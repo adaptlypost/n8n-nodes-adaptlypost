@@ -1,0 +1,18 @@
+{
+	"node": "n8n-nodes-adaptlypost.adaptlyPost",
+	"nodeVersion": "1.0",
+	"codexVersion": "1.0",
+	"categories": ["Marketing", "Communication"],
+	"resources": {
+		"credentialDocumentation": [
+			{
+				"url": "https://github.com/adaptlypost/n8n-nodes-adaptlypost?tab=readme-ov-file#credentials"
+			}
+		],
+		"primaryDocumentation": [
+			{
+				"url": "https://github.com/adaptlypost/n8n-nodes-adaptlypost?tab=readme-ov-file"
+			}
+		]
+	}
+}

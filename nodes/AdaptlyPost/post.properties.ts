@@ -128,6 +128,16 @@ export const postProperties: INodeProperties[] = [
 				default: 'FEED',
 			},
 			{
+				displayName: 'Image Alt Texts',
+				name: 'mediaAltTexts',
+				type: 'string',
+				typeOptions: { rows: 4 },
+				default: '',
+				placeholder: 'A red bicycle leaning on a brick wall',
+				description:
+					'Alt text for each image, one line per image in the same order as Media URLs. Leave a line empty to skip an image. Sent to X, Bluesky, LinkedIn, Facebook, Instagram and Threads; Pinterest uses the first line.',
+			},
+			{
 				displayName: 'Instagram Post Type',
 				name: 'instagramPostType',
 				type: 'options',

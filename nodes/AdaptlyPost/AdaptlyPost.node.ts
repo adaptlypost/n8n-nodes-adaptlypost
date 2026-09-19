@@ -14,6 +14,14 @@ import { postProperties } from './post.properties';
 import { analyticsProperties } from './analytics.properties';
 import { adaptlyPostApiRequest } from './transport';
 
+const asLines = (value: unknown): string[] => {
+	const lines = String(value ?? '')
+		.split('\n')
+		.map((line) => line.trim());
+	while (lines.length > 0 && !lines[lines.length - 1]) lines.pop();
+	return lines;
+};
+
 const asList = (value: unknown): string[] =>
 	Array.isArray(value)
 		? value.map(String)
@@ -252,6 +260,7 @@ async function createPost(this: IExecuteFunctions, i: number): Promise<IDataObje
 		contentType: this.getNodeParameter('contentType', i),
 		text: this.getNodeParameter('text', i, '') || undefined,
 		mediaUrls: mediaUrls.length ? mediaUrls : undefined,
+		mediaAltTexts: mediaUrls.length && options.mediaAltTexts ? asLines(options.mediaAltTexts) : undefined,
 		scheduledAt: options.scheduledAt || undefined,
 		timezone: options.timezone || 'UTC',
 		saveAsDraft: options.saveAsDraft === true,

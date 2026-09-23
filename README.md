@@ -36,6 +36,17 @@ Every delivery is checked against the `x-adaptly-signature` header with the secr
 
 Create a workspace token at [app.adaptlypost.com/api-tokens](https://app.adaptlypost.com/api-tokens). It starts with `adaptly_` and is scoped to one workspace. Paste it into the AdaptlyPost API credential in n8n. n8n tests the credential with a request to `GET /social-accounts`.
 
+A token carries the role chosen when it was created, and never does more than the member who created it:
+
+| Role | Can |
+| --- | --- |
+| Admin | Everything, including connecting accounts |
+| Editor | Create, schedule, publish, retry and delete posts; manage webhooks |
+| Contributor | Create and edit its own drafts, upload media |
+| Viewer | Read posts and analytics |
+
+Create takes any key but only an Editor or Admin key can publish or schedule; with a Contributor key turn on Save as Draft. Publish Draft and Retry Failed Platforms need an Editor or Admin key. The AdaptlyPost Trigger registers a webhook when the workflow is activated, which needs an Editor or Admin key. When a key lacks a permission the node fails with the server's message, the required permission and the key's role; a new key of the same role or a retry will not change the answer. `GET /me` returns the role and permissions of the key in hand.
+
 ## Compatibility
 
 Tested with n8n 1.100 and later.

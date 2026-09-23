@@ -70,7 +70,8 @@ export class AdaptlyPostTrigger implements INodeType {
 				options: EVENTS,
 				required: true,
 				default: ['post.published'],
-				description: 'Which AdaptlyPost events start the workflow',
+				description:
+					'Which AdaptlyPost events start the workflow. Activating the workflow registers a webhook, which needs an Editor or Admin key; a Contributor or Viewer key is refused with 403.',
 			},
 		],
 	};

@@ -12,7 +12,7 @@ import { getAccounts, groupAccountsByPlatform, type SocialAccount } from './acco
 import { uploadMediaFromUrl } from './media';
 import { postProperties } from './post.properties';
 import { analyticsProperties } from './analytics.properties';
-import { adaptlyPostApiRequest } from './transport';
+import { adaptlyPostApiRequest, describeApiError, readApiErrorBody } from './transport';
 
 const asLines = (value: unknown): string[] => {
 	const lines = String(value ?? '')
@@ -100,16 +100,31 @@ export class AdaptlyPost implements INodeType {
 					...rows.map((json) => ({ json: json as IDataObject, pairedItem: { item: i } })),
 				);
 			} catch (error) {
+				const apiError = readApiErrorBody(error);
 				if (this.continueOnFail()) {
 					returnData.push({
-						json: { error: (error as Error).message },
+						json: {
+							error: apiError?.message || (error as Error).message,
+							...(apiError && {
+								code: apiError.code,
+								requiredPermission: apiError.requiredPermission,
+								role: apiError.role,
+							}),
+						},
 						pairedItem: { item: i },
 					});
 					continue;
 				}
 				throw error instanceof NodeOperationError
 					? error
-					: new NodeApiError(this.getNode(), error as JsonObject, { itemIndex: i });
+					: new NodeApiError(this.getNode(), error as JsonObject, {
+							itemIndex: i,
+							...(apiError && {
+								httpCode: String(apiError.statusCode),
+								message: apiError.message,
+								description: describeApiError(apiError),
+							}),
+						});
 			}
 		}
 

@@ -25,7 +25,7 @@ export class AdaptlyPostApi implements ICredentialType {
 			required: true,
 			default: '',
 			description:
-				'Workspace token from app.adaptlypost.com/api-tokens. It starts with adaptly_.',
+				'Workspace token from app.adaptlypost.com/api-tokens. It starts with adaptly_. The token carries the role chosen when it was created: an Editor or Admin key can schedule and publish, a Contributor key can only save drafts and upload media, a Viewer key can only read. The AdaptlyPost Trigger node registers a webhook, which needs an Editor or Admin key (webhooks.manage). A key never does more than the member who created it.',
 		},
 	];
 

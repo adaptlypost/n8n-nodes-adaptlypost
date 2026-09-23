@@ -15,13 +15,15 @@ export const postProperties: INodeProperties[] = [
 				name: 'Create',
 				value: 'create',
 				action: 'Create a post',
-				description: 'Publish now, schedule, or save a draft on one or more accounts',
+				description:
+					'Publish now, schedule, or save a draft on one or more accounts. Publishing and scheduling need an Editor or Admin key; a Contributor key can only save drafts.',
 			},
 			{
 				name: 'Delete',
 				value: 'delete',
 				action: 'Delete a post',
-				description: 'Delete a draft or scheduled post',
+				description:
+					'Delete a draft or scheduled post. A Contributor key can only delete its own drafts.',
 			},
 			{
 				name: 'Get',
@@ -45,13 +47,14 @@ export const postProperties: INodeProperties[] = [
 				name: 'Publish Draft',
 				value: 'publishDraft',
 				action: 'Publish a draft post',
-				description: 'Publish a draft now or schedule it',
+				description: 'Publish a draft now or schedule it. Needs an Editor or Admin key.',
 			},
 			{
 				name: 'Retry Failed Platforms',
 				value: 'retry',
 				action: 'Retry failed platforms of a post',
-				description: 'Re-queue publishing for every platform that failed',
+				description:
+					'Re-queue publishing for every platform that failed. Needs an Editor or Admin key.',
 			},
 			{
 				name: 'Unschedule',
@@ -173,14 +176,16 @@ export const postProperties: INodeProperties[] = [
 				name: 'saveAsDraft',
 				type: 'boolean',
 				default: false,
-				description: 'Whether to store the post without publishing or scheduling it',
+				description:
+					'Whether to store the post without publishing or scheduling it. Turn this on when the credential is a Contributor key: it cannot publish or schedule, and AdaptlyPost refuses with 403 otherwise.',
 			},
 			{
 				displayName: 'Scheduled At',
 				name: 'scheduledAt',
 				type: 'dateTime',
 				default: '',
-				description: 'Leave empty to publish immediately',
+				description:
+					'Leave empty to publish immediately. Scheduling and publishing both need an Editor or Admin key.',
 			},
 			{
 				displayName: 'TikTok Privacy',
@@ -236,7 +241,8 @@ export const postProperties: INodeProperties[] = [
 		type: 'dateTime',
 		default: '',
 		displayOptions: { show: { resource: ['post'], operation: ['publishDraft'] } },
-		description: 'Leave empty to publish immediately',
+		description:
+			'Leave empty to publish immediately. Scheduling and publishing both need an Editor or Admin key.',
 	},
 	{
 		displayName: 'Timezone',

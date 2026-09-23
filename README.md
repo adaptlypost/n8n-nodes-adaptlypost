@@ -14,7 +14,7 @@ Follow the [installation guide](https://docs.n8n.io/integrations/community-nodes
 
 | Resource | Operations |
 | --- | --- |
-| Post | Create, Get, Get Many, Get Results, Publish Draft, Retry Failed Platforms, Delete |
+| Post | Create, Get, Get Many, Get Results, Publish Draft, Retry Failed Platforms, Unschedule, Delete |
 | Account | Get Many |
 | Analytics | Get Overview, Get Timeseries, Get Platform Breakdown, Get Post Analytics |
 

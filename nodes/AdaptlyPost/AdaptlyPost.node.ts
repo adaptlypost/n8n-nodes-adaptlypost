@@ -182,6 +182,13 @@ async function runOperation(
 				`/social-posts/${this.getNodeParameter('postId', i)}/retry`,
 				{},
 			);
+		case 'unschedule':
+			return adaptlyPostApiRequest.call(
+				this,
+				'POST',
+				`/social-posts/${this.getNodeParameter('postId', i)}/unschedule`,
+				{},
+			);
 		case 'delete':
 			return adaptlyPostApiRequest.call(
 				this,

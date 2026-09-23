@@ -1,7 +1,7 @@
 import type { INodeProperties } from 'n8n-workflow';
 
 const onlyPosts = { resource: ['post'] };
-const withPostId = { resource: ['post'], operation: ['delete', 'get', 'getResults', 'publishDraft', 'retry'] };
+const withPostId = { resource: ['post'], operation: ['delete', 'get', 'getResults', 'publishDraft', 'retry', 'unschedule'] };
 
 export const postProperties: INodeProperties[] = [
 	{
@@ -52,6 +52,12 @@ export const postProperties: INodeProperties[] = [
 				value: 'retry',
 				action: 'Retry failed platforms of a post',
 				description: 'Re-queue publishing for every platform that failed',
+			},
+			{
+				name: 'Unschedule',
+				value: 'unschedule',
+				action: 'Unschedule a post',
+				description: 'Turn a scheduled or dated draft post back into an undated draft',
 			},
 		],
 		default: 'create',

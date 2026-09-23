@@ -1,5 +1,9 @@
 # Changelog
 
+## Unreleased
+
+- Post gains an Unschedule operation that turns a scheduled or dated draft post back into an undated draft.
+
 ## 0.1.3
 
 - Create post and the account lists take Mastodon accounts on any server.

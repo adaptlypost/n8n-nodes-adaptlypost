@@ -12,6 +12,7 @@ export const PLATFORMS = [
 	'LINKEDIN',
 	'PINTEREST',
 	'YOUTUBE',
+	'MASTODON',
 ] as const;
 
 export type Platform = (typeof PLATFORMS)[number];
@@ -26,6 +27,7 @@ export const PLATFORM_LABELS: Record<Platform, string> = {
 	LINKEDIN: 'LinkedIn',
 	PINTEREST: 'Pinterest',
 	YOUTUBE: 'YouTube',
+	MASTODON: 'Mastodon',
 };
 
 export interface SocialAccount {
@@ -46,6 +48,7 @@ const CONNECTION_ID_FIELD: Record<Exclude<Platform, 'FACEBOOK'>, string> = {
 	LINKEDIN: 'linkedinConnectionIds',
 	PINTEREST: 'pinterestConnectionIds',
 	YOUTUBE: 'youtubeConnectionIds',
+	MASTODON: 'mastodonConnectionIds',
 };
 
 export const connectionField = (platform: Platform): string =>

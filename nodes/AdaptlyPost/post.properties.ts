@@ -135,7 +135,7 @@ export const postProperties: INodeProperties[] = [
 				default: '',
 				placeholder: 'A red bicycle leaning on a brick wall',
 				description:
-					'Alt text for each image, one line per image in the same order as Media URLs. Leave a line empty to skip an image. Sent to X, Bluesky, LinkedIn, Facebook, Instagram and Threads; Pinterest uses the first line.',
+					'Alt text for each image, one line per image in the same order as Media URLs. Leave a line empty to skip an image. Sent to X, Bluesky, Mastodon, LinkedIn, Facebook, Instagram and Threads; Pinterest uses the first line.',
 			},
 			{
 				displayName: 'Instagram Post Type',
@@ -281,6 +281,7 @@ export const postProperties: INodeProperties[] = [
 					{ name: 'Facebook', value: 'FACEBOOK' },
 					{ name: 'Instagram', value: 'INSTAGRAM' },
 					{ name: 'LinkedIn', value: 'LINKEDIN' },
+					{ name: 'Mastodon', value: 'MASTODON' },
 					{ name: 'Pinterest', value: 'PINTEREST' },
 					{ name: 'Threads', value: 'THREADS' },
 					{ name: 'TikTok', value: 'TIKTOK' },

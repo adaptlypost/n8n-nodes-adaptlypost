@@ -1,6 +1,6 @@
 # Changelog
 
-## Unreleased
+## 0.1.4
 
 - Post gains an Unschedule operation that turns a scheduled or dated draft post back into an undated draft.
 

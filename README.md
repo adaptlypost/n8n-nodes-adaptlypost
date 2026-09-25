@@ -18,7 +18,9 @@ Follow the [installation guide](https://docs.n8n.io/integrations/community-nodes
 | Account | Get Many |
 | Analytics | Get Overview, Get Timeseries, Get Platform Breakdown, Get Post Analytics |
 
-Create takes the accounts to post from (a multi-select loaded from your workspace), the text, and media URLs. Media is copied from the URL you give into AdaptlyPost storage before the post is created, so any public JPEG, PNG, WebP, MP4 or QuickTime link works. TikTok privacy, Pinterest board, Instagram and Facebook post type, and YouTube title and privacy live under Additional Fields.
+Create takes the accounts to post from (a multi-select loaded from your workspace), the text, and media URLs. Media is copied from the URL you give into AdaptlyPost storage before the post is created, so any public JPEG, PNG, WebP, MP4 or QuickTime link works. TikTok privacy, Pinterest board, Instagram and Facebook post type, YouTube title and privacy, and LinkedIn document title live under Additional Fields.
+
+The Document content type is LinkedIn only: it publishes exactly one PDF, PPT, PPTX, DOC or DOCX file (max 100 MB, 300 pages), given as the single Media URL, as a LinkedIn document post. LinkedIn shows the file name as the title unless you set LinkedIn Document Title.
 
 ### AdaptlyPost Trigger
 

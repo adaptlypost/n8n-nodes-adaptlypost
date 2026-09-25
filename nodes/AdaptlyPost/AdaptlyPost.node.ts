@@ -318,6 +318,12 @@ async function createPost(this: IExecuteFunctions, i: number): Promise<IDataObje
 			postType: options.facebookPostType,
 		}));
 	}
+	if (targets.platforms.includes('LINKEDIN') && options.linkedinDocumentTitle) {
+		body.linkedinConfigs = ids('LINKEDIN').map((connectionId) => ({
+			connectionId,
+			documentTitle: options.linkedinDocumentTitle,
+		}));
+	}
 	if (targets.platforms.includes('YOUTUBE')) {
 		body.youtubeConfigs = ids('YOUTUBE').map((connectionId) => ({
 			connectionId,

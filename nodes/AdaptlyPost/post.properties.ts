@@ -91,12 +91,20 @@ export const postProperties: INodeProperties[] = [
 		type: 'options',
 		options: [
 			{ name: 'Carousel', value: 'CAROUSEL' },
+			{
+				name: 'Document',
+				value: 'DOCUMENT',
+				description:
+					'LinkedIn only. Publishes exactly one PDF, PPT, PPTX, DOC or DOCX file (max 100 MB, 300 pages) as a LinkedIn document post.',
+			},
 			{ name: 'Image', value: 'IMAGE' },
 			{ name: 'Text', value: 'TEXT' },
 			{ name: 'Video', value: 'VIDEO' },
 		],
 		default: 'TEXT',
 		displayOptions: { show: { resource: ['post'], operation: ['create'] } },
+		description:
+			'Document is LinkedIn only and takes exactly one PDF, PPT, PPTX, DOC or DOCX file in Media URLs. AdaptlyPost refuses a Document post on another platform, with two or more files, or with an image or video, and refuses a document file on any other content type.',
 	},
 	{
 		displayName: 'Text',
@@ -115,7 +123,7 @@ export const postProperties: INodeProperties[] = [
 		placeholder: 'https://example.com/photo.jpg, https://example.com/clip.mp4',
 		displayOptions: { show: { resource: ['post'], operation: ['create'] } },
 		description:
-			'Comma-separated public URLs of JPEG, PNG, WebP, MP4 or QuickTime files. Each file is copied into AdaptlyPost storage before posting.',
+			'Comma-separated public URLs of JPEG, PNG, WebP, MP4 or QuickTime files. For a Document post, the URL of that one PDF, PPT, PPTX, DOC or DOCX file (max 100 MB, 300 pages). Each file is copied into AdaptlyPost storage before posting.',
 	},
 	{
 		displayName: 'Additional Fields',
@@ -156,6 +164,15 @@ export const postProperties: INodeProperties[] = [
 					{ name: 'Story', value: 'STORY' },
 				],
 				default: 'FEED',
+			},
+			{
+				displayName: 'LinkedIn Document Title',
+				name: 'linkedinDocumentTitle',
+				type: 'string',
+				default: '',
+				placeholder: 'Q3 product roadmap',
+				description:
+					'Title LinkedIn shows on a Document post, up to 100 characters. Defaults to the file name. Applied to every selected LinkedIn account; ignored for other content types.',
 			},
 			{
 				displayName: 'Pinterest Board ID',

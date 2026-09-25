@@ -9,6 +9,11 @@ const SUPPORTED_MEDIA_TYPES = {
 	'image/webp': '.webp',
 	'video/mp4': '.mp4',
 	'video/quicktime': '.mov',
+	'application/pdf': '.pdf',
+	'application/vnd.ms-powerpoint': '.ppt',
+	'application/vnd.openxmlformats-officedocument.presentationml.presentation': '.pptx',
+	'application/msword': '.doc',
+	'application/vnd.openxmlformats-officedocument.wordprocessingml.document': '.docx',
 } as const;
 
 type MediaType = keyof typeof SUPPORTED_MEDIA_TYPES;
@@ -35,7 +40,7 @@ export async function uploadMediaFromUrl(
 	if (!isSupported(mimeType)) {
 		throw new NodeOperationError(
 			this.getNode(),
-			`${sourceUrl} is served as "${mimeType || 'unknown'}". AdaptlyPost accepts JPEG, PNG, WebP, MP4 and QuickTime.`,
+			`${sourceUrl} is served as "${mimeType || 'unknown'}". AdaptlyPost accepts JPEG, PNG, WebP, MP4, QuickTime, and PDF, PPT, PPTX, DOC or DOCX for LinkedIn document posts.`,
 			{ itemIndex },
 		);
 	}

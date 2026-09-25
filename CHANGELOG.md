@@ -1,6 +1,6 @@
 # Changelog
 
-## Unreleased
+## 0.1.5
 
 - Retry Failed Platforms works again: the API now retries every failed platform of the post when the request names none.
 - API keys now carry a workspace role (Admin, Editor, Contributor, Viewer). A 403 `permission_denied` response shows the server message, the required permission and the key's role instead of a generic HTTP error, and never asks you to reconnect. With Continue On Fail the output item carries `code`, `requiredPermission` and `role`.

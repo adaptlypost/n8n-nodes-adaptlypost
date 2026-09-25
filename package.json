@@ -1,6 +1,6 @@
 {
   "name": "n8n-nodes-adaptlypost",
-  "version": "0.1.4",
+  "version": "0.1.5",
   "description": "n8n community node for AdaptlyPost: schedule and publish social posts, react to publishing results",
   "license": "MIT",
   "homepage": "https://adaptlypost.com",

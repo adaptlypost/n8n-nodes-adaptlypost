@@ -62,6 +62,7 @@ export const analyticsProperties: INodeProperties[] = [
 		options: [
 			{ name: 'Bluesky', value: 'BLUESKY' },
 			{ name: 'Facebook', value: 'FACEBOOK' },
+			{ name: 'Google Business Profile', value: 'GOOGLE_BUSINESS' },
 			{ name: 'Instagram', value: 'INSTAGRAM' },
 			{ name: 'LinkedIn', value: 'LINKEDIN' },
 			{ name: 'Pinterest', value: 'PINTEREST' },

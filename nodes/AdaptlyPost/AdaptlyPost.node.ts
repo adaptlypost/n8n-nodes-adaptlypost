@@ -8,7 +8,7 @@ import type {
 } from 'n8n-workflow';
 import { NodeApiError, NodeConnectionTypes, NodeOperationError } from 'n8n-workflow';
 
-import { getAccounts, groupAccountsByPlatform, type SocialAccount } from './accounts';
+import { connectionField, getAccounts, groupAccountsByPlatform, type SocialAccount } from './accounts';
 import { uploadMediaFromUrl } from './media';
 import { postProperties } from './post.properties';
 import { analyticsProperties } from './analytics.properties';
@@ -268,8 +268,7 @@ async function createPost(this: IExecuteFunctions, i: number): Promise<IDataObje
 	} catch (error) {
 		throw new NodeOperationError(this.getNode(), (error as Error).message, { itemIndex: i });
 	}
-	const ids = (platform: (typeof targets.platforms)[number]) =>
-		targets[platform === 'FACEBOOK' ? 'pageIds' : `${platform.toLowerCase()}ConnectionIds`] ?? [];
+	const ids = (platform: (typeof targets.platforms)[number]) => targets[connectionField(platform)] ?? [];
 
 	const mediaUrls: string[] = [];
 	for (const sourceUrl of asList(this.getNodeParameter('mediaUrls', i, ''))) {
@@ -330,6 +329,34 @@ async function createPost(this: IExecuteFunctions, i: number): Promise<IDataObje
 			videoTitle: options.youtubeTitle || undefined,
 			privacyStatus: options.youtubePrivacyStatus || undefined,
 			postType: options.youtubePostType || undefined,
+		}));
+	}
+	const googleBusinessFields = [
+		'googleBusinessTopicType',
+		'googleBusinessCallToActionType',
+		'googleBusinessCallToActionUrl',
+		'googleBusinessEventTitle',
+		'googleBusinessEventStart',
+		'googleBusinessEventEnd',
+		'googleBusinessOfferCouponCode',
+		'googleBusinessOfferRedeemUrl',
+		'googleBusinessOfferTerms',
+	];
+	if (
+		targets.platforms.includes('GOOGLE_BUSINESS') &&
+		googleBusinessFields.some((field) => options[field])
+	) {
+		body.googleBusinessConfigs = ids('GOOGLE_BUSINESS').map((connectionId) => ({
+			connectionId,
+			topicType: options.googleBusinessTopicType || 'STANDARD',
+			callToActionType: options.googleBusinessCallToActionType || undefined,
+			callToActionUrl: options.googleBusinessCallToActionUrl || undefined,
+			eventTitle: options.googleBusinessEventTitle || undefined,
+			eventStart: options.googleBusinessEventStart || undefined,
+			eventEnd: options.googleBusinessEventEnd || undefined,
+			offerCouponCode: options.googleBusinessOfferCouponCode || undefined,
+			offerRedeemUrl: options.googleBusinessOfferRedeemUrl || undefined,
+			offerTerms: options.googleBusinessOfferTerms || undefined,
 		}));
 	}
 

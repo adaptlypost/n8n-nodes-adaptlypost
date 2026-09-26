@@ -145,6 +145,89 @@ export const postProperties: INodeProperties[] = [
 				default: 'FEED',
 			},
 			{
+				displayName: 'Google Business Button',
+				name: 'googleBusinessCallToActionType',
+				type: 'options',
+				options: [
+					{ name: 'Book', value: 'BOOK' },
+					{ name: 'Call', value: 'CALL' },
+					{ name: 'Learn More', value: 'LEARN_MORE' },
+					{ name: 'Order', value: 'ORDER' },
+					{ name: 'Shop', value: 'SHOP' },
+					{ name: 'Sign Up', value: 'SIGN_UP' },
+				],
+				default: 'LEARN_MORE',
+				description:
+					'Button on the Google Business Profile post. Every button except Call needs Google Business Button URL; Call dials the phone number on the business profile. Keep phone numbers and emails out of the text, because Google removes those posts.',
+			},
+			{
+				displayName: 'Google Business Button URL',
+				name: 'googleBusinessCallToActionUrl',
+				type: 'string',
+				default: '',
+				placeholder: 'https://example.com/book',
+				description: 'Link for the button. Required for every button except Call, which ignores it.',
+			},
+			{
+				displayName: 'Google Business Event End',
+				name: 'googleBusinessEventEnd',
+				type: 'string',
+				default: '',
+				placeholder: '2026-10-01T21:00',
+				description:
+					"End of the event or offer in the business's local time, as YYYY-MM-DD or YYYY-MM-DDTHH:mm with no timezone. Required for Event and Offer.",
+			},
+			{
+				displayName: 'Google Business Event Start',
+				name: 'googleBusinessEventStart',
+				type: 'string',
+				default: '',
+				placeholder: '2026-10-01T18:00',
+				description:
+					"Start of the event or offer in the business's local time, as YYYY-MM-DD or YYYY-MM-DDTHH:mm with no timezone. Required for Event and Offer.",
+			},
+			{
+				displayName: 'Google Business Event Title',
+				name: 'googleBusinessEventTitle',
+				type: 'string',
+				default: '',
+				description: 'Title of the event or offer. Required for Event and Offer.',
+			},
+			{
+				displayName: 'Google Business Offer Coupon Code',
+				name: 'googleBusinessOfferCouponCode',
+				type: 'string',
+				default: '',
+				description: 'Offer posts only',
+			},
+			{
+				displayName: 'Google Business Offer Redeem URL',
+				name: 'googleBusinessOfferRedeemUrl',
+				type: 'string',
+				default: '',
+				description: 'Where to redeem the offer. Offer posts only.',
+			},
+			{
+				displayName: 'Google Business Offer Terms',
+				name: 'googleBusinessOfferTerms',
+				type: 'string',
+				default: '',
+				description: 'Terms and conditions of the offer. Offer posts only.',
+			},
+			{
+				displayName: 'Google Business Post Type',
+				name: 'googleBusinessTopicType',
+				type: 'options',
+				options: [
+					{ name: 'Event', value: 'EVENT' },
+					{ name: 'Offer', value: 'OFFER' },
+					{ name: 'Standard', value: 'STANDARD' },
+				],
+				default: 'STANDARD',
+				description:
+					'Google Business Profile posts take text or one JPEG or PNG image up to 5 MB, no video or carousels, and at most 1500 characters. Google reviews every post and can reject it.',
+			},
+			{
 				displayName: 'Image Alt Texts',
 				name: 'mediaAltTexts',
 				type: 'string',
@@ -152,7 +235,7 @@ export const postProperties: INodeProperties[] = [
 				default: '',
 				placeholder: 'A red bicycle leaning on a brick wall',
 				description:
-					'Alt text for each image, one line per image in the same order as Media URLs. Leave a line empty to skip an image. Sent to X, Bluesky, Mastodon, LinkedIn, Facebook, Instagram and Threads; Pinterest uses the first line.',
+					'Alt text for each image, one line per image in the same order as Media URLs. Leave a line empty to skip an image. Sent to X, Bluesky, Mastodon, LinkedIn, Facebook, Instagram and Threads; Pinterest uses the first line. Google Business Profile has no alt text.',
 			},
 			{
 				displayName: 'Instagram Post Type',
@@ -308,6 +391,7 @@ export const postProperties: INodeProperties[] = [
 				options: [
 					{ name: 'Bluesky', value: 'BLUESKY' },
 					{ name: 'Facebook', value: 'FACEBOOK' },
+					{ name: 'Google Business Profile', value: 'GOOGLE_BUSINESS' },
 					{ name: 'Instagram', value: 'INSTAGRAM' },
 					{ name: 'LinkedIn', value: 'LINKEDIN' },
 					{ name: 'Mastodon', value: 'MASTODON' },

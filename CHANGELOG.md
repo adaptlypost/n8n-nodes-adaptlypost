@@ -2,6 +2,7 @@
 
 ## 0.1.5
 
+- Create post and the account lists take Google Business Profile locations. Additional Fields set the post type (Standard, Event, Offer), the button and its link, the event or offer title and local start and end, and the offer's coupon code, redeem link and terms. Get Many and the analytics platform filter take Google Business Profile too.
 - Retry Failed Platforms works again: the API now retries every failed platform of the post when the request names none.
 - API keys now carry a workspace role (Admin, Editor, Contributor, Viewer). A 403 `permission_denied` response shows the server message, the required permission and the key's role instead of a generic HTTP error, and never asks you to reconnect. With Continue On Fail the output item carries `code`, `requiredPermission` and `role`.
 - A 401 `token_issuer_lost_access` response explains that the key was revoked because its creator left the workspace.

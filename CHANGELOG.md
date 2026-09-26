@@ -1,5 +1,11 @@
 # Changelog
 
+## 0.2.0
+
+- Create post takes a Repeat option group: Frequency (Daily, Weekly, Monthly), Repeat Every (1 to 30), Weekdays for weekly posts, and Ends (Never, On Date with End Date, After Number of Posts with Number of Posts from 2 to 365). It is sent as `recurrence` only when a Frequency is set, with the end date as YYYY-MM-DD. A recurring post needs a future Scheduled At and cannot be a draft or include TikTok. The response carries `recurringPostId`.
+- New Recurring Post resource with Get, Get Many (Return All, Limit, Statuses filter), Pause, Resume and Delete.
+- Post objects may carry `recurringPostId` and `occurrenceAt`.
+
 ## 0.1.5
 
 - Retry Failed Platforms works again: the API now retries every failed platform of the post when the request names none.

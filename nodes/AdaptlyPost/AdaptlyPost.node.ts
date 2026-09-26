@@ -12,6 +12,7 @@ import { getAccounts, groupAccountsByPlatform, type SocialAccount } from './acco
 import { uploadMediaFromUrl } from './media';
 import { postProperties } from './post.properties';
 import { analyticsProperties } from './analytics.properties';
+import { recurringPostProperties } from './recurringPost.properties';
 import { adaptlyPostApiRequest, describeApiError, readApiErrorBody } from './transport';
 
 const asLines = (value: unknown): string[] => {
@@ -56,6 +57,7 @@ export class AdaptlyPost implements INodeType {
 					{ name: 'Account', value: 'account' },
 					{ name: 'Analytics', value: 'analytics' },
 					{ name: 'Post', value: 'post' },
+					{ name: 'Recurring Post', value: 'recurringPost' },
 				],
 				default: 'post',
 			},
@@ -77,6 +79,7 @@ export class AdaptlyPost implements INodeType {
 			},
 			...postProperties,
 			...analyticsProperties,
+			...recurringPostProperties,
 		],
 	};
 
@@ -145,6 +148,10 @@ async function runOperation(
 
 	if (resource === 'analytics') {
 		return runAnalytics.call(this, operation, i);
+	}
+
+	if (resource === 'recurringPost') {
+		return runRecurringPost.call(this, operation, i);
 	}
 
 	switch (operation) {
@@ -254,6 +261,75 @@ async function runAnalytics(
 	}
 }
 
+async function runRecurringPost(
+	this: IExecuteFunctions,
+	operation: string,
+	i: number,
+): Promise<IDataObject | IDataObject[]> {
+	if (operation === 'getAll') {
+		const returnAll = this.getNodeParameter('returnAll', i) as boolean;
+		const filters = this.getNodeParameter('filters', i, {}) as IDataObject;
+		const limit = returnAll ? 100 : (this.getNodeParameter('limit', i) as number);
+		const recurringPosts: IDataObject[] = [];
+		let offset = 0;
+		while (true) {
+			const page = await adaptlyPostApiRequest.call(this, 'GET', '/recurring-posts', undefined, {
+				...filters,
+				limit: Math.min(limit - recurringPosts.length, 100),
+				offset,
+			});
+			recurringPosts.push(...(page.recurringPosts as IDataObject[]));
+			offset += (page.recurringPosts as IDataObject[]).length;
+			if (!page.hasMore || (!returnAll && recurringPosts.length >= limit)) break;
+		}
+		return recurringPosts;
+	}
+
+	const path = `/recurring-posts/${this.getNodeParameter('recurringPostId', i)}`;
+	switch (operation) {
+		case 'get':
+			return adaptlyPostApiRequest.call(this, 'GET', path);
+		case 'pause':
+			return adaptlyPostApiRequest.call(this, 'POST', `${path}/pause`, {});
+		case 'resume':
+			return adaptlyPostApiRequest.call(this, 'POST', `${path}/resume`, {});
+		case 'delete':
+			return adaptlyPostApiRequest.call(this, 'DELETE', path);
+		default:
+			throw new NodeOperationError(this.getNode(), `Unknown operation "${operation}"`);
+	}
+}
+
+function readRecurrence(this: IExecuteFunctions, i: number): IDataObject | undefined {
+	const repeat = this.getNodeParameter('recurrence', i, {}) as IDataObject;
+	if (Object.keys(repeat).length === 0) return undefined;
+	if (!repeat.frequency) {
+		throw new NodeOperationError(this.getNode(), 'Choose how often the post repeats', {
+			itemIndex: i,
+		});
+	}
+	if (repeat.ends === 'onDate' && !repeat.endsOn) {
+		throw new NodeOperationError(this.getNode(), 'Add an End Date or choose another Ends option', {
+			itemIndex: i,
+		});
+	}
+	if (repeat.ends === 'afterCount' && !repeat.maxOccurrences) {
+		throw new NodeOperationError(
+			this.getNode(),
+			'Add a Number of Posts or choose another Ends option',
+			{ itemIndex: i },
+		);
+	}
+	const weekdays = repeat.frequency === 'WEEKLY' ? asList(repeat.weekdays) : [];
+	return {
+		frequency: repeat.frequency,
+		interval: repeat.interval,
+		weekdays: weekdays.length ? weekdays : undefined,
+		endsOn: repeat.ends === 'onDate' ? String(repeat.endsOn).slice(0, 10) : undefined,
+		maxOccurrences: repeat.ends === 'afterCount' ? repeat.maxOccurrences : undefined,
+	};
+}
+
 async function createPost(this: IExecuteFunctions, i: number): Promise<IDataObject> {
 	const accountIds = asList(this.getNodeParameter('accountIds', i));
 	if (accountIds.length === 0) {
@@ -261,6 +337,7 @@ async function createPost(this: IExecuteFunctions, i: number): Promise<IDataObje
 			itemIndex: i,
 		});
 	}
+	const recurrence = readRecurrence.call(this, i);
 	const { accounts } = await adaptlyPostApiRequest.call(this, 'GET', '/social-accounts');
 	let targets;
 	try {
@@ -286,6 +363,7 @@ async function createPost(this: IExecuteFunctions, i: number): Promise<IDataObje
 		scheduledAt: options.scheduledAt || undefined,
 		timezone: options.timezone || 'UTC',
 		saveAsDraft: options.saveAsDraft === true,
+		recurrence,
 	};
 
 	if (targets.platforms.includes('TIKTOK')) {

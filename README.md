@@ -17,8 +17,13 @@ Follow the [installation guide](https://docs.n8n.io/integrations/community-nodes
 | Post | Create, Get, Get Many, Get Results, Publish Draft, Retry Failed Platforms, Unschedule, Delete |
 | Account | Get Many |
 | Analytics | Get Overview, Get Timeseries, Get Platform Breakdown, Get Post Analytics |
+| Recurring Post | Get, Get Many, Pause, Resume, Delete |
 
 Create takes the accounts to post from (a multi-select loaded from your workspace), the text, and media URLs. Media is copied from the URL you give into AdaptlyPost storage before the post is created, so any public JPEG, PNG, WebP, MP4 or QuickTime link works. TikTok privacy, Pinterest board, Instagram and Facebook post type, YouTube title and privacy, and LinkedIn document title live under Additional Fields.
+
+Repeat on Create turns the post into a recurring post. Pick a Frequency (daily, weekly or monthly), Repeat Every N days, weeks or months (1 to 30), Weekdays for a weekly post, and when it Ends: never, on an End Date, or after a Number of Posts (2 to 365). A recurring post needs a future Scheduled At, which becomes the first post and sets the time of day. It cannot be saved as a draft or include a TikTok account. X and LinkedIn reject identical text, so use spintax such as `{Hi|Hello}` to vary each post. The response carries `recurringPostId`, and every post it creates carries `recurringPostId` and `occurrenceAt`.
+
+Only the next post of an active recurring post exists as a scheduled post. Pause stops the series and deletes that upcoming post; Resume continues from the next date after now and skips the dates missed while paused. Delete stops the series and keeps the posts that already went out. Deleting the single upcoming post with Post > Delete skips that date only. A series pauses itself after 3 failed posts in a row, when the subscription lapses, when its creator loses workspace access, when one of its accounts is disconnected, or when a platform rejects the content; `pauseReason` says which.
 
 The Document content type is LinkedIn only: it publishes exactly one PDF, PPT, PPTX, DOC or DOCX file (max 100 MB, 300 pages), given as the single Media URL, as a LinkedIn document post. LinkedIn shows the file name as the title unless you set LinkedIn Document Title.
 

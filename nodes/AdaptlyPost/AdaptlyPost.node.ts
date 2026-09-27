@@ -384,10 +384,11 @@ async function createPost(this: IExecuteFunctions, i: number): Promise<IDataObje
 			link: options.pinterestLink || undefined,
 		}));
 	}
-	if (targets.platforms.includes('INSTAGRAM') && options.instagramPostType) {
+	if (targets.platforms.includes('INSTAGRAM') && (options.instagramPostType || options.instagramTrialGraduation)) {
 		body.instagramConfigs = ids('INSTAGRAM').map((connectionId) => ({
 			connectionId,
-			postType: options.instagramPostType,
+			postType: options.instagramPostType || undefined,
+			trialGraduation: options.instagramTrialGraduation || undefined,
 		}));
 	}
 	if (targets.platforms.includes('FACEBOOK') && options.facebookPostType) {

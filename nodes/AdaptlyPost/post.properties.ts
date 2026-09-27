@@ -166,6 +166,19 @@ export const postProperties: INodeProperties[] = [
 				default: 'FEED',
 			},
 			{
+				displayName: 'Instagram Trial Reel',
+				name: 'instagramTrialGraduation',
+				type: 'options',
+				options: [
+					{ name: 'Instagram Shares It If It Performs Well', value: 'SS_PERFORMANCE' },
+					{ name: 'No Trial', value: '' },
+					{ name: 'You Share It From the Instagram App', value: 'MANUAL' },
+				],
+				default: '',
+				description:
+					"Publish the reel as a trial reel: Instagram shows it to non-followers first and keeps it off followers' feeds and the profile grid until it is shared. Only for a single video posted as a Reel or Feed video, never a Story, image or carousel. Needs a professional account that Instagram has enabled for trial reels.",
+			},
+			{
 				displayName: 'LinkedIn Document Title',
 				name: 'linkedinDocumentTitle',
 				type: 'string',

@@ -1,5 +1,14 @@
 # Changelog
 
+## 0.4.0
+
+- Post Get Many and Recurring Post Get Many send Statuses and Platforms as repeated query keys, so the filters work. Before, n8n sent `statuses[0]=`, which the API rejected with a 400, and analytics silently ignored the Platforms filter.
+- Analytics Timeseries sends the granularity the API reads (`granularity=DAILY|WEEKLY|MONTHLY`). Before, the setting was ignored and every result came back daily. Saved workflows keep working.
+- Post Analytics caps Limit at 100 and gains Return All, which pages until there are no more posts.
+- The trigger rejects deliveries that are missing the signature or timestamp header when a signing secret is stored.
+- A 403 names the key's role, and says so when the key's creator was demoted and the key holds only that member's permissions.
+- The account picker lists disconnected accounts last and marks them, and Create Post refuses them before calling the API.
+
 ## 0.3.0
 
 - Create post takes Instagram Trial Reel under Additional Fields, sent as `instagramConfigs[].trialGraduation` for every selected Instagram account. You Share It From the Instagram App sends `MANUAL`, Instagram Shares It If It Performs Well sends `SS_PERFORMANCE`, and No Trial sends nothing. Only a single video posted as a Reel or Feed video can be a trial; a Story, image or carousel is rejected with a 400. Post responses may carry `instagramTrialGraduation` on the Instagram platform entry.

@@ -27,6 +27,7 @@ export async function adaptlyPostApiRequest(
 		method,
 		url: `${API_BASE_URL}${path}`,
 		qs,
+		arrayFormat: 'repeat',
 		body,
 		json: true,
 	};
@@ -43,6 +44,9 @@ export interface ApiErrorBody {
 	message: string;
 	requiredPermission?: string;
 	role?: string;
+	keyRole?: string;
+	issuerRole?: string;
+	tokenType?: string;
 }
 
 const isRecord = (value: unknown): value is Record<string, unknown> =>
@@ -60,6 +64,9 @@ const bodyCandidates = (error: unknown): unknown[] => {
 	];
 };
 
+const optionalString = (value: unknown): string | undefined =>
+	typeof value === 'string' && value ? value : undefined;
+
 export function readApiErrorBody(error: unknown): ApiErrorBody | undefined {
 	for (const candidate of bodyCandidates(error)) {
 		if (!isRecord(candidate)) continue;
@@ -69,10 +76,30 @@ export function readApiErrorBody(error: unknown): ApiErrorBody | undefined {
 			statusCode,
 			code,
 			message: Array.isArray(message) ? message.join('; ') : String(message ?? ''),
-			requiredPermission:
-				typeof candidate.requiredPermission === 'string' ? candidate.requiredPermission : undefined,
-			role: typeof candidate.role === 'string' ? candidate.role : undefined,
+			requiredPermission: optionalString(candidate.requiredPermission),
+			role: optionalString(candidate.role),
+			keyRole: optionalString(candidate.keyRole),
+			issuerRole: optionalString(candidate.issuerRole),
+			tokenType: optionalString(candidate.tokenType),
 		};
+	}
+	return undefined;
+}
+
+const roleLabel = (role: string): string => role.charAt(0).toUpperCase() + role.slice(1);
+
+const narrowingIssuerRole = (body: ApiErrorBody): string | undefined =>
+	body.keyRole && body.issuerRole && body.keyRole !== body.issuerRole && body.role === body.issuerRole
+		? body.issuerRole
+		: undefined;
+
+function describeDeniedRole(body: ApiErrorBody): string | undefined {
+	const issuerRole = narrowingIssuerRole(body);
+	if (issuerRole && body.keyRole) {
+		return `This key carries the ${roleLabel(body.keyRole)} role, but the member who created it is now a ${roleLabel(issuerRole)}, so the key holds only that member's permissions.`;
+	}
+	if (body.tokenType === 'api_token' && body.keyRole) {
+		return `This key has the ${roleLabel(body.keyRole)} role.`;
 	}
 	return undefined;
 }
@@ -82,8 +109,10 @@ export function describeApiError(body: ApiErrorBody): string {
 		case 'permission_denied':
 			return [
 				body.requiredPermission ? `Required permission: ${body.requiredPermission}.` : undefined,
-				body.role ? `This key has the ${body.role} role.` : undefined,
-				`Retrying will not help. Use a key created with the Editor or Admin role (${TOKENS_URL}), or ask a workspace admin for one.`,
+				describeDeniedRole(body),
+				narrowingIssuerRole(body)
+					? `Retrying will not help. Ask a workspace admin to restore that member's role, or to create a key with the Editor or Admin role (${TOKENS_URL}).`
+					: `Retrying will not help. Use a key created with the Editor or Admin role (${TOKENS_URL}), or ask a workspace admin for one.`,
 			]
 				.filter(Boolean)
 				.join(' ');

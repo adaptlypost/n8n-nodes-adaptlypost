@@ -36,6 +36,7 @@ export interface SocialAccount {
 	displayName: string;
 	username?: string;
 	status: 'active' | 'unauthorized';
+	unauthorizedReason?: string;
 	pageId?: string;
 }
 
@@ -71,6 +72,11 @@ export function groupAccountsByPlatform(
 		if (!account) {
 			throw new Error(`Account ${id} is not connected to this AdaptlyPost workspace`);
 		}
+		if (account.status === 'unauthorized') {
+			throw new Error(
+				`${account.displayName} (${PLATFORM_LABELS[account.platform]}) is disconnected. Reconnect it in AdaptlyPost or remove it from Accounts.`,
+			);
+		}
 		if (!targets.platforms.includes(account.platform)) {
 			targets.platforms.push(account.platform);
 		}
@@ -83,8 +89,17 @@ export function groupAccountsByPlatform(
 
 export async function getAccounts(this: ILoadOptionsFunctions): Promise<INodePropertyOptions[]> {
 	const { accounts } = await adaptlyPostApiRequest.call(this, 'GET', '/social-accounts');
-	return (accounts as SocialAccount[]).map((account) => ({
-		name: `${account.displayName} (${PLATFORM_LABELS[account.platform]})`,
-		value: account.id,
-	}));
+	const disconnectedLast = (account: SocialAccount) => Number(account.status === 'unauthorized');
+	return [...(accounts as SocialAccount[])]
+		.sort((a, b) => disconnectedLast(a) - disconnectedLast(b))
+		.map((account) => {
+			const label = `${account.displayName} (${PLATFORM_LABELS[account.platform]})`;
+			return account.status === 'unauthorized'
+				? {
+						name: `${label} - Disconnected`,
+						value: account.id,
+						description: 'Reconnect this account in AdaptlyPost before posting to it',
+					}
+				: { name: label, value: account.id };
+		});
 }

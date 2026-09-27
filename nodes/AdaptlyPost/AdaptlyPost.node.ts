@@ -112,6 +112,8 @@ export class AdaptlyPost implements INodeType {
 								code: apiError.code,
 								requiredPermission: apiError.requiredPermission,
 								role: apiError.role,
+								keyRole: apiError.keyRole,
+								issuerRole: apiError.issuerRole,
 							}),
 						},
 						pairedItem: { item: i },
@@ -222,39 +224,57 @@ async function runOperation(
 	}
 }
 
+const GRANULARITY: Record<string, string> = {
+	DAY: 'DAILY',
+	WEEK: 'WEEKLY',
+	MONTH: 'MONTHLY',
+};
+
 async function runAnalytics(
 	this: IExecuteFunctions,
 	operation: string,
 	i: number,
 ): Promise<IDataObject | IDataObject[]> {
-	const qs: IDataObject = {
+	const range: IDataObject = {
 		from: this.getNodeParameter('from', i),
 		to: this.getNodeParameter('to', i),
-		platforms: this.getNodeParameter('platforms', i, []),
 	};
+	if (operation === 'platformBreakdown') {
+		return adaptlyPostApiRequest.call(
+			this,
+			'GET',
+			'/analytics/platform-breakdown',
+			undefined,
+			range,
+		);
+	}
+	const qs: IDataObject = { ...range, platforms: this.getNodeParameter('platforms', i, []) };
 	switch (operation) {
 		case 'overview':
 			return adaptlyPostApiRequest.call(this, 'GET', '/analytics/overview', undefined, qs);
-		case 'timeseries':
+		case 'timeseries': {
+			const interval = this.getNodeParameter('interval', i) as string;
 			return adaptlyPostApiRequest.call(this, 'GET', '/analytics/timeseries', undefined, {
 				...qs,
-				interval: this.getNodeParameter('interval', i),
+				granularity: GRANULARITY[interval] ?? interval,
 			});
-		case 'platformBreakdown':
-			return adaptlyPostApiRequest.call(
-				this,
-				'GET',
-				'/analytics/platform-breakdown',
-				undefined,
-				qs,
-			);
+		}
 		case 'posts': {
-			const page = await adaptlyPostApiRequest.call(this, 'GET', '/analytics/posts', undefined, {
-				...qs,
-				sortBy: this.getNodeParameter('sortBy', i),
-				limit: this.getNodeParameter('limit', i),
-			});
-			return page.posts as IDataObject[];
+			const returnAll = this.getNodeParameter('returnAll', i, false) as boolean;
+			const limit = returnAll ? 100 : Math.min(this.getNodeParameter('limit', i) as number, 100);
+			const sortBy = this.getNodeParameter('sortBy', i);
+			const posts: IDataObject[] = [];
+			for (let page = 1; ; page++) {
+				const result = await adaptlyPostApiRequest.call(this, 'GET', '/analytics/posts', undefined, {
+					...qs,
+					sortBy,
+					page,
+					limit,
+				});
+				posts.push(...(result.posts as IDataObject[]));
+				if (!returnAll || !result.hasMore) break;
+			}
+			return posts;
 		}
 		default:
 			throw new NodeOperationError(this.getNode(), `Unknown operation "${operation}"`);

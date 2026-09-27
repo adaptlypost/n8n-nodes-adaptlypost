@@ -37,7 +37,7 @@ Registers a webhook with AdaptlyPost and fires on the events you pick:
 - Post Scheduled
 - Account Disconnected
 
-Every delivery is checked against the `x-adaptly-signature` header with the secret AdaptlyPost returned when the webhook was registered.
+Every delivery is checked against the `x-adaptly-signature` and `x-adaptly-timestamp` headers with the secret AdaptlyPost returned when the webhook was registered. A request with a missing or wrong signature is answered with 401 and does not start the workflow. Each active trigger registers its own webhook, and a workspace can have at most 10.
 
 ## Credentials
 

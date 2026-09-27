@@ -136,10 +136,13 @@ export class AdaptlyPostTrigger implements INodeType {
 		const signature = headers['x-adaptly-signature'];
 		const timestamp = headers['x-adaptly-timestamp'];
 
-		if (secret && signature && timestamp && !signatureMatches(secret, timestamp, rawBody, signature)) {
-			const response = this.getResponseObject();
-			response.status(401).send('Invalid signature');
-			return { noWebhookResponse: true };
+		if (secret) {
+			const signed = !!signature && !!timestamp;
+			if (!signed || !signatureMatches(secret, timestamp, rawBody, signature)) {
+				const response = this.getResponseObject();
+				response.status(401).send(signed ? 'Invalid signature' : 'Missing signature');
+				return { noWebhookResponse: true };
+			}
 		}
 
 		const events = this.getNodeParameter('events') as string[];

@@ -70,11 +70,13 @@ export const analyticsProperties: INodeProperties[] = [
 			{ name: 'YouTube', value: 'YOUTUBE' },
 		],
 		default: [],
-		displayOptions: { show: onlyAnalytics },
+		displayOptions: {
+			show: { resource: ['analytics'], operation: ['overview', 'timeseries', 'posts'] },
+		},
 		description: 'Leave empty for every platform with analytics',
 	},
 	{
-		displayName: 'Interval',
+		displayName: 'Granularity',
 		name: 'interval',
 		type: 'options',
 		options: [
@@ -84,6 +86,7 @@ export const analyticsProperties: INodeProperties[] = [
 		],
 		default: 'DAY',
 		displayOptions: { show: { resource: ['analytics'], operation: ['timeseries'] } },
+		description: 'Size of each bucket',
 	},
 	{
 		displayName: 'Sort By',
@@ -104,12 +107,22 @@ export const analyticsProperties: INodeProperties[] = [
 		displayOptions: { show: { resource: ['analytics'], operation: ['posts'] } },
 	},
 	{
+		displayName: 'Return All',
+		name: 'returnAll',
+		type: 'boolean',
+		default: false,
+		displayOptions: { show: { resource: ['analytics'], operation: ['posts'] } },
+		description: 'Whether to return all results or only up to a given limit',
+	},
+	{
 		displayName: 'Limit',
 		name: 'limit',
 		type: 'number',
-		typeOptions: { minValue: 1 },
+		typeOptions: { minValue: 1, maxValue: 100 },
 		default: 50,
-		displayOptions: { show: { resource: ['analytics'], operation: ['posts'] } },
+		displayOptions: {
+			show: { resource: ['analytics'], operation: ['posts'], returnAll: [false] },
+		},
 		description: 'Max number of results to return',
 	},
 ];

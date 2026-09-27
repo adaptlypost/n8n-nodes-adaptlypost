@@ -1,5 +1,9 @@
 # Changelog
 
+## 0.3.0
+
+- Create post takes Instagram Trial Reel under Additional Fields, sent as `instagramConfigs[].trialGraduation` for every selected Instagram account. You Share It From the Instagram App sends `MANUAL`, Instagram Shares It If It Performs Well sends `SS_PERFORMANCE`, and No Trial sends nothing. Only a single video posted as a Reel or Feed video can be a trial; a Story, image or carousel is rejected with a 400. Post responses may carry `instagramTrialGraduation` on the Instagram platform entry.
+
 ## 0.2.0
 
 - Create post takes a Repeat option group: Frequency (Daily, Weekly, Monthly), Repeat Every (1 to 30), Weekdays for weekly posts, and Ends (Never, On Date with End Date, After Number of Posts with Number of Posts from 2 to 365). It is sent as `recurrence` only when a Frequency is set, with the end date as YYYY-MM-DD. A recurring post needs a future Scheduled At and cannot be a draft or include TikTok. The response carries `recurringPostId`.

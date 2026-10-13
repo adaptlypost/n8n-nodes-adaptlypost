@@ -8,7 +8,14 @@ import type {
 } from 'n8n-workflow';
 import { NodeApiError, NodeConnectionTypes, NodeOperationError } from 'n8n-workflow';
 
-import { getAccounts, groupAccountsByPlatform, type SocialAccount } from './accounts';
+import {
+	connectionField,
+	getAccounts,
+	getInstagramAccounts,
+	groupAccountsByPlatform,
+	type Platform,
+	type SocialAccount,
+} from './accounts';
 import { uploadMediaFromUrl } from './media';
 import { postProperties } from './post.properties';
 import { analyticsProperties } from './analytics.properties';
@@ -74,8 +81,45 @@ export class AdaptlyPost implements INodeType {
 						action: 'Get many accounts',
 						description: 'List the social accounts connected to the workspace',
 					},
+					{
+						name: 'Search Instagram Audio',
+						value: 'searchInstagramAudio',
+						action: 'Search instagram audio',
+						description:
+							'Find music or original sounds to add to an Instagram Reel. Returns only audio Meta has cleared for publishing from other apps, which can differ from what the Instagram app shows.',
+					},
 				],
 				default: 'getAll',
+			},
+			{
+				displayName: 'Instagram Account Name or ID',
+				name: 'instagramAccountId',
+				type: 'options',
+				required: true,
+				default: '',
+				typeOptions: { loadOptionsMethod: 'getInstagramAccounts' },
+				displayOptions: { show: { resource: ['account'], operation: ['searchInstagramAudio'] } },
+				description:
+					'Instagram account connected through Facebook. Choose from the list, or specify an ID using an <a href="https://docs.n8n.io/code/expressions/">expression</a>.',
+			},
+			{
+				displayName: 'Audio Type',
+				name: 'audioType',
+				type: 'options',
+				options: [
+					{ name: 'Music', value: 'music' },
+					{ name: 'Original Sound', value: 'original_sound' },
+				],
+				default: 'music',
+				displayOptions: { show: { resource: ['account'], operation: ['searchInstagramAudio'] } },
+			},
+			{
+				displayName: 'Search Query',
+				name: 'searchQuery',
+				type: 'string',
+				default: '',
+				displayOptions: { show: { resource: ['account'], operation: ['searchInstagramAudio'] } },
+				description: 'Keyword filter, up to 100 characters. Leave empty for trending audio.',
 			},
 			...postProperties,
 			...analyticsProperties,
@@ -86,6 +130,7 @@ export class AdaptlyPost implements INodeType {
 	methods = {
 		loadOptions: {
 			getAccounts,
+			getInstagramAccounts,
 		},
 	};
 
@@ -144,6 +189,20 @@ async function runOperation(
 	i: number,
 ): Promise<IDataObject | IDataObject[]> {
 	if (resource === 'account') {
+		if (operation === 'searchInstagramAudio') {
+			const accountId = this.getNodeParameter('instagramAccountId', i) as string;
+			const { audio } = await adaptlyPostApiRequest.call(
+				this,
+				'GET',
+				`/social-accounts/${encodeURIComponent(accountId)}/instagram-audio`,
+				undefined,
+				{
+					audioType: this.getNodeParameter('audioType', i),
+					searchQuery: this.getNodeParameter('searchQuery', i, '') || undefined,
+				},
+			);
+			return audio as IDataObject[];
+		}
 		const { accounts } = await adaptlyPostApiRequest.call(this, 'GET', '/social-accounts');
 		return accounts as IDataObject[];
 	}
@@ -350,6 +409,87 @@ function readRecurrence(this: IExecuteFunctions, i: number): IDataObject | undef
 	};
 }
 
+const fixedCollectionEntries = (value: unknown, key: string): IDataObject[] => {
+	const entries = (value as IDataObject | undefined)?.[key];
+	if (!entries) return [];
+	return (Array.isArray(entries) ? entries : [entries]) as IDataObject[];
+};
+
+const googleBusinessConfig = (connectionId: string, settings: IDataObject): IDataObject => {
+	const topicType = (settings.topicType as string) || 'STANDARD';
+	const hasEvent = topicType === 'EVENT' || topicType === 'OFFER';
+	const isOffer = topicType === 'OFFER';
+	const callToActionType = (settings.callToActionType as string) || undefined;
+	return {
+		connectionId,
+		topicType,
+		callToActionType,
+		callToActionUrl:
+			callToActionType && callToActionType !== 'CALL'
+				? settings.callToActionUrl || undefined
+				: undefined,
+		eventTitle: hasEvent ? settings.eventTitle || undefined : undefined,
+		eventStart: hasEvent ? settings.eventStart || undefined : undefined,
+		eventEnd: hasEvent ? settings.eventEnd || undefined : undefined,
+		offerCouponCode: isOffer ? settings.offerCouponCode || undefined : undefined,
+		offerRedeemUrl: isOffer ? settings.offerRedeemUrl || undefined : undefined,
+		offerTerms: isOffer ? settings.offerTerms || undefined : undefined,
+	};
+};
+
+function readInstagramAudio(
+	this: IExecuteFunctions,
+	options: IDataObject,
+	i: number,
+): IDataObject | undefined {
+	const audio = fixedCollectionEntries(options.instagramAudio, 'audio')[0];
+	if (!audio) return undefined;
+	if (!audio.audioId) {
+		throw new NodeOperationError(
+			this.getNode(),
+			'Instagram Audio needs an Audio ID. Find one with Account > Search Instagram Audio.',
+			{ itemIndex: i },
+		);
+	}
+	return {
+		audioId: audio.audioId,
+		title: audio.title || undefined,
+		artist: audio.artist || undefined,
+		audioVolume: audio.audioVolume ?? undefined,
+		videoVolume: audio.videoVolume ?? undefined,
+	};
+}
+
+async function readPlatformThumbnails(
+	this: IExecuteFunctions,
+	options: IDataObject,
+	i: number,
+): Promise<IDataObject[]> {
+	const thumbnails: IDataObject[] = [];
+	for (const entry of fixedCollectionEntries(options.platformThumbnails, 'thumbnail')) {
+		if (entry.source === 'frame') {
+			thumbnails.push({
+				platform: entry.platform,
+				thumbnailTimestampMs: entry.thumbnailTimestampMs ?? 0,
+			});
+			continue;
+		}
+		const url = String(entry.thumbnailUrl ?? '').trim();
+		if (!url) {
+			throw new NodeOperationError(
+				this.getNode(),
+				`Add an Image URL to the ${entry.platform as string} video thumbnail or switch it to Video Frame`,
+				{ itemIndex: i },
+			);
+		}
+		thumbnails.push({
+			platform: entry.platform,
+			thumbnailUrl: url.startsWith('data:') ? url : await uploadMediaFromUrl.call(this, url, i),
+		});
+	}
+	return thumbnails;
+}
+
 async function createPost(this: IExecuteFunctions, i: number): Promise<IDataObject> {
 	const accountIds = asList(this.getNodeParameter('accountIds', i));
 	if (accountIds.length === 0) {
@@ -365,8 +505,7 @@ async function createPost(this: IExecuteFunctions, i: number): Promise<IDataObje
 	} catch (error) {
 		throw new NodeOperationError(this.getNode(), (error as Error).message, { itemIndex: i });
 	}
-	const ids = (platform: (typeof targets.platforms)[number]) =>
-		targets[platform === 'FACEBOOK' ? 'pageIds' : `${platform.toLowerCase()}ConnectionIds`] ?? [];
+	const ids = (platform: Platform) => targets[connectionField(platform)] ?? [];
 
 	const mediaUrls: string[] = [];
 	for (const sourceUrl of asList(this.getNodeParameter('mediaUrls', i, ''))) {
@@ -384,7 +523,23 @@ async function createPost(this: IExecuteFunctions, i: number): Promise<IDataObje
 		timezone: options.timezone || 'UTC',
 		saveAsDraft: options.saveAsDraft === true,
 		recurrence,
+		twitterKeepLinks: targets.platforms.includes('TWITTER') && options.twitterKeepLinks === true ? true : undefined,
+		firstComments: fixedCollectionEntries(options.firstComments, 'comment').map((comment) => ({
+			platform: comment.platform,
+			text: comment.text,
+		})),
+		platformAspectRatios: fixedCollectionEntries(options.platformAspectRatios, 'shape').map(
+			(shape) => ({
+				platform: shape.platform,
+				aspectRatio: shape.aspectRatio,
+				fit: shape.fit || undefined,
+			}),
+		),
+		platformThumbnails: await readPlatformThumbnails.call(this, options, i),
 	};
+	for (const field of ['firstComments', 'platformAspectRatios', 'platformThumbnails']) {
+		if ((body[field] as IDataObject[]).length === 0) delete body[field];
+	}
 
 	if (targets.platforms.includes('TIKTOK')) {
 		body.tiktokConfigs = ids('TIKTOK').map((connectionId) => ({
@@ -404,18 +559,43 @@ async function createPost(this: IExecuteFunctions, i: number): Promise<IDataObje
 			link: options.pinterestLink || undefined,
 		}));
 	}
-	if (targets.platforms.includes('INSTAGRAM') && (options.instagramPostType || options.instagramTrialGraduation)) {
+	const instagramAudio = readInstagramAudio.call(this, options, i);
+	const collaborators = asLines(options.instagramCollaborators ?? '').filter(Boolean);
+	if (
+		targets.platforms.includes('INSTAGRAM') &&
+		(options.instagramPostType ||
+			options.instagramTrialGraduation ||
+			options.instagramShareToStory === true ||
+			collaborators.length ||
+			instagramAudio)
+	) {
 		body.instagramConfigs = ids('INSTAGRAM').map((connectionId) => ({
 			connectionId,
 			postType: options.instagramPostType || undefined,
 			trialGraduation: options.instagramTrialGraduation || undefined,
+			shareToStory: options.instagramShareToStory === true ? true : undefined,
+			collaborators: collaborators.length ? collaborators : undefined,
+			audio: instagramAudio,
 		}));
 	}
-	if (targets.platforms.includes('FACEBOOK') && options.facebookPostType) {
+	if (
+		targets.platforms.includes('FACEBOOK') &&
+		(options.facebookPostType ||
+			options.facebookShareToStory === true ||
+			options.facebookTextFormatPresetId)
+	) {
 		body.facebookConfigs = ids('FACEBOOK').map((pageId) => ({
 			pageId,
-			postType: options.facebookPostType,
+			postType: options.facebookPostType || undefined,
+			shareToStory: options.facebookShareToStory === true ? true : undefined,
+			textFormatPresetId: options.facebookTextFormatPresetId || undefined,
 		}));
+	}
+	const googleBusiness = fixedCollectionEntries(options.googleBusiness, 'settings')[0];
+	if (targets.platforms.includes('GOOGLE_BUSINESS') && googleBusiness) {
+		body.googleBusinessConfigs = ids('GOOGLE_BUSINESS').map((connectionId) =>
+			googleBusinessConfig(connectionId, googleBusiness),
+		);
 	}
 	if (targets.platforms.includes('LINKEDIN') && options.linkedinDocumentTitle) {
 		body.linkedinConfigs = ids('LINKEDIN').map((connectionId) => ({

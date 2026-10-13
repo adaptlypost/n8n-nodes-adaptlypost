@@ -1,6 +1,6 @@
 # n8n-nodes-adaptlypost
 
-n8n community node for [AdaptlyPost](https://adaptlypost.com). Publish and schedule posts to Instagram, TikTok, YouTube, X, Facebook, LinkedIn, Pinterest, Threads, Bluesky and Mastodon from a workflow, and start workflows when a post publishes or fails.
+n8n community node for [AdaptlyPost](https://adaptlypost.com). Publish and schedule posts to Instagram, TikTok, YouTube, X, Facebook, LinkedIn, Pinterest, Threads, Bluesky, Mastodon and Google Business Profile from a workflow, and start workflows when a post publishes or fails.
 
 [n8n](https://n8n.io/) is a [fair-code licensed](https://docs.n8n.io/sustainable-use-license/) workflow automation platform.
 
@@ -15,13 +15,28 @@ Follow the [installation guide](https://docs.n8n.io/integrations/community-nodes
 | Resource | Operations |
 | --- | --- |
 | Post | Create, Get, Get Many, Get Results, Publish Draft, Retry Failed Platforms, Unschedule, Delete |
-| Account | Get Many |
+| Account | Get Many, Search Instagram Audio |
 | Analytics | Get Overview, Get Timeseries, Get Platform Breakdown, Get Post Analytics |
 | Recurring Post | Get, Get Many, Pause, Resume, Delete |
 
 Create takes the accounts to post from (a multi-select loaded from your workspace), the text, and media URLs. Media is copied from the URL you give into AdaptlyPost storage before the post is created, so any public JPEG, PNG, WebP, MP4 or QuickTime link works. TikTok privacy, Pinterest board, Instagram and Facebook post type, YouTube title and privacy, and LinkedIn document title live under Additional Fields.
 
-Repeat on Create turns the post into a recurring post. Pick a Frequency (daily, weekly or monthly), Repeat Every N days, weeks or months (1 to 30), Weekdays for a weekly post, and when it Ends: never, on an End Date, or after a Number of Posts (2 to 365). A recurring post needs a future Scheduled At, which becomes the first post and sets the time of day. It cannot be saved as a draft or include a TikTok account. X and LinkedIn reject identical text, so use spintax such as `{Hi|Hello}` to vary each post. The response carries `recurringPostId`, and every post it creates carries `recurringPostId` and `occurrenceAt`.
+Additional Fields also hold the options below. Each one applies to every selected account of its platform.
+
+- First Comments: one comment per platform, posted from the same account about 10 seconds after the post goes out (60 seconds on YouTube). Works on LinkedIn, X, Threads, Bluesky, Mastodon and YouTube. A failed comment never fails the post; the platform entry carries `firstCommentStatus` and `firstCommentError`.
+- Video Thumbnails: a thumbnail per platform for a video post. YouTube, Facebook and LinkedIn take an image, TikTok takes a video frame, and Instagram and Pinterest take either.
+- Image Shape: reframes every image of an image or carousel post to square, portrait, vertical or landscape on Instagram or TikTok, by cropping from the center or padding with a blurred copy.
+- Instagram Share to Story and Facebook Share to Story: also publish the same media as a story. The story is its own entry in the post's platforms.
+- Instagram Collaborators: up to 3 usernames, one per line.
+- Instagram Audio: music or an original sound added to a Reel. Get the Audio ID from Account > Search Instagram Audio, which needs an Instagram account connected through Facebook. Leave Search Query empty to get trending audio.
+- Facebook Text Background ID: a colored background for a short text post with no media.
+- X Keep Links Clickable: only for AppSumo lifetime deals. By default AdaptlyPost breaks links in X text, because X charges far more for a post with a link.
+
+Google Business Profile locations show up in the account picker. A Google Business Profile post is text or one JPEG or PNG image, up to 1500 characters. Without settings a location gets a standard update. Add Google Business Profile under Additional Fields to post an event or an offer, or to add a button such as Book or Call. Event dates are in the business's local time, written as `2026-10-01` or `2026-10-01T18:00`.
+
+On LinkedIn, mention a company page in the text with `@[Page Name](urn:li:organization:12345)`, using the page name exactly as LinkedIn shows it.
+
+Repeat on Create turns the post into a recurring post. Pick a Frequency (daily, weekly, monthly or yearly), Repeat Every N days, weeks, months or years (1 to 30), Weekdays for a weekly post, and when it Ends: never, on an End Date, or after a Number of Posts (2 to 365). A recurring post needs a future Scheduled At, which becomes the first post and sets the time of day. It cannot be saved as a draft or include a TikTok account. X and LinkedIn reject identical text, so use spintax such as `{Hi|Hello}` to vary each post. The response carries `recurringPostId`, and every post it creates carries `recurringPostId` and `occurrenceAt`.
 
 Only the next post of an active recurring post exists as a scheduled post. Pause stops the series and deletes that upcoming post; Resume continues from the next date after now and skips the dates missed while paused. Delete stops the series and keeps the posts that already went out. Deleting the single upcoming post with Post > Delete skips that date only. A series pauses itself after 3 failed posts in a row, when the subscription lapses, when its creator loses workspace access, when one of its accounts is disconnected, or when a platform rejects the content; `pauseReason` says which.
 

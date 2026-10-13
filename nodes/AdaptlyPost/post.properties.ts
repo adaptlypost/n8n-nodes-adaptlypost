@@ -104,7 +104,7 @@ export const postProperties: INodeProperties[] = [
 		default: 'TEXT',
 		displayOptions: { show: { resource: ['post'], operation: ['create'] } },
 		description:
-			'Document is LinkedIn only and takes exactly one PDF, PPT, PPTX, DOC or DOCX file in Media URLs. AdaptlyPost refuses a Document post on another platform, with two or more files, or with an image or video, and refuses a document file on any other content type.',
+			'Document is LinkedIn only and takes exactly one PDF, PPT, PPTX, DOC or DOCX file in Media URLs. AdaptlyPost refuses a Document post on another platform, with two or more files, or with an image or video, and refuses a document file on any other content type. Google Business Profile takes Text or Image, with one JPEG or PNG image up to 5 MB.',
 	},
 	{
 		displayName: 'Text',
@@ -113,7 +113,8 @@ export const postProperties: INodeProperties[] = [
 		typeOptions: { rows: 4 },
 		default: '',
 		displayOptions: { show: { resource: ['post'], operation: ['create'] } },
-		description: 'Caption shared across the selected platforms',
+		description:
+			"Caption shared across the selected platforms. On LinkedIn, mention a company page with @[Page Name](urn:li:organization:12345), using the page's numeric ID and its name exactly as LinkedIn shows it.",
 	},
 	{
 		displayName: 'Media URLs',
@@ -145,6 +146,175 @@ export const postProperties: INodeProperties[] = [
 				default: 'FEED',
 			},
 			{
+				displayName: 'Facebook Share to Story',
+				name: 'facebookShareToStory',
+				type: 'boolean',
+				default: false,
+				description:
+					'Whether to also publish the same media as a story on each selected Facebook page, next to the Feed or Reel post. The story is its own entry in the post platforms and succeeds, fails and retries on its own. It skips the caption, video title and text background, needs an image, video or carousel, and a video must be 60 seconds or shorter. Ignored when Facebook Post Type is Story.',
+			},
+			{
+				displayName: 'Facebook Text Background ID',
+				name: 'facebookTextFormatPresetId',
+				type: 'string',
+				default: '',
+				placeholder: '106018623298955',
+				description:
+					"Facebook's ID for a colored text background, for example 106018623298955 (solid purple) or 249307305544279 (red to blue gradient). Only for Text posts with no media and text up to 130 characters. Links in the text show without a preview. If Facebook refuses the background, the post goes out as plain text.",
+			},
+			{
+				displayName: 'First Comments',
+				name: 'firstComments',
+				type: 'fixedCollection',
+				typeOptions: { multipleValues: true },
+				placeholder: 'Add First Comment',
+				default: {},
+				description:
+					'A comment posted from the same account about 10 seconds after the post goes out (60 seconds on YouTube), one per platform. A comment that fails never fails the post: read firstCommentStatus and firstCommentError on the platform. A platform the post does not go to, a private or made for kids YouTube video and a Facebook or Instagram story are refused.',
+				options: [
+					{
+						displayName: 'Comment',
+						name: 'comment',
+						values: [
+							{
+								displayName: 'Platform',
+								name: 'platform',
+								type: 'options',
+								options: [
+									{ name: 'Bluesky', value: 'BLUESKY', description: 'Up to 300 characters, posted as a reply' },
+									{ name: 'LinkedIn', value: 'LINKEDIN', description: 'Up to 1250 characters' },
+									{ name: 'Mastodon', value: 'MASTODON', description: 'Up to 500 characters, posted as a reply' },
+									{ name: 'Threads', value: 'THREADS', description: 'Up to 500 characters, posted as a reply' },
+									{
+										name: 'X (Twitter)',
+										value: 'TWITTER',
+										description:
+											'Up to 280 characters, posted as a reply. Not retried if it fails.',
+									},
+									{ name: 'YouTube', value: 'YOUTUBE', description: 'Up to 10000 characters' },
+								],
+								default: 'LINKEDIN',
+							},
+							{
+								displayName: 'Text',
+								name: 'text',
+								type: 'string',
+								typeOptions: { rows: 2 },
+								default: '',
+							},
+						],
+					},
+				],
+			},
+			{
+				displayName: 'Google Business Profile',
+				name: 'googleBusiness',
+				type: 'fixedCollection',
+				placeholder: 'Add Google Business Profile Settings',
+				default: {},
+				description:
+					'Applied to every selected Google Business Profile location. Without it a location gets a standard update.',
+				options: [
+					{
+						displayName: 'Settings',
+						name: 'settings',
+						values: [
+							{
+								displayName: 'Button',
+								name: 'callToActionType',
+								type: 'options',
+								options: [
+									{ name: 'Book', value: 'BOOK' },
+									{
+										name: 'Call',
+										value: 'CALL',
+										description: 'Dials the phone number on the Business Profile',
+									},
+									{ name: 'Learn More', value: 'LEARN_MORE' },
+									{ name: 'No Button', value: '' },
+									{ name: 'Order', value: 'ORDER' },
+									{ name: 'Shop', value: 'SHOP' },
+									{ name: 'Sign Up', value: 'SIGN_UP' },
+								],
+								default: '',
+								description: 'Button shown on the post',
+							},
+							{
+								displayName: 'Button URL',
+								name: 'callToActionUrl',
+								type: 'string',
+								default: '',
+								placeholder: 'https://example.com/book',
+								displayOptions: { hide: { callToActionType: ['', 'CALL'] } },
+								description: 'Where the button leads. Required for every button except Call.',
+							},
+							{
+								displayName: 'Event End',
+								name: 'eventEnd',
+								type: 'string',
+								default: '',
+								placeholder: '2026-10-01T21:00',
+								displayOptions: { show: { topicType: ['EVENT', 'OFFER'] } },
+								description:
+									"YYYY-MM-DD or YYYY-MM-DDTHH:mm in the business's local time, with no offset",
+							},
+							{
+								displayName: 'Event Start',
+								name: 'eventStart',
+								type: 'string',
+								default: '',
+								placeholder: '2026-10-01T18:00',
+								displayOptions: { show: { topicType: ['EVENT', 'OFFER'] } },
+								description:
+									"YYYY-MM-DD or YYYY-MM-DDTHH:mm in the business's local time, with no offset. Google reads it in the location's time zone.",
+							},
+							{
+								displayName: 'Event Title',
+								name: 'eventTitle',
+								type: 'string',
+								default: '',
+								displayOptions: { show: { topicType: ['EVENT', 'OFFER'] } },
+								description: 'Required for an event or an offer',
+							},
+							{
+								displayName: 'Offer Coupon Code',
+								name: 'offerCouponCode',
+								type: 'string',
+								default: '',
+								displayOptions: { show: { topicType: ['OFFER'] } },
+							},
+							{
+								displayName: 'Offer Redeem URL',
+								name: 'offerRedeemUrl',
+								type: 'string',
+								default: '',
+								displayOptions: { show: { topicType: ['OFFER'] } },
+							},
+							{
+								displayName: 'Offer Terms',
+								name: 'offerTerms',
+								type: 'string',
+								typeOptions: { rows: 2 },
+								default: '',
+								displayOptions: { show: { topicType: ['OFFER'] } },
+							},
+							{
+								displayName: 'Post Type',
+								name: 'topicType',
+								type: 'options',
+								options: [
+									{ name: 'Event', value: 'EVENT' },
+									{ name: 'Offer', value: 'OFFER' },
+									{ name: 'Update', value: 'STANDARD' },
+								],
+								default: 'STANDARD',
+								description: 'An event or an offer needs Event Title, Event Start and Event End',
+							},
+						],
+					},
+				],
+			},
+			{
 				displayName: 'Image Alt Texts',
 				name: 'mediaAltTexts',
 				type: 'string',
@@ -153,6 +323,132 @@ export const postProperties: INodeProperties[] = [
 				placeholder: 'A red bicycle leaning on a brick wall',
 				description:
 					'Alt text for each image, one line per image in the same order as Media URLs. Leave a line empty to skip an image. Sent to X, Bluesky, Mastodon, LinkedIn, Facebook, Instagram and Threads; Pinterest uses the first line.',
+			},
+			{
+				displayName: 'Image Shape',
+				name: 'platformAspectRatios',
+				type: 'fixedCollection',
+				typeOptions: { multipleValues: true },
+				placeholder: 'Add Image Shape',
+				default: {},
+				description:
+					'Reframe every image of an Image or Carousel post to one shape on a platform, one entry per platform. A platform without an entry keeps its images as uploaded. Video posts and Instagram stories are refused.',
+				options: [
+					{
+						displayName: 'Shape',
+						name: 'shape',
+						values: [
+							{
+								displayName: 'Platform',
+								name: 'platform',
+								type: 'options',
+								options: [
+									{
+										name: 'Instagram',
+										value: 'INSTAGRAM',
+										description: 'Square, Portrait or Landscape',
+									},
+									{ name: 'TikTok', value: 'TIKTOK', description: 'Any of the four shapes' },
+								],
+								default: 'INSTAGRAM',
+							},
+							{
+								displayName: 'Shape',
+								name: 'aspectRatio',
+								type: 'options',
+								options: [
+									{ name: 'Landscape (1.91:1)', value: 'LANDSCAPE' },
+									{ name: 'Portrait (4:5)', value: 'PORTRAIT' },
+									{ name: 'Square (1:1)', value: 'SQUARE' },
+									{ name: 'Vertical (9:16)', value: 'VERTICAL', description: 'TikTok only' },
+								],
+								default: 'PORTRAIT',
+							},
+							{
+								displayName: 'Fit',
+								name: 'fit',
+								type: 'options',
+								options: [
+									{
+										name: 'Crop',
+										value: 'CROP',
+										description: 'Cut the shape from the center of the image',
+									},
+									{
+										name: 'Pad',
+										value: 'PAD',
+										description: 'Keep the whole image and fill the rest with a blurred copy of it',
+									},
+								],
+								default: 'CROP',
+							},
+						],
+					},
+				],
+			},
+			{
+				displayName: 'Instagram Audio',
+				name: 'instagramAudio',
+				type: 'fixedCollection',
+				placeholder: 'Add Instagram Audio',
+				default: {},
+				description:
+					'Music or an original sound added to the Reel on every selected Instagram account. Needs the Video content type, an Instagram Post Type other than Story, and accounts connected through Facebook. Find an Audio ID with Account > Search Instagram Audio.',
+				options: [
+					{
+						displayName: 'Audio',
+						name: 'audio',
+						values: [
+							{
+								displayName: 'Artist',
+								name: 'artist',
+								type: 'string',
+								default: '',
+								description: 'Artist or creator, stored for display only',
+							},
+							{
+								displayName: 'Audio ID',
+								name: 'audioId',
+								type: 'string',
+								default: '',
+								description: 'The audioId returned by Search Instagram Audio',
+							},
+							{
+								displayName: 'Audio Volume',
+								name: 'audioVolume',
+								type: 'number',
+								typeOptions: { minValue: 1, maxValue: 100 },
+								default: 100,
+								description: 'Volume of the added audio, from 1 to 100',
+							},
+							{
+								displayName: 'Title',
+								name: 'title',
+								type: 'string',
+								default: '',
+								description: 'Track title, stored for display only',
+							},
+							{
+								displayName: 'Video Volume',
+								name: 'videoVolume',
+								type: 'number',
+								typeOptions: { minValue: 1, maxValue: 100 },
+								default: 100,
+								description: "Volume of the video's own sound, from 1 to 100",
+							},
+						],
+					},
+				],
+			},
+			{
+				displayName: 'Instagram Collaborators',
+				name: 'instagramCollaborators',
+				type: 'string',
+				typeOptions: { rows: 3 },
+				default: '',
+				placeholder: 'partnerbrand',
+				description:
+					'Instagram usernames to invite as collaborators, one per line, up to 3. A leading @ is dropped. Works on feed images, carousels and reels, not on a story or a trial reel. Each collaborator has to accept the invite in Instagram.',
 			},
 			{
 				displayName: 'Instagram Post Type',
@@ -164,6 +460,14 @@ export const postProperties: INodeProperties[] = [
 					{ name: 'Story', value: 'STORY' },
 				],
 				default: 'FEED',
+			},
+			{
+				displayName: 'Instagram Share to Story',
+				name: 'instagramShareToStory',
+				type: 'boolean',
+				default: false,
+				description:
+					'Whether to also publish the same media as a story on each selected Instagram account, next to the Feed or Reel post. The story is its own entry in the post platforms and succeeds, fails and retries on its own. It skips the caption, first comment, cover, collaborators, trial and audio, needs an image, video or carousel, and a video must be 60 seconds or shorter. Ignored when Instagram Post Type is Story.',
 			},
 			{
 				displayName: 'Instagram Trial Reel',
@@ -237,6 +541,75 @@ export const postProperties: INodeProperties[] = [
 				description: 'IANA name such as America/New_York, stored with the post for display',
 			},
 			{
+				displayName: 'Video Thumbnails',
+				name: 'platformThumbnails',
+				type: 'fixedCollection',
+				typeOptions: { multipleValues: true },
+				placeholder: 'Add Video Thumbnail',
+				default: {},
+				description:
+					'A thumbnail for one platform of a Video post, one entry per platform. Not for Facebook or Instagram stories.',
+				options: [
+					{
+						displayName: 'Thumbnail',
+						name: 'thumbnail',
+						values: [
+							{
+								displayName: 'Platform',
+								name: 'platform',
+								type: 'options',
+								options: [
+									{ name: 'Facebook', value: 'FACEBOOK', description: 'Image only' },
+									{ name: 'Instagram', value: 'INSTAGRAM', description: 'Image or video frame' },
+									{ name: 'LinkedIn', value: 'LINKEDIN', description: 'Image only' },
+									{ name: 'Pinterest', value: 'PINTEREST', description: 'Image or video frame' },
+									{ name: 'TikTok', value: 'TIKTOK', description: 'Video frame only' },
+									{ name: 'YouTube', value: 'YOUTUBE', description: 'Image only' },
+								],
+								default: 'YOUTUBE',
+							},
+							{
+								displayName: 'Source',
+								name: 'source',
+								type: 'options',
+								options: [
+									{ name: 'Image', value: 'image' },
+									{ name: 'Video Frame', value: 'frame' },
+								],
+								default: 'image',
+							},
+							{
+								displayName: 'Image URL',
+								name: 'thumbnailUrl',
+								type: 'string',
+								default: '',
+								placeholder: 'https://example.com/cover.jpg',
+								displayOptions: { show: { source: ['image'] } },
+								description:
+									'Public URL of a JPEG, PNG or WebP image, copied into AdaptlyPost storage before posting, or an image data URI',
+							},
+							{
+								displayName: 'Frame (Ms)',
+								name: 'thumbnailTimestampMs',
+								type: 'number',
+								typeOptions: { minValue: 0 },
+								default: 0,
+								displayOptions: { show: { source: ['frame'] } },
+								description: 'The video frame to use, in milliseconds from the start',
+							},
+						],
+					},
+				],
+			},
+			{
+				displayName: 'X Keep Links Clickable',
+				name: 'twitterKeepLinks',
+				type: 'boolean',
+				default: false,
+				description:
+					'Whether to keep links in the X text clickable. X charges over 10 times more for a post with a link, so AdaptlyPost breaks every link in X text by default (example.com becomes example. com). Only AppSumo lifetime deals can turn this on, and a kept link costs 20 credits instead of 2; on any other plan the post is refused with a 400.',
+			},
+			{
 				displayName: 'YouTube Format',
 				name: 'youtubePostType',
 				type: 'options',
@@ -304,6 +677,12 @@ export const postProperties: INodeProperties[] = [
 					{ name: 'Daily', value: 'DAILY' },
 					{ name: 'Monthly', value: 'MONTHLY' },
 					{ name: 'Weekly', value: 'WEEKLY' },
+					{
+						name: 'Yearly',
+						value: 'YEARLY',
+						description:
+							'Same date every year or every N years. A series started on February 29 posts on February 28 in other years.',
+					},
 				],
 				default: 'WEEKLY',
 				description: 'How often the post repeats. The post only repeats when this is set.',
@@ -323,7 +702,7 @@ export const postProperties: INodeProperties[] = [
 				type: 'number',
 				typeOptions: { minValue: 1, maxValue: 30 },
 				default: 1,
-				description: 'Repeat every N days, weeks or months',
+				description: 'Repeat every N days, weeks, months or years',
 			},
 			{
 				displayName: 'Weekdays',
@@ -401,10 +780,12 @@ export const postProperties: INodeProperties[] = [
 				options: [
 					{ name: 'Bluesky', value: 'BLUESKY' },
 					{ name: 'Facebook', value: 'FACEBOOK' },
+					{ name: 'Google Business Profile', value: 'GOOGLE_BUSINESS' },
 					{ name: 'Instagram', value: 'INSTAGRAM' },
 					{ name: 'LinkedIn', value: 'LINKEDIN' },
 					{ name: 'Mastodon', value: 'MASTODON' },
 					{ name: 'Pinterest', value: 'PINTEREST' },
+					{ name: 'Telegram', value: 'TELEGRAM' },
 					{ name: 'Threads', value: 'THREADS' },
 					{ name: 'TikTok', value: 'TIKTOK' },
 					{ name: 'X (Twitter)', value: 'TWITTER' },

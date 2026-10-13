@@ -13,6 +13,7 @@ export const PLATFORMS = [
 	'PINTEREST',
 	'YOUTUBE',
 	'MASTODON',
+	'GOOGLE_BUSINESS',
 ] as const;
 
 export type Platform = (typeof PLATFORMS)[number];
@@ -28,6 +29,7 @@ export const PLATFORM_LABELS: Record<Platform, string> = {
 	PINTEREST: 'Pinterest',
 	YOUTUBE: 'YouTube',
 	MASTODON: 'Mastodon',
+	GOOGLE_BUSINESS: 'Google Business Profile',
 };
 
 export interface SocialAccount {
@@ -38,6 +40,7 @@ export interface SocialAccount {
 	status: 'active' | 'unauthorized';
 	unauthorizedReason?: string;
 	pageId?: string;
+	supportsInstagramAudio?: boolean;
 }
 
 const CONNECTION_ID_FIELD: Record<Exclude<Platform, 'FACEBOOK'>, string> = {
@@ -50,6 +53,7 @@ const CONNECTION_ID_FIELD: Record<Exclude<Platform, 'FACEBOOK'>, string> = {
 	PINTEREST: 'pinterestConnectionIds',
 	YOUTUBE: 'youtubeConnectionIds',
 	MASTODON: 'mastodonConnectionIds',
+	GOOGLE_BUSINESS: 'googleBusinessConnectionIds',
 };
 
 export const connectionField = (platform: Platform): string =>
@@ -87,9 +91,10 @@ export function groupAccountsByPlatform(
 	return targets;
 }
 
+const disconnectedLast = (account: SocialAccount) => Number(account.status === 'unauthorized');
+
 export async function getAccounts(this: ILoadOptionsFunctions): Promise<INodePropertyOptions[]> {
 	const { accounts } = await adaptlyPostApiRequest.call(this, 'GET', '/social-accounts');
-	const disconnectedLast = (account: SocialAccount) => Number(account.status === 'unauthorized');
 	return [...(accounts as SocialAccount[])]
 		.sort((a, b) => disconnectedLast(a) - disconnectedLast(b))
 		.map((account) => {
@@ -102,4 +107,21 @@ export async function getAccounts(this: ILoadOptionsFunctions): Promise<INodePro
 					}
 				: { name: label, value: account.id };
 		});
+}
+
+export async function getInstagramAccounts(
+	this: ILoadOptionsFunctions,
+): Promise<INodePropertyOptions[]> {
+	const { accounts } = await adaptlyPostApiRequest.call(this, 'GET', '/social-accounts');
+	const audioFirst = (account: SocialAccount) => Number(!account.supportsInstagramAudio);
+	return (accounts as SocialAccount[])
+		.filter((account) => account.platform === 'INSTAGRAM')
+		.sort((a, b) => audioFirst(a) - audioFirst(b) || disconnectedLast(a) - disconnectedLast(b))
+		.map((account) => ({
+			name: account.displayName,
+			value: account.id,
+			description: account.supportsInstagramAudio
+				? undefined
+				: 'Audio search needs an Instagram account connected through Facebook',
+		}));
 }

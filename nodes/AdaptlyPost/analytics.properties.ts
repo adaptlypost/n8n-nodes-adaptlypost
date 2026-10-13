@@ -62,18 +62,21 @@ export const analyticsProperties: INodeProperties[] = [
 		options: [
 			{ name: 'Bluesky', value: 'BLUESKY' },
 			{ name: 'Facebook', value: 'FACEBOOK' },
+			{ name: 'Google Business Profile', value: 'GOOGLE_BUSINESS' },
 			{ name: 'Instagram', value: 'INSTAGRAM' },
 			{ name: 'LinkedIn', value: 'LINKEDIN' },
 			{ name: 'Pinterest', value: 'PINTEREST' },
 			{ name: 'Threads', value: 'THREADS' },
 			{ name: 'TikTok', value: 'TIKTOK' },
+			{ name: 'X (Twitter)', value: 'TWITTER' },
 			{ name: 'YouTube', value: 'YOUTUBE' },
 		],
 		default: [],
 		displayOptions: {
 			show: { resource: ['analytics'], operation: ['overview', 'timeseries', 'posts'] },
 		},
-		description: 'Leave empty for every platform with analytics',
+		description:
+			'Leave empty for every platform with analytics. Mastodon and Telegram have no analytics.',
 	},
 	{
 		displayName: 'Granularity',

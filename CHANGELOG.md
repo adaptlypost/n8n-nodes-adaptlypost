@@ -1,5 +1,19 @@
 # Changelog
 
+## 0.5.0
+
+- Create post takes Google Business Profile locations. The account picker lists them, and Additional Fields > Google Business Profile sets the post type (update, event or offer), a button (Book, Order, Shop, Learn More, Sign Up or Call) with its URL, the event title and dates, and the offer coupon code, redeem URL and terms. It is sent as `googleBusinessConnectionIds` and `googleBusinessConfigs` for every selected location.
+- Create post takes First Comments, one per platform, sent as `firstComments`. LinkedIn, X, Threads, Bluesky, Mastodon and YouTube support them.
+- Create post takes Video Thumbnails, an image or a video frame per platform, sent as `platformThumbnails`. An image URL is copied into AdaptlyPost storage first, like Media URLs.
+- Create post takes Image Shape per platform (Instagram or TikTok) with Crop or Pad, sent as `platformAspectRatios`.
+- Create post takes Instagram Share to Story, Instagram Collaborators (one username per line, up to 3) and Instagram Audio, sent in `instagramConfigs`.
+- Create post takes Facebook Share to Story and Facebook Text Background ID, sent in `facebookConfigs`.
+- Create post takes X Keep Links Clickable, sent as `twitterKeepLinks`. Only AppSumo lifetime deals can use it.
+- Repeat takes a Yearly frequency: the post comes back on the same date every year or every N years. A series started on February 29 posts on February 28 in other years.
+- New Account > Search Instagram Audio operation (`GET /social-accounts/{id}/instagram-audio`) with Audio Type (music or original sound) and an optional Search Query. It returns one item per track.
+- Post Get Many can filter by Google Business Profile and Telegram. The analytics Platforms filter gains Google Business Profile and X.
+- Post responses may carry the new platform fields: `firstComment`, `firstCommentStatus`, `firstCommentError`, `thumbnailUrl`, `thumbnailTimestampMs`, `mediaAspectRatio`, `mediaAspectRatioFit`, `instagramCollaborators`, `instagramAudioId`, `facebookTextFormatPresetId`, `twitterKeepLinks` and the `googleBusiness*` settings. Accounts may carry `supportsInstagramAudio`.
+
 ## 0.4.0
 
 - Post Get Many and Recurring Post Get Many send Statuses and Platforms as repeated query keys, so the filters work. Before, n8n sent `statuses[0]=`, which the API rejected with a 400, and analytics silently ignored the Platforms filter.

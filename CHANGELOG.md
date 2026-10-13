@@ -1,5 +1,13 @@
 # Changelog
 
+## 0.6.0
+
+- Create post no longer fails with "Pinterest posts need a board ID" when Pinterest Board is empty. The pin goes to a board named AdaptlyPost, which is created on the Pinterest account the first time.
+- Pinterest Board is a dropdown of the boards of the Pinterest accounts selected in Accounts. An ID from an expression still works, so saved workflows keep running.
+- With several Pinterest accounts selected, the board is sent only to the account that owns it and the others pin to their AdaptlyPost board. A board that none of them owns stops the item with an error.
+- Pinterest Link is sent without a board.
+- New Account > Get Pinterest Boards operation (`GET /social-accounts/{id}/pinterest-boards`). It returns one item per board with `id`, `name`, `description`, `privacy` and `pinCount`, secret boards included.
+
 ## 0.5.0
 
 - Create post takes Google Business Profile locations. The account picker lists them, and Additional Fields > Google Business Profile sets the post type (update, event or offer), a button (Book, Order, Shop, Learn More, Sign Up or Call) with its URL, the event title and dates, and the offer coupon code, redeem URL and terms. It is sent as `googleBusinessConnectionIds` and `googleBusinessConfigs` for every selected location.

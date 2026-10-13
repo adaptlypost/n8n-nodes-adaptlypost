@@ -15,7 +15,7 @@ Follow the [installation guide](https://docs.n8n.io/integrations/community-nodes
 | Resource | Operations |
 | --- | --- |
 | Post | Create, Get, Get Many, Get Results, Publish Draft, Retry Failed Platforms, Unschedule, Delete |
-| Account | Get Many, Search Instagram Audio |
+| Account | Get Many, Get Pinterest Boards, Search Instagram Audio |
 | Analytics | Get Overview, Get Timeseries, Get Platform Breakdown, Get Post Analytics |
 | Recurring Post | Get, Get Many, Pause, Resume, Delete |
 
@@ -28,6 +28,7 @@ Additional Fields also hold the options below. Each one applies to every selecte
 - Image Shape: reframes every image of an image or carousel post to square, portrait, vertical or landscape on Instagram or TikTok, by cropping from the center or padding with a blurred copy.
 - Instagram Share to Story and Facebook Share to Story: also publish the same media as a story. The story is its own entry in the post's platforms.
 - Instagram Collaborators: up to 3 usernames, one per line.
+- Pinterest Board: a dropdown of the boards of the selected Pinterest accounts, also available as Account > Get Pinterest Boards. Leave it empty to pin to a board named AdaptlyPost, which is created on the Pinterest account the first time. With several Pinterest accounts, the board is used for the account that owns it.
 - Instagram Audio: music or an original sound added to a Reel. Get the Audio ID from Account > Search Instagram Audio, which needs an Instagram account connected through Facebook. Leave Search Query empty to get trending audio.
 - Facebook Text Background ID: a colored background for a short text post with no media.
 - X Keep Links Clickable: only for AppSumo lifetime deals. By default AdaptlyPost breaks links in X text, because X charges far more for a post with a link.

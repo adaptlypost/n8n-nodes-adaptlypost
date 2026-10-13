@@ -492,11 +492,16 @@ export const postProperties: INodeProperties[] = [
 					'Title LinkedIn shows on a Document post, up to 100 characters. Defaults to the file name. Applied to every selected LinkedIn account; ignored for other content types.',
 			},
 			{
-				displayName: 'Pinterest Board ID',
+				displayName: 'Pinterest Board Name or ID',
 				name: 'pinterestBoard',
-				type: 'string',
+				type: 'options',
 				default: '',
-				description: 'Required when a Pinterest account is selected',
+				typeOptions: {
+					loadOptionsMethod: 'getPinterestBoards',
+					loadOptionsDependsOn: ['accountIds'],
+				},
+				description:
+					'Board to pin to, listed from the Pinterest accounts selected in Accounts. Leave empty to pin to a board named AdaptlyPost, which is created on the Pinterest account the first time. With several Pinterest accounts, the board is used for the account that owns it and the others pin to their AdaptlyPost board. Choose from the list, or specify an ID using an <a href="https://docs.n8n.io/code/expressions/">expression</a>.',
 			},
 			{
 				displayName: 'Pinterest Link',

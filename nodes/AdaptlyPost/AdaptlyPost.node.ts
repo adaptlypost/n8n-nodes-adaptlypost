@@ -12,7 +12,10 @@ import {
 	connectionField,
 	getAccounts,
 	getInstagramAccounts,
+	getPinterestAccounts,
+	getPinterestBoards,
 	groupAccountsByPlatform,
+	type PinterestBoard,
 	type Platform,
 	type SocialAccount,
 } from './accounts';
@@ -82,6 +85,13 @@ export class AdaptlyPost implements INodeType {
 						description: 'List the social accounts connected to the workspace',
 					},
 					{
+						name: 'Get Pinterest Boards',
+						value: 'getPinterestBoards',
+						action: 'Get pinterest boards',
+						description:
+							'List the boards of a Pinterest account, secret boards included. Use a board ID as Pinterest Board when creating a post.',
+					},
+					{
 						name: 'Search Instagram Audio',
 						value: 'searchInstagramAudio',
 						action: 'Search instagram audio',
@@ -101,6 +111,17 @@ export class AdaptlyPost implements INodeType {
 				displayOptions: { show: { resource: ['account'], operation: ['searchInstagramAudio'] } },
 				description:
 					'Instagram account connected through Facebook. Choose from the list, or specify an ID using an <a href="https://docs.n8n.io/code/expressions/">expression</a>.',
+			},
+			{
+				displayName: 'Pinterest Account Name or ID',
+				name: 'pinterestAccountId',
+				type: 'options',
+				required: true,
+				default: '',
+				typeOptions: { loadOptionsMethod: 'getPinterestAccounts' },
+				displayOptions: { show: { resource: ['account'], operation: ['getPinterestBoards'] } },
+				description:
+					'Pinterest account to list boards for. Choose from the list, or specify an ID using an <a href="https://docs.n8n.io/code/expressions/">expression</a>.',
 			},
 			{
 				displayName: 'Audio Type',
@@ -131,6 +152,8 @@ export class AdaptlyPost implements INodeType {
 		loadOptions: {
 			getAccounts,
 			getInstagramAccounts,
+			getPinterestAccounts,
+			getPinterestBoards,
 		},
 	};
 
@@ -202,6 +225,15 @@ async function runOperation(
 				},
 			);
 			return audio as IDataObject[];
+		}
+		if (operation === 'getPinterestBoards') {
+			const accountId = this.getNodeParameter('pinterestAccountId', i) as string;
+			const { boards } = await adaptlyPostApiRequest.call(
+				this,
+				'GET',
+				`/social-accounts/${encodeURIComponent(accountId)}/pinterest-boards`,
+			);
+			return boards as IDataObject[];
 		}
 		const { accounts } = await adaptlyPostApiRequest.call(this, 'GET', '/social-accounts');
 		return accounts as IDataObject[];
@@ -490,6 +522,37 @@ async function readPlatformThumbnails(
 	return thumbnails;
 }
 
+async function pinterestAccountsOwningBoard(
+	this: IExecuteFunctions,
+	connectionIds: string[],
+	boardId: string,
+	i: number,
+): Promise<string[]> {
+	if (connectionIds.length === 1) return connectionIds;
+	const owners: string[] = [];
+	for (const connectionId of connectionIds) {
+		const { boards } = await adaptlyPostApiRequest.call(
+			this,
+			'GET',
+			`/social-accounts/${encodeURIComponent(connectionId)}/pinterest-boards`,
+		);
+		if ((boards as PinterestBoard[]).some((board) => board.id === boardId)) {
+			owners.push(connectionId);
+		}
+	}
+	if (!owners.length) {
+		throw new NodeOperationError(
+			this.getNode(),
+			`Pinterest board ${boardId} does not belong to any of the selected Pinterest accounts`,
+			{
+				itemIndex: i,
+				description: 'Pick a board from the list or leave Pinterest Board empty.',
+			},
+		);
+	}
+	return owners;
+}
+
 async function createPost(this: IExecuteFunctions, i: number): Promise<IDataObject> {
 	const accountIds = asList(this.getNodeParameter('accountIds', i));
 	if (accountIds.length === 0) {
@@ -548,16 +611,18 @@ async function createPost(this: IExecuteFunctions, i: number): Promise<IDataObje
 		}));
 	}
 	if (targets.platforms.includes('PINTEREST')) {
-		if (!options.pinterestBoard) {
-			throw new NodeOperationError(this.getNode(), 'Pinterest posts need a board ID', {
-				itemIndex: i,
-			});
+		const boardId = String(options.pinterestBoard ?? '').trim();
+		const link = options.pinterestLink || undefined;
+		const boardOwners = boardId
+			? await pinterestAccountsOwningBoard.call(this, ids('PINTEREST'), boardId, i)
+			: [];
+		if (boardId || link) {
+			body.pinterestConfigs = ids('PINTEREST').map((connectionId) => ({
+				connectionId,
+				boardId: boardOwners.includes(connectionId) ? boardId : undefined,
+				link,
+			}));
 		}
-		body.pinterestConfigs = ids('PINTEREST').map((connectionId) => ({
-			connectionId,
-			boardId: options.pinterestBoard,
-			link: options.pinterestLink || undefined,
-		}));
 	}
 	const instagramAudio = readInstagramAudio.call(this, options, i);
 	const collaborators = asLines(options.instagramCollaborators ?? '').filter(Boolean);

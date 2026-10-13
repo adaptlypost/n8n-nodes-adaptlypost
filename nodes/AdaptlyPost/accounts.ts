@@ -125,3 +125,55 @@ export async function getInstagramAccounts(
 				: 'Audio search needs an Instagram account connected through Facebook',
 		}));
 }
+
+export interface PinterestBoard {
+	id: string;
+	name: string;
+}
+
+export async function getPinterestAccounts(
+	this: ILoadOptionsFunctions,
+): Promise<INodePropertyOptions[]> {
+	const { accounts } = await adaptlyPostApiRequest.call(this, 'GET', '/social-accounts');
+	return (accounts as SocialAccount[])
+		.filter((account) => account.platform === 'PINTEREST')
+		.sort((a, b) => disconnectedLast(a) - disconnectedLast(b))
+		.map((account) =>
+			account.status === 'unauthorized'
+				? {
+						name: `${account.displayName} - Disconnected`,
+						value: account.id,
+						description: 'Reconnect this account in AdaptlyPost before listing its boards',
+					}
+				: { name: account.displayName, value: account.id },
+		);
+}
+
+export async function getPinterestBoards(
+	this: ILoadOptionsFunctions,
+): Promise<INodePropertyOptions[]> {
+	const selected = this.getCurrentNodeParameter('accountIds');
+	const selectedIds = Array.isArray(selected) ? selected : [];
+	const { accounts } = await adaptlyPostApiRequest.call(this, 'GET', '/social-accounts');
+	const pinterestAccounts = (accounts as SocialAccount[]).filter(
+		(account) => account.platform === 'PINTEREST' && account.status === 'active',
+	);
+	const chosen = pinterestAccounts.filter((account) => selectedIds.includes(account.id));
+	const targets = chosen.length ? chosen : pinterestAccounts;
+
+	const options: INodePropertyOptions[] = [];
+	for (const account of targets) {
+		const { boards } = await adaptlyPostApiRequest.call(
+			this,
+			'GET',
+			`/social-accounts/${encodeURIComponent(account.id)}/pinterest-boards`,
+		);
+		for (const board of boards as PinterestBoard[]) {
+			options.push({
+				name: targets.length > 1 ? `${board.name} (${account.displayName})` : board.name,
+				value: board.id,
+			});
+		}
+	}
+	return options;
+}

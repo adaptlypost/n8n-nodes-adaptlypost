@@ -21,6 +21,7 @@ import {
 } from './accounts';
 import { uploadMediaFromUrl } from './media';
 import { postProperties } from './post.properties';
+import { DEFAULT_WAIT_TIMEOUT_SECONDS, PostResultError, waitForPostResults } from './postResults';
 import { analyticsProperties } from './analytics.properties';
 import { recurringPostProperties } from './recurringPost.properties';
 import { adaptlyPostApiRequest, describeApiError, readApiErrorBody } from './transport';
@@ -173,6 +174,14 @@ export class AdaptlyPost implements INodeType {
 			} catch (error) {
 				const apiError = readApiErrorBody(error);
 				if (this.continueOnFail()) {
+					if (error instanceof PostResultError) {
+						returnData.push({
+							json: { error: error.message, ...error.output },
+							error,
+							pairedItem: { item: i },
+						});
+						continue;
+					}
 					returnData.push({
 						json: {
 							error: apiError?.message || (error as Error).message,
@@ -677,5 +686,13 @@ async function createPost(this: IExecuteFunctions, i: number): Promise<IDataObje
 		}));
 	}
 
-	return adaptlyPostApiRequest.call(this, 'POST', '/social-posts', body);
+	const created = await adaptlyPostApiRequest.call(this, 'POST', '/social-posts', body);
+	const publishesNow = body.saveAsDraft !== true && created.isScheduled !== true;
+	if (options.waitForResult !== true || !publishesNow) return created;
+	return waitForPostResults.call(
+		this,
+		created,
+		(options.waitTimeout as number | undefined) ?? DEFAULT_WAIT_TIMEOUT_SECONDS,
+		i,
+	);
 }

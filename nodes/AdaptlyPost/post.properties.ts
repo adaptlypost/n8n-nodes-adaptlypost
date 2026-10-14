@@ -1,5 +1,7 @@
 import type { INodeProperties } from 'n8n-workflow';
 
+import { DEFAULT_WAIT_TIMEOUT_SECONDS } from './postResults';
+
 const onlyPosts = { resource: ['post'] };
 const withPostId = { resource: ['post'], operation: ['delete', 'get', 'getResults', 'publishDraft', 'retry', 'unschedule'] };
 
@@ -605,6 +607,24 @@ export const postProperties: INodeProperties[] = [
 						],
 					},
 				],
+			},
+			{
+				displayName: 'Wait for Result',
+				name: 'waitForResult',
+				type: 'boolean',
+				default: false,
+				description:
+					'Whether to wait until the post has finished publishing and add its status and the result of each account to the output. AdaptlyPost queues a post and publishes it afterwards, so without this the node succeeds even when a platform rejects the post later. With it, the item fails with the platform error when any account fails. A draft or a scheduled post returns right away. Running the node again after a failure creates a second post, so leave Retry On Fail off.',
+			},
+			{
+				displayName: 'Wait Timeout (Seconds)',
+				name: 'waitTimeout',
+				type: 'number',
+				typeOptions: { minValue: 10, maxValue: 3600 },
+				default: DEFAULT_WAIT_TIMEOUT_SECONDS,
+				displayOptions: { show: { waitForResult: [true] } },
+				description:
+					'How long Wait for Result waits before the item fails. A long video can take a few minutes. The post keeps publishing after the timeout, and Get Results returns its outcome later.',
 			},
 			{
 				displayName: 'X Keep Links Clickable',

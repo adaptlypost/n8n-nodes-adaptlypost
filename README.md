@@ -35,6 +35,16 @@ Additional Fields also hold the options below. Each one applies to every selecte
 
 Google Business Profile locations show up in the account picker. A Google Business Profile post is text or one JPEG or PNG image, up to 1500 characters. Without settings a location gets a standard update. Add Google Business Profile under Additional Fields to post an event or an offer, or to add a button such as Book or Call. Event dates are in the business's local time, written as `2026-10-01` or `2026-10-01T18:00`.
 
+Create answers as soon as AdaptlyPost queues the post, and the post publishes afterwards. By default the node succeeds even when a platform rejects the post later. Turn on Wait for Result under Additional Fields to wait for the outcome. The node then reads `GET /social-posts/{id}/results` every 5 seconds until the post is `COMPLETED`, `PARTIAL_FAILURE` or `FAILED`, for up to Wait Timeout (Seconds), which is 300 unless you change it.
+
+- Completed: the output keeps the fields Create returns and gains `status` and `results`, one result per account with `platform`, `accountName`, `status`, `platformPostId`, `errorMessage` and `publishedAt`.
+- Failed on one or more accounts: the item fails with each failed account and its error, for example `Publishing failed on TikTok (radiogyan): TikTok needs a video between 23 and 60 frames per second`.
+- Still publishing at the timeout: the item fails with the post ID. The post keeps publishing, and Post > Get Results returns the outcome later.
+- With On Error set to Continue, a failed or timed out item is returned with `error`, `status` and `results` and the workflow goes on. With Continue (using error output) it goes to the error output.
+- A draft or a scheduled post returns right away. Use the AdaptlyPost Trigger to react when a scheduled post publishes or fails.
+
+Leave Retry On Fail off when Wait for Result is on. Running the node again creates a second post. Retry the failed accounts of the first one with Post > Retry Failed Platforms.
+
 On LinkedIn, mention a company page in the text with `@[Page Name](urn:li:organization:12345)`, using the page name exactly as LinkedIn shows it.
 
 Repeat on Create turns the post into a recurring post. Pick a Frequency (daily, weekly, monthly or yearly), Repeat Every N days, weeks, months or years (1 to 30), Weekdays for a weekly post, and when it Ends: never, on an End Date, or after a Number of Posts (2 to 365). A recurring post needs a future Scheduled At, which becomes the first post and sets the time of day. It cannot be saved as a draft or include a TikTok account. X and LinkedIn reject identical text, so use spintax such as `{Hi|Hello}` to vary each post. The response carries `recurringPostId`, and every post it creates carries `recurringPostId` and `occurrenceAt`.

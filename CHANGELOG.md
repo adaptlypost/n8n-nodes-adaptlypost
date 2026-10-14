@@ -1,5 +1,12 @@
 # Changelog
 
+## 0.8.0
+
+- Create post takes Pinterest Board Name under Additional Fields, sent as `pinterestConfigs[].boardName`. It picks the board by name, which helps when the name comes from an earlier node. AdaptlyPost looks the name up among the boards of the Pinterest account when the post is created: an exact match wins, otherwise a single match that ignores case. A name that matches no board, or more than one, fails the item with AdaptlyPost's message. It never falls back to another board.
+- With several Pinterest accounts, the name is sent only to the accounts that have a board with that name and the others pin to their AdaptlyPost board. A name that none of them has stops the item with an error.
+- Setting both Pinterest Board and Pinterest Board Name stops the item with "Set Pinterest Board or Pinterest Board Name, not both" before anything is uploaded.
+- Pinterest Board keeps working as before.
+
 ## 0.7.0
 
 - Create post takes Wait for Result under Additional Fields, off by default. When on, the node reads `GET /social-posts/{id}/results` every 5 seconds until the post is `COMPLETED`, `PARTIAL_FAILURE` or `FAILED`, and adds `status` and `results` to the fields Create already returns. Before, the node returned as soon as the post was queued, so a platform error that came later never showed in n8n.

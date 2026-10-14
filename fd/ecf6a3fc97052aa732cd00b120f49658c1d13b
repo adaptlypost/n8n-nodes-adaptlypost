@@ -1,0 +1,31 @@
+nodes/AdaptlyPost/postResults.ts
+  s_01435da89fc31b::t_fab4e78db5f473 1-85,87
+  s_01435da89fc31b::t_094585dd501f44 86,88-116
+test/createPostWaitForResult.test.js
+  s_01435da89fc31b::t_49ede69108dc00 1-284
+  s_01435da89fc31b::t_e7eb94073223c4 285-316
+.github/workflows/ci.yml
+  s_01435da89fc31b::t_58667b2ad9a4b0 35-37
+README.md
+  s_01435da89fc31b::t_01a046b0e456a8 38-47
+nodes/AdaptlyPost/AdaptlyPost.node.ts
+  s_01435da89fc31b::t_eae39cc1a1a1c1 24,177-184,689-697
+nodes/AdaptlyPost/post.properties.ts
+  s_01435da89fc31b::t_24fda31a52c63b 3-4,611-628
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.5",
+  "base_commit_sha": "fdecf6a3fc97052aa732cd00b120f49658c1d13b",
+  "prompts": {},
+  "sessions": {
+    "s_01435da89fc31b": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "cd6ae8a8-d889-40b7-95f7-ac95b4e6827b",
+        "model": "claude-opus-5-5"
+      },
+      "human_author": "Taras Shynkarenko <taras.shinkarenko@gmail.com>"
+    }
+  }
+}

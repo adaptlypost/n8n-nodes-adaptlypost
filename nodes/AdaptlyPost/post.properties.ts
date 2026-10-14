@@ -494,6 +494,15 @@ export const postProperties: INodeProperties[] = [
 					'Title LinkedIn shows on a Document post, up to 100 characters. Defaults to the file name. Applied to every selected LinkedIn account; ignored for other content types.',
 			},
 			{
+				displayName: 'Pinterest Board Name',
+				name: 'pinterestBoardName',
+				type: 'string',
+				default: '',
+				placeholder: 'Summer recipes',
+				description:
+					'Name of the board to pin to, useful when the name comes from an earlier node. AdaptlyPost looks it up among the boards of the Pinterest account when the post is created: an exact match wins, otherwise a single match that ignores case. A name that matches no board, or several, fails the item. With several Pinterest accounts, the name is used for the accounts that have a board with that name and the others pin to their AdaptlyPost board. Use Pinterest Board or Pinterest Board Name, not both.',
+			},
+			{
 				displayName: 'Pinterest Board Name or ID',
 				name: 'pinterestBoard',
 				type: 'options',
@@ -503,7 +512,7 @@ export const postProperties: INodeProperties[] = [
 					loadOptionsDependsOn: ['accountIds'],
 				},
 				description:
-					'Board to pin to, listed from the Pinterest accounts selected in Accounts. Leave empty to pin to a board named AdaptlyPost, which is created on the Pinterest account the first time. With several Pinterest accounts, the board is used for the account that owns it and the others pin to their AdaptlyPost board. Choose from the list, or specify an ID using an <a href="https://docs.n8n.io/code/expressions/">expression</a>.',
+					'Board to pin to, listed from the Pinterest accounts selected in Accounts. Leave empty to pin to a board named AdaptlyPost, which is created on the Pinterest account the first time. With several Pinterest accounts, the board is used for the account that owns it and the others pin to their AdaptlyPost board. To pick a board by name, use Pinterest Board Name instead. Choose from the list, or specify an ID using an <a href="https://docs.n8n.io/code/expressions/">expression</a>.',
 			},
 			{
 				displayName: 'Pinterest Link',

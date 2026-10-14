@@ -1,6 +1,6 @@
 {
   "name": "n8n-nodes-adaptlypost",
-  "version": "0.6.0",
+  "version": "0.7.0",
   "description": "n8n community node for AdaptlyPost: schedule and publish social posts, react to publishing results",
   "license": "MIT",
   "homepage": "https://adaptlypost.com",
@@ -24,6 +24,7 @@
     "dev": "n8n-node dev",
     "lint": "n8n-node lint",
     "lint:fix": "n8n-node lint --fix",
+    "test": "n8n-node build && node --test \"test/*.test.js\"",
     "release": "n8n-node release",
     "prepublishOnly": "n8n-node prerelease"
   },

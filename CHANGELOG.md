@@ -1,5 +1,13 @@
 # Changelog
 
+## 0.7.0
+
+- Create post takes Wait for Result under Additional Fields, off by default. When on, the node reads `GET /social-posts/{id}/results` every 5 seconds until the post is `COMPLETED`, `PARTIAL_FAILURE` or `FAILED`, and adds `status` and `results` to the fields Create already returns. Before, the node returned as soon as the post was queued, so a platform error that came later never showed in n8n.
+- A post that ends as `FAILED` or `PARTIAL_FAILURE` fails the item with each failed account and its error, for example "Publishing failed on TikTok (radiogyan): TikTok needs a video between 23 and 60 frames per second". With On Error set to Continue, the item is returned with `error`, `status` and `results` instead.
+- Wait Timeout (Seconds) sets how long to wait, 300 by default. A post still publishing at the timeout fails the item with its post ID, and Post > Get Results returns the outcome later.
+- A draft or a scheduled post returns right away, as before.
+- A status the node does not know fails the item instead of passing as a success.
+
 ## 0.6.0
 
 - Create post no longer fails with "Pinterest posts need a board ID" when Pinterest Board is empty. The pin goes to a board named AdaptlyPost, which is created on the Pinterest account the first time.

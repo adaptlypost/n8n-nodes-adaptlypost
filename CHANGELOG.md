@@ -1,5 +1,10 @@
 # Changelog
 
+## 0.9.0
+
+- Create post takes Instagram AI Generated under Additional Fields, sent as `instagramConfigs[].aiGenerated`. Instagram shows its "AI info" label on the post. It works on images, carousels, reels and stories, and a story made with Instagram Share to Story carries the label too.
+- Post responses may carry `instagramAiGenerated`.
+
 ## 0.8.0
 
 - Create post takes Pinterest Board Name under Additional Fields, sent as `pinterestConfigs[].boardName`. It picks the board by name, which helps when the name comes from an earlier node. AdaptlyPost looks the name up among the boards of the Pinterest account when the post is created: an exact match wins, otherwise a single match that ignores case. A name that matches no board, or more than one, fails the item with AdaptlyPost's message. It never falls back to another board.

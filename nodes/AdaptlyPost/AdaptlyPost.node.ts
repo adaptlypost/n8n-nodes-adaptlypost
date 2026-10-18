@@ -679,6 +679,7 @@ async function createPost(this: IExecuteFunctions, i: number): Promise<IDataObje
 		(options.instagramPostType ||
 			options.instagramTrialGraduation ||
 			options.instagramShareToStory === true ||
+			options.instagramAiGenerated === true ||
 			collaborators.length ||
 			instagramAudio)
 	) {
@@ -688,6 +689,7 @@ async function createPost(this: IExecuteFunctions, i: number): Promise<IDataObje
 			trialGraduation: options.instagramTrialGraduation || undefined,
 			shareToStory: options.instagramShareToStory === true ? true : undefined,
 			collaborators: collaborators.length ? collaborators : undefined,
+			aiGenerated: options.instagramAiGenerated === true ? true : undefined,
 			audio: instagramAudio,
 		}));
 	}

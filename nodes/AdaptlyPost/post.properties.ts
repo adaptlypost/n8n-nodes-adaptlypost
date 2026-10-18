@@ -389,6 +389,14 @@ export const postProperties: INodeProperties[] = [
 				],
 			},
 			{
+				displayName: 'Instagram AI Generated',
+				name: 'instagramAiGenerated',
+				type: 'boolean',
+				default: false,
+				description:
+					'Whether to disclose that the post was made or edited with AI. Instagram shows its "AI info" label on the post. Works on images, carousels, reels and stories.',
+			},
+			{
 				displayName: 'Instagram Audio',
 				name: 'instagramAudio',
 				type: 'fixedCollection',

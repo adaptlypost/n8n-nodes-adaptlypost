@@ -28,6 +28,7 @@ Additional Fields also hold the options below. Each one applies to every selecte
 - Image Shape: reframes every image of an image or carousel post to square, portrait, vertical or landscape on Instagram or TikTok, by cropping from the center or padding with a blurred copy.
 - Instagram Share to Story and Facebook Share to Story: also publish the same media as a story. The story is its own entry in the post's platforms.
 - Instagram Collaborators: up to 3 usernames, one per line.
+- Instagram AI Generated: Instagram shows its "AI info" label on the post. Works on images, carousels, reels and stories.
 - Pinterest Board: a dropdown of the boards of the selected Pinterest accounts, also available as Account > Get Pinterest Boards. Leave it empty to pin to a board named AdaptlyPost, which is created on the Pinterest account the first time. With several Pinterest accounts, the board is used for the account that owns it.
 - Pinterest Board Name: picks the board by name instead, for when the name comes from an earlier node. AdaptlyPost looks it up among the account's boards when the post is created: an exact match wins, otherwise a single match that ignores case. A name that matches no board, or more than one, fails the item. Set Pinterest Board or Pinterest Board Name, not both.
 - Instagram Audio: music or an original sound added to a Reel. Get the Audio ID from Account > Search Instagram Audio, which needs an Instagram account connected through Facebook. Leave Search Query empty to get trending audio.

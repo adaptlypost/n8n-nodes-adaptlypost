@@ -1,0 +1,23 @@
+README.md
+  s_66f766cdb4ac1d::t_6217449133e1a9 31
+nodes/AdaptlyPost/AdaptlyPost.node.ts
+  s_66f766cdb4ac1d::t_3c533fa7f4671e 682,692
+nodes/AdaptlyPost/post.properties.ts
+  s_66f766cdb4ac1d::t_4386ef25268b01 391-398
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.5",
+  "base_commit_sha": "ce8b9336950ff03a5f82308492dd4012c740f58e",
+  "prompts": {},
+  "sessions": {
+    "s_66f766cdb4ac1d": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "aaeccc98-71c3-4950-acc3-7d040d692bb8",
+        "model": "unknown"
+      },
+      "human_author": "Taras Shynkarenko <taras.shinkarenko@gmail.com>"
+    }
+  }
+}

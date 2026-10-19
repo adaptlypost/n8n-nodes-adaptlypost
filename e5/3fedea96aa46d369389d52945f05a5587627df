@@ -1,0 +1,32 @@
+README.md
+  s_9f2ce0440f5a4b::t_e5b830a1ecb988 36-37
+nodes/AdaptlyPost/AdaptlyPost.node.ts
+  s_9f2ce0440f5a4b::t_4d3f5f09340e03 703-705
+  s_9f2ce0440f5a4b::t_881e89cdb58519 700-701,706-710,716-717
+CHANGELOG.md
+  s_9f2ce0440f5a4b::t_5fbe827eb404ea 3-8
+nodes/AdaptlyPost/post.properties.ts
+  s_9f2ce0440f5a4b::t_b613e7e3ff4fca 139-200
+test/createPostFacebookCarousel.test.js
+  s_9f2ce0440f5a4b::t_589c9b5dc2a25a 1-99
+package-lock.json
+  s_9f2ce0440f5a4b::t_80e9de9e84d2c0 3,9
+package.json
+  s_9f2ce0440f5a4b::t_da447a30c7de90 3
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.5",
+  "base_commit_sha": "e53fedea96aa46d369389d52945f05a5587627df",
+  "prompts": {},
+  "sessions": {
+    "s_9f2ce0440f5a4b": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "4362346d-b2d9-4fc8-9d15-42f4e1948c39",
+        "model": "unknown"
+      },
+      "human_author": "Taras Shynkarenko <taras.shinkarenko@gmail.com>"
+    }
+  }
+}

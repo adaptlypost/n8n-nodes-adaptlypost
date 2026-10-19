@@ -137,6 +137,68 @@ export const postProperties: INodeProperties[] = [
 		displayOptions: { show: { resource: ['post'], operation: ['create'] } },
 		options: [
 			{
+				displayName: 'Facebook Carousel Cards',
+				name: 'facebookCarouselCards',
+				type: 'fixedCollection',
+				typeOptions: { multipleValues: true, sortable: true },
+				placeholder: 'Add Card',
+				default: {},
+				displayOptions: { show: { facebookImageLayout: ['CAROUSEL'] } },
+				description:
+					'One card per image, in the same order as Media URLs, up to 5. Facebook shows the card image and title only for links to a website the page owns; for other links the post fails with an explanation.',
+				options: [
+					{
+						displayName: 'Card',
+						name: 'card',
+						values: [
+							{
+								displayName: 'Link',
+								name: 'link',
+								type: 'string',
+								default: '',
+								required: true,
+								placeholder: 'https://example.com/product',
+								description: 'The http or https URL the card opens, up to 2048 characters',
+							},
+							{
+								displayName: 'Title',
+								name: 'title',
+								type: 'string',
+								default: '',
+								description: 'Up to 100 characters',
+							},
+							{
+								displayName: 'Description',
+								name: 'description',
+								type: 'string',
+								default: '',
+								description: 'Up to 200 characters',
+							},
+						],
+					},
+				],
+			},
+			{
+				displayName: 'Facebook Image Layout',
+				name: 'facebookImageLayout',
+				type: 'options',
+				options: [
+					{
+						name: 'Grid',
+						value: 'GRID',
+						description: 'The images show as a photo grid',
+					},
+					{
+						name: 'Carousel',
+						value: 'CAROUSEL',
+						description: 'Swipeable cards, each opening its own link',
+					},
+				],
+				default: 'GRID',
+				description:
+					'A carousel needs 2 to 5 images, no videos, Facebook Post Type Feed, and one Facebook Carousel Card per image',
+			},
+			{
 				displayName: 'Facebook Post Type',
 				name: 'facebookPostType',
 				type: 'options',

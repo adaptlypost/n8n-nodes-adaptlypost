@@ -1,5 +1,11 @@
 # Changelog
 
+## 0.10.0
+
+- Create post takes Facebook Image Layout and Facebook Carousel Cards under Additional Fields, sent as `facebookConfigs[].imageLayout` and `facebookConfigs[].carouselCards`. Carousel shows 2 to 5 images as swipeable cards, each opening its own link, with an optional title and description. Add one card per image, in the same order as Media URLs. Cards are sent only when the layout is Carousel.
+- A carousel needs 2 to 5 images, no videos, Facebook Post Type Feed and one card per image, or AdaptlyPost refuses the post. Facebook shows the card image and title only for links to a website the page owns; for other links the post fails with the error Facebook returns.
+- Workflows that never set the layout keep posting a photo grid.
+
 ## 0.9.0
 
 - Create post takes Instagram AI Generated under Additional Fields, sent as `instagramConfigs[].aiGenerated`. Instagram shows its "AI info" label on the post. It works on images, carousels, reels and stories, and a story made with Instagram Share to Story carries the label too.

@@ -697,13 +697,24 @@ async function createPost(this: IExecuteFunctions, i: number): Promise<IDataObje
 		targets.platforms.includes('FACEBOOK') &&
 		(options.facebookPostType ||
 			options.facebookShareToStory === true ||
-			options.facebookTextFormatPresetId)
+			options.facebookTextFormatPresetId ||
+			options.facebookImageLayout)
 	) {
+		const carouselCards =
+			options.facebookImageLayout === 'CAROUSEL'
+				? fixedCollectionEntries(options.facebookCarouselCards, 'card').map((card) => ({
+					link: card.link,
+					title: card.title || undefined,
+					description: card.description || undefined,
+				}))
+			: [];
 		body.facebookConfigs = ids('FACEBOOK').map((pageId) => ({
 			pageId,
 			postType: options.facebookPostType || undefined,
 			shareToStory: options.facebookShareToStory === true ? true : undefined,
 			textFormatPresetId: options.facebookTextFormatPresetId || undefined,
+			imageLayout: options.facebookImageLayout || undefined,
+			carouselCards: carouselCards.length ? carouselCards : undefined,
 		}));
 	}
 	const googleBusiness = fixedCollectionEntries(options.googleBusiness, 'settings')[0];

@@ -1,0 +1,23 @@
+CHANGELOG.md
+  s_8e76d9fec23cdd::t_e238070c42b69e 3
+package-lock.json
+  s_8e76d9fec23cdd::t_00f6ddd0f88472 3,9
+package.json
+  s_8e76d9fec23cdd::t_1ae240dcb504f7 3
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.5",
+  "base_commit_sha": "7e32d6b990a17564579938788f066f0f43326998",
+  "prompts": {},
+  "sessions": {
+    "s_8e76d9fec23cdd": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "324ff6b0-9349-4fe3-a568-da5c42288623",
+        "model": "claude-opus-5-5"
+      },
+      "human_author": "Taras Shynkarenko <taras.shinkarenko@gmail.com>"
+    }
+  }
+}

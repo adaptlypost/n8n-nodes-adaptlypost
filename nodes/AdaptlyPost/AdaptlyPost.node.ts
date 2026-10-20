@@ -761,6 +761,7 @@ async function createPost(this: IExecuteFunctions, i: number): Promise<IDataObje
 			videoTitle: options.youtubeTitle || undefined,
 			privacyStatus: options.youtubePrivacyStatus || undefined,
 			postType: options.youtubePostType || undefined,
+			aiGenerated: options.youtubeAiGenerated === true ? true : undefined,
 		}));
 	}
 

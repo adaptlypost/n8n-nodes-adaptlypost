@@ -35,6 +35,7 @@ Additional Fields also hold the options below. Each one applies to every selecte
 - Facebook Text Background ID: a colored background for a short text post with no media.
 - Facebook Image Layout: Grid (the default) shows the images as a photo grid. Carousel shows them as swipeable cards, each opening its own link, and needs 2 to 5 images, no videos and Facebook Post Type Feed.
 - Facebook Carousel Cards: one card per image, in the same order as Media URLs, up to 5, each with a link and an optional title and description. Facebook shows the card image and title only for links to a website the page owns; for other links the post fails with an explanation.
+- YouTube AI Generated: YouTube shows its "Altered or synthetic content" label on the video. Use it for realistic content that was generated or altered, such as an AI voice, an AI avatar or edited footage that looks real. Works on videos and Shorts.
 - X Keep Links Clickable: only for AppSumo lifetime deals. By default AdaptlyPost breaks links in X text, because X charges far more for a post with a link.
 
 Google Business Profile locations show up in the account picker. A Google Business Profile post is text or one JPEG or PNG image, up to 1500 characters. Without settings a location gets a standard update. Add Google Business Profile under Additional Fields to post an event or an offer, or to add a button such as Book or Call. Event dates are in the business's local time, written as `2026-10-01` or `2026-10-01T18:00`.

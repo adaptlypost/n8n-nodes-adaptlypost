@@ -714,6 +714,14 @@ export const postProperties: INodeProperties[] = [
 					'Whether to keep links in the X text clickable. X charges over 10 times more for a post with a link, so AdaptlyPost breaks every link in X text by default (example.com becomes example. com). Only AppSumo lifetime deals can turn this on, and a kept link costs 20 credits instead of 2; on any other plan the post is refused with a 400.',
 			},
 			{
+				displayName: 'YouTube AI Generated',
+				name: 'youtubeAiGenerated',
+				type: 'boolean',
+				default: false,
+				description:
+					'Whether to disclose altered or synthetic content, such as an AI voice, an AI avatar or realistic footage that was generated or edited. YouTube shows its "Altered or synthetic content" label on the video. Works on videos and Shorts.',
+			},
+			{
 				displayName: 'YouTube Format',
 				name: 'youtubePostType',
 				type: 'options',

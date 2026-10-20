@@ -1,0 +1,23 @@
+CHANGELOG.md
+  s_8e76d9fec23cdd::t_64057e632a1ffe 3-7
+README.md
+  s_8e76d9fec23cdd::t_c2d61a3b763986 18,70-71
+nodes/AdaptlyPost/AdaptlyPost.node.ts
+  s_8e76d9fec23cdd::t_c8eabf65d84e61 95-101,134-144,265-272
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.5",
+  "base_commit_sha": "60dbf5c2cdd33f0dd25efb602b31ba08c1495835",
+  "prompts": {},
+  "sessions": {
+    "s_8e76d9fec23cdd": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "324ff6b0-9349-4fe3-a568-da5c42288623",
+        "model": "claude-opus-5-5"
+      },
+      "human_author": "Taras Shynkarenko <taras.shinkarenko@gmail.com>"
+    }
+  }
+}

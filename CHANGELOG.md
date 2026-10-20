@@ -1,6 +1,6 @@
 # Changelog
 
-## Unreleased
+## 0.11.0
 
 - Account > Remove disconnects an account from the workspace through `DELETE /social-accounts/{id}`, the same as removing it on the Connectors page. It works on disconnected accounts too, so a workflow can drop the account named by the Account Disconnected trigger. It takes an account ID or a Facebook page ID and returns `id`, `platform`, `displayName`, `pageId` and `removed: true`.
 - Removing an account needs an Admin token. Other roles get the 403 `permission_denied` error AdaptlyPost returns. An account the workspace does not hold returns 404.

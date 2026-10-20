@@ -15,7 +15,7 @@ Follow the [installation guide](https://docs.n8n.io/integrations/community-nodes
 | Resource | Operations |
 | --- | --- |
 | Post | Create, Get, Get Many, Get Results, Publish Draft, Retry Failed Platforms, Unschedule, Delete |
-| Account | Get Many, Get Pinterest Boards, Search Instagram Audio |
+| Account | Get Many, Get Pinterest Boards, Remove, Search Instagram Audio |
 | Analytics | Get Overview, Get Timeseries, Get Platform Breakdown, Get Post Analytics |
 | Recurring Post | Get, Get Many, Pause, Resume, Delete |
 
@@ -66,6 +66,8 @@ Registers a webhook with AdaptlyPost and fires on the events you pick:
 - Post Failed
 - Post Scheduled
 - Account Disconnected
+
+Account > Remove disconnects an account from the workspace, disconnected ones included, and returns `id`, `platform`, `displayName`, `pageId` for Facebook pages and `removed: true`. Feed it the account ID from Account Disconnected to drop accounts nobody will reconnect. Pending and recurring posts stop publishing to the account, and only a workspace Admin token can remove one.
 
 Every delivery is checked against the `x-adaptly-signature` and `x-adaptly-timestamp` headers with the secret AdaptlyPost returned when the webhook was registered. A request with a missing or wrong signature is answered with 401 and does not start the workflow. Each active trigger registers its own webhook, and a workspace can have at most 10.
 

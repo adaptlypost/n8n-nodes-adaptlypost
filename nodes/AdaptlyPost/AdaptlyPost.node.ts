@@ -93,6 +93,13 @@ export class AdaptlyPost implements INodeType {
 							'List the boards of a Pinterest account, secret boards included. Use a board ID as Pinterest Board when creating a post.',
 					},
 					{
+						name: 'Remove',
+						value: 'remove',
+						action: 'Remove an account',
+						description:
+							'Disconnect an account from the workspace, disconnected ones included. Pending and recurring posts stop publishing to it. To bring it back, connect it again in AdaptlyPost.',
+					},
+					{
 						name: 'Search Instagram Audio',
 						value: 'searchInstagramAudio',
 						action: 'Search instagram audio',
@@ -123,6 +130,17 @@ export class AdaptlyPost implements INodeType {
 				displayOptions: { show: { resource: ['account'], operation: ['getPinterestBoards'] } },
 				description:
 					'Pinterest account to list boards for. Choose from the list, or specify an ID using an <a href="https://docs.n8n.io/code/expressions/">expression</a>.',
+			},
+			{
+				displayName: 'Account Name or ID',
+				name: 'accountId',
+				type: 'options',
+				required: true,
+				default: '',
+				typeOptions: { loadOptionsMethod: 'getAccounts' },
+				displayOptions: { show: { resource: ['account'], operation: ['remove'] } },
+				description:
+					'Account to disconnect, such as the account ID from the Account Disconnected trigger, or a Facebook page ID. Choose from the list, or specify an ID using an <a href="https://docs.n8n.io/code/expressions/">expression</a>.',
 			},
 			{
 				displayName: 'Audio Type',
@@ -243,6 +261,14 @@ async function runOperation(
 				`/social-accounts/${encodeURIComponent(accountId)}/pinterest-boards`,
 			);
 			return boards as IDataObject[];
+		}
+		if (operation === 'remove') {
+			const accountId = this.getNodeParameter('accountId', i) as string;
+			return adaptlyPostApiRequest.call(
+				this,
+				'DELETE',
+				`/social-accounts/${encodeURIComponent(accountId)}`,
+			);
 		}
 		const { accounts } = await adaptlyPostApiRequest.call(this, 'GET', '/social-accounts');
 		return accounts as IDataObject[];

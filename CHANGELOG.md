@@ -1,5 +1,10 @@
 # Changelog
 
+## Unreleased
+
+- Account > Remove disconnects an account from the workspace through `DELETE /social-accounts/{id}`, the same as removing it on the Connectors page. It works on disconnected accounts too, so a workflow can drop the account named by the Account Disconnected trigger. It takes an account ID or a Facebook page ID and returns `id`, `platform`, `displayName`, `pageId` and `removed: true`.
+- Removing an account needs an Admin token. Other roles get the 403 `permission_denied` error AdaptlyPost returns. An account the workspace does not hold returns 404.
+
 ## 0.10.0
 
 - Create post takes Facebook Image Layout and Facebook Carousel Cards under Additional Fields, sent as `facebookConfigs[].imageLayout` and `facebookConfigs[].carouselCards`. Carousel shows 2 to 5 images as swipeable cards, each opening its own link, with an optional title and description. Add one card per image, in the same order as Media URLs. Cards are sent only when the layout is Carousel.

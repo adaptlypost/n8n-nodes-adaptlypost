@@ -1,6 +1,6 @@
 # Changelog
 
-## Unreleased
+## 0.12.0
 
 - Create post takes YouTube AI Generated under Additional Fields, sent as `youtubeConfigs[].aiGenerated`. YouTube shows its "Altered or synthetic content" label on the video. Use it for realistic content that was generated or altered, such as an AI voice, an AI avatar or edited footage that looks real. It works on videos and Shorts.
 - Post responses may carry `youtubeAiGenerated`.

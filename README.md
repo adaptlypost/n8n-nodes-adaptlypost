@@ -14,7 +14,7 @@ Follow the [installation guide](https://docs.n8n.io/integrations/community-nodes
 
 | Resource | Operations |
 | --- | --- |
-| Post | Create, Get, Get Many, Get Results, Publish Draft, Retry Failed Platforms, Unschedule, Delete |
+| Post | Create, Validate, Get, Get Many, Get Results, Publish Draft, Retry Failed Platforms, Unschedule, Delete |
 | Account | Get Many, Get Pinterest Boards, Remove, Search Instagram Audio |
 | Analytics | Get Overview, Get Timeseries, Get Platform Breakdown, Get Post Analytics |
 | Recurring Post | Get, Get Many, Pause, Resume, Delete |
@@ -49,6 +49,16 @@ Create answers as soon as AdaptlyPost queues the post, and the post publishes af
 - A draft or a scheduled post returns right away. Use the AdaptlyPost Trigger to react when a scheduled post publishes or fails.
 
 Leave Retry On Fail off when Wait for Result is on. Running the node again creates a second post. Retry the failed accounts of the first one with Post > Retry Failed Platforms.
+
+Validate takes the same fields as Create and creates nothing. It sends the post to `POST /social-posts/validate`, which runs every check Create runs, plus the ones that usually fail only at publish time: TikTok creator limits and video length, the YouTube upload quota, expired Instagram and Threads tokens, Mastodon attachment limits, Pinterest boards and X credits. Media URLs are copied into AdaptlyPost storage first, as Create does, so the server can inspect them. The output is the report:
+
+- `valid` is false when any issue is an `ERROR`, which means Create would refuse the post.
+- `outcome` is what Create would do: `PUBLISH_NOW`, `SCHEDULED` or `DRAFT`.
+- `accounts` has one entry per selected account with its `status` (`READY`, `WARNING` or `BLOCKED`) and `issues`. A warning lets the post through.
+- `issues` holds problems with the post as a whole. Each issue has a `code`, a `severity` and a translated `message`.
+- `notChecked` lists what only the platform can decide at publish time, so a valid report is not a guarantee.
+
+Put an IF node on `valid` between Validate and Create to stop a post that would fail. Any key that can save drafts may run Validate. When Create itself refuses a post for its content, the error lists every issue with its account, and On Error > Continue returns them in `issues`.
 
 On LinkedIn, mention a company page in the text with `@[Page Name](urn:li:organization:12345)`, using the page name exactly as LinkedIn shows it.
 

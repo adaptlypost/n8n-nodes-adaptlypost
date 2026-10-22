@@ -209,11 +209,18 @@ export class AdaptlyPost implements INodeType {
 								role: apiError.role,
 								keyRole: apiError.keyRole,
 								issuerRole: apiError.issuerRole,
+								issues: apiError.issues,
 							}),
 						},
 						pairedItem: { item: i },
 					});
 					continue;
+				}
+				if (apiError?.code === 'post_validation_failed') {
+					throw new NodeOperationError(this.getNode(), apiError.message, {
+						itemIndex: i,
+						description: describeApiError(apiError),
+					});
 				}
 				throw error instanceof NodeOperationError
 					? error
@@ -285,6 +292,8 @@ async function runOperation(
 	switch (operation) {
 		case 'create':
 			return createPost.call(this, i);
+		case 'validate':
+			return validatePost.call(this, i);
 		case 'get':
 			return adaptlyPostApiRequest.call(
 				this,
@@ -621,7 +630,10 @@ async function pinterestAccountsOwningBoard(
 	return owners;
 }
 
-async function createPost(this: IExecuteFunctions, i: number): Promise<IDataObject> {
+async function buildPostBody(
+	this: IExecuteFunctions,
+	i: number,
+): Promise<{ body: IDataObject; options: IDataObject }> {
 	const accountIds = asList(this.getNodeParameter('accountIds', i));
 	if (accountIds.length === 0) {
 		throw new NodeOperationError(this.getNode(), 'Select at least one account', {
@@ -765,6 +777,11 @@ async function createPost(this: IExecuteFunctions, i: number): Promise<IDataObje
 		}));
 	}
 
+	return { body, options };
+}
+
+async function createPost(this: IExecuteFunctions, i: number): Promise<IDataObject> {
+	const { body, options } = await buildPostBody.call(this, i);
 	const created = await adaptlyPostApiRequest.call(this, 'POST', '/social-posts', body);
 	const publishesNow = body.saveAsDraft !== true && created.isScheduled !== true;
 	if (options.waitForResult !== true || !publishesNow) return created;
@@ -774,4 +791,9 @@ async function createPost(this: IExecuteFunctions, i: number): Promise<IDataObje
 		(options.waitTimeout as number | undefined) ?? DEFAULT_WAIT_TIMEOUT_SECONDS,
 		i,
 	);
+}
+
+async function validatePost(this: IExecuteFunctions, i: number): Promise<IDataObject> {
+	const { body } = await buildPostBody.call(this, i);
+	return adaptlyPostApiRequest.call(this, 'POST', '/social-posts/validate', body);
 }

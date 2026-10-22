@@ -47,6 +47,7 @@ export interface ApiErrorBody {
 	keyRole?: string;
 	issuerRole?: string;
 	tokenType?: string;
+	issues?: IDataObject[];
 }
 
 const isRecord = (value: unknown): value is Record<string, unknown> =>
@@ -81,6 +82,7 @@ export function readApiErrorBody(error: unknown): ApiErrorBody | undefined {
 			keyRole: optionalString(candidate.keyRole),
 			issuerRole: optionalString(candidate.issuerRole),
 			tokenType: optionalString(candidate.tokenType),
+			issues: Array.isArray(candidate.issues) ? (candidate.issues as IDataObject[]) : undefined,
 		};
 	}
 	return undefined;
@@ -118,6 +120,14 @@ export function describeApiError(body: ApiErrorBody): string {
 				.join(' ');
 		case 'token_issuer_lost_access':
 			return `The member who created this key no longer has access to the workspace, so the key is revoked. Ask a workspace admin for a new key (${TOKENS_URL}).`;
+		case 'post_validation_failed':
+			return [
+				...(body.issues ?? []).map((issue) => {
+					const where = [issue.platform, issue.connectionId].filter(Boolean).join(' ');
+					return `${String(issue.severity)} ${String(issue.code)}${where ? ` (${where})` : ''}: ${String(issue.message)}`;
+				}),
+				'Nothing was created. Fix these and run the node again; Post > Validate shows the status of every account without creating anything.',
+			].join('\n');
 		case 'subscription_required':
 			return 'The workspace plan does not allow this. Update the subscription in the AdaptlyPost app.';
 		default:

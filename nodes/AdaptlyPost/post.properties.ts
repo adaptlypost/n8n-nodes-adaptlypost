@@ -3,6 +3,7 @@ import type { INodeProperties } from 'n8n-workflow';
 import { DEFAULT_WAIT_TIMEOUT_SECONDS } from './postResults';
 
 const onlyPosts = { resource: ['post'] };
+const postBodyFields = { resource: ['post'], operation: ['create', 'validate'] };
 const withPostId = { resource: ['post'], operation: ['delete', 'get', 'getResults', 'publishDraft', 'retry', 'unschedule'] };
 
 export const postProperties: INodeProperties[] = [
@@ -64,6 +65,13 @@ export const postProperties: INodeProperties[] = [
 				action: 'Unschedule a post',
 				description: 'Turn a scheduled or dated draft post back into an undated draft',
 			},
+			{
+				name: 'Validate',
+				value: 'validate',
+				action: 'Validate a post without creating it',
+				description:
+					'Dry run: check the same fields as Create without creating, scheduling or publishing anything, and return a report per account. Any key that can save drafts may run it.',
+			},
 		],
 		default: 'create',
 	},
@@ -83,7 +91,7 @@ export const postProperties: INodeProperties[] = [
 		required: true,
 		default: [],
 		typeOptions: { loadOptionsMethod: 'getAccounts' },
-		displayOptions: { show: { resource: ['post'], operation: ['create'] } },
+		displayOptions: { show: postBodyFields },
 		description:
 			'Connected accounts to post from. Choose from the list, or specify IDs using an <a href="https://docs.n8n.io/code/expressions/">expression</a>.',
 	},
@@ -104,7 +112,7 @@ export const postProperties: INodeProperties[] = [
 			{ name: 'Video', value: 'VIDEO' },
 		],
 		default: 'TEXT',
-		displayOptions: { show: { resource: ['post'], operation: ['create'] } },
+		displayOptions: { show: postBodyFields },
 		description:
 			'Document is LinkedIn only and takes exactly one PDF, PPT, PPTX, DOC or DOCX file in Media URLs. AdaptlyPost refuses a Document post on another platform, with two or more files, or with an image or video, and refuses a document file on any other content type. Google Business Profile takes Text or Image, with one JPEG or PNG image up to 5 MB.',
 	},
@@ -114,7 +122,7 @@ export const postProperties: INodeProperties[] = [
 		type: 'string',
 		typeOptions: { rows: 4 },
 		default: '',
-		displayOptions: { show: { resource: ['post'], operation: ['create'] } },
+		displayOptions: { show: postBodyFields },
 		description:
 			"Caption shared across the selected platforms. On LinkedIn, mention a company page with @[Page Name](urn:li:organization:12345), using the page's numeric ID and its name exactly as LinkedIn shows it.",
 	},
@@ -124,7 +132,7 @@ export const postProperties: INodeProperties[] = [
 		type: 'string',
 		default: '',
 		placeholder: 'https://example.com/photo.jpg, https://example.com/clip.mp4',
-		displayOptions: { show: { resource: ['post'], operation: ['create'] } },
+		displayOptions: { show: postBodyFields },
 		description:
 			'Comma-separated public URLs of JPEG, PNG, WebP, MP4 or QuickTime files. For a Document post, the URL of that one PDF, PPT, PPTX, DOC or DOCX file (max 100 MB, 300 pages). Each file is copied into AdaptlyPost storage before posting.',
 	},
@@ -134,7 +142,7 @@ export const postProperties: INodeProperties[] = [
 		type: 'collection',
 		placeholder: 'Add Field',
 		default: {},
-		displayOptions: { show: { resource: ['post'], operation: ['create'] } },
+		displayOptions: { show: postBodyFields },
 		options: [
 			{
 				displayName: 'Facebook Carousel Cards',
@@ -692,6 +700,7 @@ export const postProperties: INodeProperties[] = [
 				name: 'waitForResult',
 				type: 'boolean',
 				default: false,
+				displayOptions: { show: { '/operation': ['create'] } },
 				description:
 					'Whether to wait until the post has finished publishing and add its status and the result of each account to the output. AdaptlyPost queues a post and publishes it afterwards, so without this the node succeeds even when a platform rejects the post later. With it, the item fails with the platform error when any account fails. A draft or a scheduled post returns right away. Running the node again after a failure creates a second post, so leave Retry On Fail off.',
 			},
@@ -756,7 +765,7 @@ export const postProperties: INodeProperties[] = [
 		type: 'collection',
 		placeholder: 'Add Repeat Option',
 		default: {},
-		displayOptions: { show: { resource: ['post'], operation: ['create'] } },
+		displayOptions: { show: postBodyFields },
 		description:
 			'Repeat the post on a schedule. Needs a future Scheduled At, which becomes the first post and sets the time of day. Cannot be combined with Save as Draft or a TikTok account. X and LinkedIn reject identical text, so use spintax such as {Hi|Hello} to vary each post.',
 		options: [

@@ -1,5 +1,12 @@
 # Changelog
 
+## 0.13.0
+
+- Post > Validate checks a post without creating it. It takes the same fields as Create and sends them to `POST /social-posts/validate`, which runs every check Create runs, plus the ones that usually fail only at publish time: TikTok creator limits and video length, the YouTube upload quota, expired Instagram and Threads tokens, Mastodon attachment limits, Pinterest boards and X credits. Nothing is scheduled or published, and any key that can save drafts may run it.
+- The output is the report: `valid` (false when any issue is an `ERROR`), `outcome` (`PUBLISH_NOW`, `SCHEDULED` or `DRAFT`), `accounts` with each account's `status` (`READY`, `WARNING` or `BLOCKED`) and its `issues`, `issues` for the post as a whole, and `notChecked`, what only the platform can decide at publish time. Branch on `valid` with an IF node before Create.
+- Media URLs are copied into AdaptlyPost storage first, as Create does, so the server can inspect the files.
+- When Create is refused for its content, the error now lists every issue with its account, and On Error > Continue returns them in `issues`. The error message is the same as before.
+
 ## 0.12.0
 
 - Create post takes YouTube AI Generated under Additional Fields, sent as `youtubeConfigs[].aiGenerated`. YouTube shows its "Altered or synthetic content" label on the video. Use it for realistic content that was generated or altered, such as an AI voice, an AI avatar or edited footage that looks real. It works on videos and Shorts.

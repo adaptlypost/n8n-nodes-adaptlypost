@@ -563,6 +563,51 @@ export const postProperties: INodeProperties[] = [
 					"Publish the reel as a trial reel: Instagram shows it to non-followers first and keeps it off followers' feeds and the profile grid until it is shared. Only for a single video posted as a Reel or Feed video, never a Story, image or carousel. Needs a professional account that Instagram has enabled for trial reels.",
 			},
 			{
+				displayName: 'Instagram User Tags',
+				name: 'instagramUserTags',
+				type: 'fixedCollection',
+				typeOptions: { multipleValues: true },
+				placeholder: 'Add User Tag',
+				default: {},
+				description:
+					'Public Instagram accounts to tag, one entry per account, up to 20. Works on a single image or a single video, as a feed post, reel or story; a carousel or several stories with tags are refused. On a feed image every tag needs both X and Y. On a story X and Y are optional, but set both or neither. On a video X and Y are ignored and the account is tagged on the whole video. If Instagram refuses a tag because the account is private or does not exist, the post goes out without its tags and the refused usernames come back in instagramUntaggedUsernames. The story made by Instagram Share to Story carries no tags.',
+				options: [
+					{
+						displayName: 'Tag',
+						name: 'tag',
+						values: [
+							{
+								displayName: 'Username',
+								name: 'username',
+								type: 'string',
+								default: '',
+								required: true,
+								placeholder: 'partnerbrand',
+								description: 'Public Instagram username, up to 30 characters. A leading @ is dropped.',
+							},
+							{
+								displayName: 'X',
+								name: 'x',
+								type: 'string',
+								default: '',
+								placeholder: '0.5',
+								description:
+									'Horizontal position of the tag on the image, from 0 (left edge) to 1 (right edge)',
+							},
+							{
+								displayName: 'Y',
+								name: 'y',
+								type: 'string',
+								default: '',
+								placeholder: '0.5',
+								description:
+									'Vertical position of the tag on the image, from 0 (top edge) to 1 (bottom edge)',
+							},
+						],
+					},
+				],
+			},
+			{
 				displayName: 'LinkedIn Document Title',
 				name: 'linkedinDocumentTitle',
 				type: 'string',

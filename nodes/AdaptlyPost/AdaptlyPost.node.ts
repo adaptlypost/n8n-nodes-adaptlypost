@@ -536,6 +536,37 @@ function readInstagramAudio(
 	};
 }
 
+function readInstagramUserTags(
+	this: IExecuteFunctions,
+	options: IDataObject,
+	i: number,
+): IDataObject[] {
+	const position = (value: unknown, axis: 'X' | 'Y', username: string): number | undefined => {
+		const text = String(value ?? '').trim();
+		if (!text) return undefined;
+		const coordinate = Number(text);
+		if (!Number.isFinite(coordinate) || coordinate < 0 || coordinate > 1) {
+			throw new NodeOperationError(
+				this.getNode(),
+				`Instagram User Tags: ${axis} of ${username} must be a number from 0 to 1`,
+				{ itemIndex: i },
+			);
+		}
+		return coordinate;
+	};
+	return fixedCollectionEntries(options.instagramUserTags, 'tag').flatMap((tag) => {
+		const username = String(tag.username ?? '').trim();
+		if (!username) return [];
+		return [
+			{
+				username,
+				x: position(tag.x, 'X', username),
+				y: position(tag.y, 'Y', username),
+			},
+		];
+	});
+}
+
 async function readPlatformThumbnails(
 	this: IExecuteFunctions,
 	options: IDataObject,
@@ -712,6 +743,7 @@ async function buildPostBody(
 	}
 	const instagramAudio = readInstagramAudio.call(this, options, i);
 	const collaborators = asLines(options.instagramCollaborators ?? '').filter(Boolean);
+	const userTags = readInstagramUserTags.call(this, options, i);
 	if (
 		targets.platforms.includes('INSTAGRAM') &&
 		(options.instagramPostType ||
@@ -719,6 +751,7 @@ async function buildPostBody(
 			options.instagramShareToStory === true ||
 			options.instagramAiGenerated === true ||
 			collaborators.length ||
+			userTags.length ||
 			instagramAudio)
 	) {
 		body.instagramConfigs = ids('INSTAGRAM').map((connectionId) => ({
@@ -727,6 +760,7 @@ async function buildPostBody(
 			trialGraduation: options.instagramTrialGraduation || undefined,
 			shareToStory: options.instagramShareToStory === true ? true : undefined,
 			collaborators: collaborators.length ? collaborators : undefined,
+			userTags: userTags.length ? userTags : undefined,
 			aiGenerated: options.instagramAiGenerated === true ? true : undefined,
 			audio: instagramAudio,
 		}));

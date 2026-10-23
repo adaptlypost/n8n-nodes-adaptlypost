@@ -1,5 +1,12 @@
 # Changelog
 
+## 0.14.0
+
+- Create and Validate take Instagram User Tags under Additional Fields, sent as `instagramConfigs[].userTags`. Add one row per public account to tag, up to 20, with a username and an optional X and Y from 0 to 1 measured from the top-left corner of the image. A feed image needs X and Y on every tag, a story takes both or neither, and a video ignores them and tags the account on the whole video. Tags work on one image or one video; a carousel or several stories with tags are refused.
+- When Instagram refuses a tag because the account is private or does not exist, the post goes out without its tags and `instagramUntaggedUsernames` lists the refused usernames.
+- Post responses may carry `instagramUserTags` and `instagramUntaggedUsernames`.
+- Workflows that never set it post without tags, as before.
+
 ## 0.13.0
 
 - Post > Validate checks a post without creating it. It takes the same fields as Create and sends them to `POST /social-posts/validate`, which runs every check Create runs, plus the ones that usually fail only at publish time: TikTok creator limits and video length, the YouTube upload quota, expired Instagram and Threads tokens, Mastodon attachment limits, Pinterest boards and X credits. Nothing is scheduled or published, and any key that can save drafts may run it.

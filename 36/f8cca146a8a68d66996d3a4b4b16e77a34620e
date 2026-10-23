@@ -1,0 +1,27 @@
+nodes/AdaptlyPost/AdaptlyPost.node.ts
+  s_0f001a19c97a17::t_1e22050b9850f2 734,742,751
+  s_0f001a19c97a17::t_5e9b94b2c55ba6 530-560
+nodes/AdaptlyPost/post.properties.ts
+  s_0f001a19c97a17::t_97958e2cb40242 558-601
+  s_0f001a19c97a17::t_139eb4bba17874 557
+README.md
+  s_0f001a19c97a17::t_9161f36526f11e 31
+test/createPostInstagramUserTags.test.js
+  s_0f001a19c97a17::t_07f7ad7b66ee4a 1-94
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.5",
+  "base_commit_sha": "36f8cca146a8a68d66996d3a4b4b16e77a34620e",
+  "prompts": {},
+  "sessions": {
+    "s_0f001a19c97a17": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "2258b7bb-f524-4a93-bf0c-14370b7f1895",
+        "model": "claude-opus-5-5"
+      },
+      "human_author": "Taras Shynkarenko <taras.shinkarenko@gmail.com>"
+    }
+  }
+}

@@ -1,9 +1,5 @@
 # Changelog
 
-## 0.16.0
-
-- First Comments take Facebook (up to 8000 characters) and Instagram (up to 2200). They work on feed posts and Reels, not on stories. A Facebook Page or Instagram account connected before Facebook and Instagram got first comments needs one reconnect in AdaptlyPost; until then its comment fails and `firstCommentError` says so.
-
 ## 0.15.0
 
 - Create and Validate post to Telegram. Telegram channels and groups connected in AdaptlyPost show up in Accounts under their chat title, and the selected ones are sent as `telegramConnectionIds`.
@@ -11,6 +7,7 @@
 - Video Thumbnails take Telegram, with an image only.
 - Telegram takes no first comments or image shapes, has no fields of its own under Additional Fields, and has no analytics.
 - Account > Get Many lists Telegram chats, and Account > Remove disconnects one.
+- First Comments take Facebook (up to 8000 characters) and Instagram (up to 2200). They work on feed posts and Reels, not on stories. A Facebook Page or Instagram account connected before Facebook and Instagram got first comments needs one reconnect in AdaptlyPost; until then its comment fails and `firstCommentError` says so.
 
 ## 0.14.0
 

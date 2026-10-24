@@ -23,7 +23,7 @@ Create takes the accounts to post from (a multi-select loaded from your workspac
 
 Additional Fields also hold the options below. Each one applies to every selected account of its platform.
 
-- First Comments: one comment per platform, posted from the same account about 10 seconds after the post goes out (60 seconds on YouTube). Works on LinkedIn, X, Threads, Bluesky, Mastodon and YouTube. A failed comment never fails the post; the platform entry carries `firstCommentStatus` and `firstCommentError`.
+- First Comments: one comment per platform, posted from the same account about 10 seconds after the post goes out (60 seconds on YouTube). Works on LinkedIn, X, Threads, Bluesky, Mastodon, YouTube, Facebook and Instagram (not on stories). A failed comment never fails the post; the platform entry carries `firstCommentStatus` and `firstCommentError`.
 - Video Thumbnails: a thumbnail per platform for a video post. YouTube, Facebook, LinkedIn and Telegram take an image, TikTok takes a video frame, and Instagram and Pinterest take either.
 - Image Shape: reframes every image of an image or carousel post to square, portrait, vertical or landscape on Instagram or TikTok, by cropping from the center or padding with a blurred copy.
 - Instagram Share to Story and Facebook Share to Story: also publish the same media as a story. The story is its own entry in the post's platforms.

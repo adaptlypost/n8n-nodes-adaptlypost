@@ -254,6 +254,18 @@ export const postProperties: INodeProperties[] = [
 								type: 'options',
 								options: [
 									{ name: 'Bluesky', value: 'BLUESKY', description: 'Up to 300 characters, posted as a reply' },
+									{
+										name: 'Facebook',
+										value: 'FACEBOOK',
+										description:
+											'Up to 8000 characters. A Page connected before Facebook got first comments needs one reconnect.',
+									},
+									{
+										name: 'Instagram',
+										value: 'INSTAGRAM',
+										description:
+											'Up to 2200 characters. An account connected before Instagram got first comments needs one reconnect.',
+									},
 									{ name: 'LinkedIn', value: 'LINKEDIN', description: 'Up to 1250 characters' },
 									{ name: 'Mastodon', value: 'MASTODON', description: 'Up to 500 characters, posted as a reply' },
 									{ name: 'Threads', value: 'THREADS', description: 'Up to 500 characters, posted as a reply' },

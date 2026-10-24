@@ -1,6 +1,6 @@
 # n8n-nodes-adaptlypost
 
-n8n community node for [AdaptlyPost](https://adaptlypost.com). Publish and schedule posts to Instagram, TikTok, YouTube, X, Facebook, LinkedIn, Pinterest, Threads, Bluesky, Mastodon and Google Business Profile from a workflow, and start workflows when a post publishes or fails.
+n8n community node for [AdaptlyPost](https://adaptlypost.com). Publish and schedule posts to Instagram, TikTok, YouTube, X, Facebook, LinkedIn, Pinterest, Threads, Bluesky, Mastodon, Google Business Profile and Telegram from a workflow, and start workflows when a post publishes or fails.
 
 [n8n](https://n8n.io/) is a [fair-code licensed](https://docs.n8n.io/sustainable-use-license/) workflow automation platform.
 
@@ -24,7 +24,7 @@ Create takes the accounts to post from (a multi-select loaded from your workspac
 Additional Fields also hold the options below. Each one applies to every selected account of its platform.
 
 - First Comments: one comment per platform, posted from the same account about 10 seconds after the post goes out (60 seconds on YouTube). Works on LinkedIn, X, Threads, Bluesky, Mastodon and YouTube. A failed comment never fails the post; the platform entry carries `firstCommentStatus` and `firstCommentError`.
-- Video Thumbnails: a thumbnail per platform for a video post. YouTube, Facebook and LinkedIn take an image, TikTok takes a video frame, and Instagram and Pinterest take either.
+- Video Thumbnails: a thumbnail per platform for a video post. YouTube, Facebook, LinkedIn and Telegram take an image, TikTok takes a video frame, and Instagram and Pinterest take either.
 - Image Shape: reframes every image of an image or carousel post to square, portrait, vertical or landscape on Instagram or TikTok, by cropping from the center or padding with a blurred copy.
 - Instagram Share to Story and Facebook Share to Story: also publish the same media as a story. The story is its own entry in the post's platforms.
 - Instagram Collaborators: up to 3 usernames, one per line.
@@ -40,6 +40,8 @@ Additional Fields also hold the options below. Each one applies to every selecte
 - X Keep Links Clickable: only for AppSumo lifetime deals. By default AdaptlyPost breaks links in X text, because X charges far more for a post with a link.
 
 Google Business Profile locations show up in the account picker. A Google Business Profile post is text or one JPEG or PNG image, up to 1500 characters. Without settings a location gets a standard update. Add Google Business Profile under Additional Fields to post an event or an offer, or to add a button such as Book or Call. Event dates are in the business's local time, written as `2026-10-01` or `2026-10-01T18:00`.
+
+Telegram channels and groups connected in AdaptlyPost show up in the account picker under their chat title. A Telegram post is text up to 4096 characters, with up to 10 JPEG, PNG or WebP images (10 MB each) or one MP4 or MOV video up to 50 MB. A caption over 1024 characters goes out as its own message after the media. A video can take an image thumbnail under Video Thumbnails. Telegram takes no first comments or image shapes, has no fields of its own under Additional Fields, and has no analytics. Account > Remove disconnects a Telegram chat like any other account.
 
 Create answers as soon as AdaptlyPost queues the post, and the post publishes afterwards. By default the node succeeds even when a platform rejects the post later. Turn on Wait for Result under Additional Fields to wait for the outcome. The node then reads `GET /social-posts/{id}/results` every 5 seconds until the post is `COMPLETED`, `PARTIAL_FAILURE` or `FAILED`, for up to Wait Timeout (Seconds), which is 300 unless you change it.
 

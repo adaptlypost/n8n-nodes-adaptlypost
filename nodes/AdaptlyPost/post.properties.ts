@@ -114,7 +114,7 @@ export const postProperties: INodeProperties[] = [
 		default: 'TEXT',
 		displayOptions: { show: postBodyFields },
 		description:
-			'Document is LinkedIn only and takes exactly one PDF, PPT, PPTX, DOC or DOCX file in Media URLs. AdaptlyPost refuses a Document post on another platform, with two or more files, or with an image or video, and refuses a document file on any other content type. Google Business Profile takes Text or Image, with one JPEG or PNG image up to 5 MB.',
+			'Document is LinkedIn only and takes exactly one PDF, PPT, PPTX, DOC or DOCX file in Media URLs. AdaptlyPost refuses a Document post on another platform, with two or more files, or with an image or video, and refuses a document file on any other content type. Google Business Profile takes Text or Image, with one JPEG or PNG image up to 5 MB. Telegram takes Text, Image, Video or Carousel, with up to 10 JPEG, PNG or WebP images (10 MB each) or one MP4 or MOV video up to 50 MB.',
 	},
 	{
 		displayName: 'Text',
@@ -124,7 +124,7 @@ export const postProperties: INodeProperties[] = [
 		default: '',
 		displayOptions: { show: postBodyFields },
 		description:
-			"Caption shared across the selected platforms. On LinkedIn, mention a company page with @[Page Name](urn:li:organization:12345), using the page's numeric ID and its name exactly as LinkedIn shows it.",
+			"Caption shared across the selected platforms. On LinkedIn, mention a company page with @[Page Name](urn:li:organization:12345), using the page's numeric ID and its name exactly as LinkedIn shows it. Telegram takes up to 4096 characters, and a caption over 1024 characters goes out as its own message after the media.",
 	},
 	{
 		displayName: 'Media URLs',
@@ -702,6 +702,7 @@ export const postProperties: INodeProperties[] = [
 									{ name: 'Instagram', value: 'INSTAGRAM', description: 'Image or video frame' },
 									{ name: 'LinkedIn', value: 'LINKEDIN', description: 'Image only' },
 									{ name: 'Pinterest', value: 'PINTEREST', description: 'Image or video frame' },
+									{ name: 'Telegram', value: 'TELEGRAM', description: 'Image only' },
 									{ name: 'TikTok', value: 'TIKTOK', description: 'Video frame only' },
 									{ name: 'YouTube', value: 'YOUTUBE', description: 'Image only' },
 								],

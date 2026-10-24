@@ -1,5 +1,13 @@
 # Changelog
 
+## 0.15.0
+
+- Create and Validate post to Telegram. Telegram channels and groups connected in AdaptlyPost show up in Accounts under their chat title, and the selected ones are sent as `telegramConnectionIds`.
+- A Telegram post is text up to 4096 characters, with up to 10 JPEG, PNG or WebP images (10 MB each) or one MP4 or MOV video up to 50 MB. A caption over 1024 characters goes out as its own message after the media.
+- Video Thumbnails take Telegram, with an image only.
+- Telegram takes no first comments or image shapes, has no fields of its own under Additional Fields, and has no analytics.
+- Account > Get Many lists Telegram chats, and Account > Remove disconnects one.
+
 ## 0.14.0
 
 - Create and Validate take Instagram User Tags under Additional Fields, sent as `instagramConfigs[].userTags`. Add one row per public account to tag, up to 20, with a username and an optional X and Y from 0 to 1 measured from the top-left corner of the image. A feed image needs X and Y on every tag, a story takes both or neither, and a video ignores them and tags the account on the whole video. Tags work on one image or one video; a carousel or several stories with tags are refused.

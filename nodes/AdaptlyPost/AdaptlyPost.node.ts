@@ -567,6 +567,19 @@ function readInstagramUserTags(
 	});
 }
 
+function readTumblrTags(this: IExecuteFunctions, options: IDataObject, i: number): string[] {
+	const tags = asLines(options.tumblrTags ?? '').filter(Boolean);
+	const withComma = tags.find((tag) => tag.includes(','));
+	if (withComma) {
+		throw new NodeOperationError(
+			this.getNode(),
+			`Tumblr Tags take one tag per line, without commas: "${withComma}"`,
+			{ itemIndex: i },
+		);
+	}
+	return tags;
+}
+
 async function readPlatformThumbnails(
 	this: IExecuteFunctions,
 	options: IDataObject,
@@ -800,6 +813,19 @@ async function buildPostBody(
 			connectionId,
 			documentTitle: options.linkedinDocumentTitle,
 		}));
+	}
+	if (targets.platforms.includes('TUMBLR')) {
+		const tags = readTumblrTags.call(this, options, i);
+		const title = String(options.tumblrTitle ?? '').trim();
+		const sourceUrl = String(options.tumblrSourceUrl ?? '').trim();
+		if (tags.length || title || sourceUrl) {
+			body.tumblrConfigs = ids('TUMBLR').map((connectionId) => ({
+				connectionId,
+				tags: tags.length ? tags : undefined,
+				title: title || undefined,
+				sourceUrl: sourceUrl || undefined,
+			}));
+		}
 	}
 	if (targets.platforms.includes('YOUTUBE')) {
 		body.youtubeConfigs = ids('YOUTUBE').map((connectionId) => ({

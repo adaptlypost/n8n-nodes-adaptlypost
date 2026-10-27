@@ -114,7 +114,7 @@ export const postProperties: INodeProperties[] = [
 		default: 'TEXT',
 		displayOptions: { show: postBodyFields },
 		description:
-			'Document is LinkedIn only and takes exactly one PDF, PPT, PPTX, DOC or DOCX file in Media URLs. AdaptlyPost refuses a Document post on another platform, with two or more files, or with an image or video, and refuses a document file on any other content type. Google Business Profile takes Text or Image, with one JPEG or PNG image up to 5 MB. Telegram takes Text, Image, Video or Carousel, with up to 10 JPEG, PNG or WebP images (10 MB each) or one MP4 or MOV video up to 50 MB.',
+			'Document is LinkedIn only and takes exactly one PDF, PPT, PPTX, DOC or DOCX file in Media URLs. AdaptlyPost refuses a Document post on another platform, with two or more files, or with an image or video, and refuses a document file on any other content type. Google Business Profile takes Text or Image, with one JPEG or PNG image up to 5 MB. Telegram takes Text, Image, Video or Carousel, with up to 10 JPEG, PNG or WebP images (10 MB each) or one MP4 or MOV video up to 50 MB. Tumblr takes Text, Image, Video or Carousel, with up to 30 JPEG or PNG images (10 MB each) or one MP4 video up to 500 MB and 10 minutes; it refuses WebP.',
 	},
 	{
 		displayName: 'Text',
@@ -124,7 +124,7 @@ export const postProperties: INodeProperties[] = [
 		default: '',
 		displayOptions: { show: postBodyFields },
 		description:
-			"Caption shared across the selected platforms. On LinkedIn, mention a company page with @[Page Name](urn:li:organization:12345), using the page's numeric ID and its name exactly as LinkedIn shows it. Telegram takes up to 4096 characters, and a caption over 1024 characters goes out as its own message after the media.",
+			"Caption shared across the selected platforms. On LinkedIn, mention a company page with @[Page Name](urn:li:organization:12345), using the page's numeric ID and its name exactly as LinkedIn shows it. Telegram takes up to 4096 characters, and a caption over 1024 characters goes out as its own message after the media. Tumblr takes up to 32768 characters.",
 	},
 	{
 		displayName: 'Media URLs',
@@ -406,7 +406,7 @@ export const postProperties: INodeProperties[] = [
 				default: '',
 				placeholder: 'A red bicycle leaning on a brick wall',
 				description:
-					'Alt text for each image, one line per image in the same order as Media URLs. Leave a line empty to skip an image. Sent to X, Bluesky, Mastodon, LinkedIn, Facebook, Instagram and Threads; Pinterest uses the first line.',
+					'Alt text for each image, one line per image in the same order as Media URLs. Leave a line empty to skip an image. Sent to X, Bluesky, Mastodon, Tumblr, LinkedIn, Facebook, Instagram and Threads; Pinterest uses the first line.',
 			},
 			{
 				displayName: 'Image Shape',
@@ -692,6 +692,34 @@ export const postProperties: INodeProperties[] = [
 				description: 'IANA name such as America/New_York, stored with the post for display',
 			},
 			{
+				displayName: 'Tumblr Source URL',
+				name: 'tumblrSourceUrl',
+				type: 'string',
+				default: '',
+				placeholder: 'https://example.com/article',
+				description:
+					'Link Tumblr shows as the source of the post, up to 2048 characters. Applied to every selected Tumblr blog.',
+			},
+			{
+				displayName: 'Tumblr Tags',
+				name: 'tumblrTags',
+				type: 'string',
+				typeOptions: { rows: 3 },
+				default: '',
+				placeholder: 'photography',
+				description:
+					'Tags for the post, one tag per line, up to 30 tags of up to 140 characters each. A tag can contain spaces but not a comma, and a line with a comma stops the item. A leading # is dropped, and a tag repeated with different capitalization is kept once. Applied to every selected Tumblr blog.',
+			},
+			{
+				displayName: 'Tumblr Title',
+				name: 'tumblrTitle',
+				type: 'string',
+				default: '',
+				placeholder: 'Our spring collection',
+				description:
+					'Heading shown above the media and the text, up to 4096 characters. Applied to every selected Tumblr blog.',
+			},
+			{
 				displayName: 'Video Thumbnails',
 				name: 'platformThumbnails',
 				type: 'fixedCollection',
@@ -967,6 +995,7 @@ export const postProperties: INodeProperties[] = [
 					{ name: 'Telegram', value: 'TELEGRAM' },
 					{ name: 'Threads', value: 'THREADS' },
 					{ name: 'TikTok', value: 'TIKTOK' },
+					{ name: 'Tumblr', value: 'TUMBLR' },
 					{ name: 'X (Twitter)', value: 'TWITTER' },
 					{ name: 'YouTube', value: 'YOUTUBE' },
 				],

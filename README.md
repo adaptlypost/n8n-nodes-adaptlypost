@@ -1,6 +1,6 @@
 # n8n-nodes-adaptlypost
 
-n8n community node for [AdaptlyPost](https://adaptlypost.com). Publish and schedule posts to Instagram, TikTok, YouTube, X, Facebook, LinkedIn, Pinterest, Threads, Bluesky, Mastodon, Google Business Profile and Telegram from a workflow, and start workflows when a post publishes or fails.
+n8n community node for [AdaptlyPost](https://adaptlypost.com). Publish and schedule posts to Instagram, TikTok, YouTube, X, Facebook, LinkedIn, Pinterest, Threads, Bluesky, Mastodon, Google Business Profile, Telegram and Tumblr from a workflow, and start workflows when a post publishes or fails.
 
 [n8n](https://n8n.io/) is a [fair-code licensed](https://docs.n8n.io/sustainable-use-license/) workflow automation platform.
 
@@ -19,7 +19,7 @@ Follow the [installation guide](https://docs.n8n.io/integrations/community-nodes
 | Analytics | Get Overview, Get Timeseries, Get Platform Breakdown, Get Post Analytics |
 | Recurring Post | Get, Get Many, Pause, Resume, Delete |
 
-Create takes the accounts to post from (a multi-select loaded from your workspace), the text, and media URLs. Media is copied from the URL you give into AdaptlyPost storage before the post is created, so any public JPEG, PNG, WebP, MP4 or QuickTime link works. TikTok privacy, Pinterest board, Instagram and Facebook post type, YouTube title and privacy, and LinkedIn document title live under Additional Fields.
+Create takes the accounts to post from (a multi-select loaded from your workspace), the text, and media URLs. Media is copied from the URL you give into AdaptlyPost storage before the post is created, so any public JPEG, PNG, WebP, MP4 or QuickTime link works. TikTok privacy, Pinterest board, Instagram and Facebook post type, YouTube title and privacy, LinkedIn document title, and Tumblr tags, title and source URL live under Additional Fields.
 
 Additional Fields also hold the options below. Each one applies to every selected account of its platform.
 
@@ -37,11 +37,16 @@ Additional Fields also hold the options below. Each one applies to every selecte
 - Facebook Image Layout: Grid (the default) shows the images as a photo grid. Carousel shows them as swipeable cards, each opening its own link, and needs 2 to 5 images, no videos and Facebook Post Type Feed.
 - Facebook Carousel Cards: one card per image, in the same order as Media URLs, up to 5, each with a link and an optional title and description. Facebook shows the card image and title only for links to a website the page owns; for other links the post fails with an explanation.
 - YouTube AI Generated: YouTube shows its "Altered or synthetic content" label on the video. Use it for realistic content that was generated or altered, such as an AI voice, an AI avatar or edited footage that looks real. Works on videos and Shorts.
+- Tumblr Tags: one tag per line, up to 30 tags of up to 140 characters each. A tag can contain spaces but not a comma, and a line with a comma stops the item. AdaptlyPost drops a leading # and keeps a tag once when it repeats with different capitalization.
+- Tumblr Title: a heading shown above the media and the text, up to 4096 characters.
+- Tumblr Source URL: the link Tumblr shows as the source of the post, up to 2048 characters.
 - X Keep Links Clickable: only for AppSumo lifetime deals. By default AdaptlyPost breaks links in X text, because X charges far more for a post with a link.
 
 Google Business Profile locations show up in the account picker. A Google Business Profile post is text or one JPEG or PNG image, up to 1500 characters. Without settings a location gets a standard update. Add Google Business Profile under Additional Fields to post an event or an offer, or to add a button such as Book or Call. Event dates are in the business's local time, written as `2026-10-01` or `2026-10-01T18:00`.
 
 Telegram channels and groups connected in AdaptlyPost show up in the account picker under their chat title. A Telegram post is text up to 4096 characters, with up to 10 JPEG, PNG or WebP images (10 MB each) or one MP4 or MOV video up to 50 MB. A caption over 1024 characters goes out as its own message after the media. A video can take an image thumbnail under Video Thumbnails. Telegram takes no first comments or image shapes, has no fields of its own under Additional Fields, and has no analytics. Account > Remove disconnects a Telegram chat like any other account.
+
+Tumblr blogs connected in AdaptlyPost show up in the account picker. A Tumblr post is text up to 32768 characters, up to 30 JPEG or PNG images (10 MB each), or one MP4 video up to 500 MB and 10 minutes. Tumblr refuses WebP. Image Alt Texts reach Tumblr. Tumblr takes no first comments, video thumbnails or image shapes, and has no analytics. Post > Get returns `tumblrTags`, `tumblrTitle` and `tumblrSourceUrl` on each Tumblr platform entry.
 
 Create answers as soon as AdaptlyPost queues the post, and the post publishes afterwards. By default the node succeeds even when a platform rejects the post later. Turn on Wait for Result under Additional Fields to wait for the outcome. The node then reads `GET /social-posts/{id}/results` every 5 seconds until the post is `COMPLETED`, `PARTIAL_FAILURE` or `FAILED`, for up to Wait Timeout (Seconds), which is 300 unless you change it.
 

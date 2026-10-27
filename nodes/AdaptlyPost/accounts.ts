@@ -15,6 +15,7 @@ export const PLATFORMS = [
 	'MASTODON',
 	'GOOGLE_BUSINESS',
 	'TELEGRAM',
+	'TUMBLR',
 ] as const;
 
 export type Platform = (typeof PLATFORMS)[number];
@@ -32,6 +33,7 @@ export const PLATFORM_LABELS: Record<Platform, string> = {
 	MASTODON: 'Mastodon',
 	GOOGLE_BUSINESS: 'Google Business Profile',
 	TELEGRAM: 'Telegram',
+	TUMBLR: 'Tumblr',
 };
 
 export interface SocialAccount {
@@ -57,6 +59,7 @@ const CONNECTION_ID_FIELD: Record<Exclude<Platform, 'FACEBOOK'>, string> = {
 	MASTODON: 'mastodonConnectionIds',
 	GOOGLE_BUSINESS: 'googleBusinessConnectionIds',
 	TELEGRAM: 'telegramConnectionIds',
+	TUMBLR: 'tumblrConnectionIds',
 };
 
 export const connectionField = (platform: Platform): string =>

@@ -76,7 +76,7 @@ export const analyticsProperties: INodeProperties[] = [
 			show: { resource: ['analytics'], operation: ['overview', 'timeseries', 'posts'] },
 		},
 		description:
-			'Leave empty for every platform with analytics. Mastodon and Telegram have no analytics.',
+			'Leave empty for every platform with analytics. Mastodon, Telegram and Tumblr have no analytics.',
 	},
 	{
 		displayName: 'Granularity',

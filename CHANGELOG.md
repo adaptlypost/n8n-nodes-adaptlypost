@@ -1,5 +1,13 @@
 # Changelog
 
+## 0.16.0
+
+- Create and Validate post to Tumblr. Tumblr blogs connected in AdaptlyPost show up in Accounts, and the selected ones are sent as `tumblrConnectionIds`.
+- A Tumblr post is text up to 32768 characters, up to 30 JPEG or PNG images (10 MB each), or one MP4 video up to 500 MB and 10 minutes. Image Alt Texts reach Tumblr.
+- Additional Fields take Tumblr Tags, Tumblr Title and Tumblr Source URL, sent as `tumblrConfigs` for every selected Tumblr blog. Tumblr Tags take one tag per line, up to 30, and a line with a comma stops the item.
+- Tumblr takes no first comments, video thumbnails or image shapes, and has no analytics.
+- Post > Get Many filters by Tumblr, Post > Get returns `tumblrTags`, `tumblrTitle` and `tumblrSourceUrl` on each Tumblr platform entry, and Account > Remove disconnects a Tumblr blog.
+
 ## 0.15.0
 
 - Create and Validate post to Telegram. Telegram channels and groups connected in AdaptlyPost show up in Accounts under their chat title, and the selected ones are sent as `telegramConnectionIds`.

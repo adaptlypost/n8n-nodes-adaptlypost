@@ -670,7 +670,7 @@ export const postProperties: INodeProperties[] = [
 				type: 'dateTime',
 				default: '',
 				description:
-					'Leave empty to publish immediately. Scheduling and publishing both need an Editor or Admin key.',
+					"Leave empty to publish immediately. With Save as Draft on, this is the draft's planned date: the post stays a draft, and Publish Draft schedules it for that date. Scheduling and publishing both need an Editor or Admin key.",
 			},
 			{
 				displayName: 'TikTok Privacy',
@@ -932,13 +932,25 @@ export const postProperties: INodeProperties[] = [
 		],
 	},
 	{
+		displayName: 'Publish Now',
+		name: 'publishNow',
+		type: 'boolean',
+		default: false,
+		displayOptions: { show: { resource: ['post'], operation: ['publishDraft'] } },
+		description:
+			'Whether to publish immediately, even when the draft has a planned date. Needs an Editor or Admin key.',
+	},
+	{
 		displayName: 'Scheduled At',
 		name: 'scheduledAt',
 		type: 'dateTime',
 		default: '',
-		displayOptions: { show: { resource: ['post'], operation: ['publishDraft'] } },
+		displayOptions: {
+			show: { resource: ['post'], operation: ['publishDraft'] },
+			hide: { publishNow: [true] },
+		},
 		description:
-			'Leave empty to publish immediately. Scheduling and publishing both need an Editor or Admin key.',
+			"Leave empty to use the draft's planned date: a draft with a future planned date is scheduled for it, and any other draft publishes immediately. A past time publishes immediately. Scheduling and publishing both need an Editor or Admin key.",
 	},
 	{
 		displayName: 'Timezone',

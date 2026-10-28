@@ -324,16 +324,21 @@ async function runOperation(
 				'GET',
 				`/social-posts/${this.getNodeParameter('postId', i)}/results`,
 			);
-		case 'publishDraft':
+		case 'publishDraft': {
+			const publishNow = this.getNodeParameter('publishNow', i, false) === true;
 			return adaptlyPostApiRequest.call(
 				this,
 				'POST',
 				`/social-posts/${this.getNodeParameter('postId', i)}/publish`,
 				{
-					scheduledAt: this.getNodeParameter('scheduledAt', i, '') || undefined,
+					scheduledAt: publishNow
+						? undefined
+						: this.getNodeParameter('scheduledAt', i, '') || undefined,
 					timezone: this.getNodeParameter('timezone', i, 'UTC') || 'UTC',
+					...(publishNow && { publishNow: true }),
 				},
 			);
+		}
 		case 'retry':
 			return adaptlyPostApiRequest.call(
 				this,

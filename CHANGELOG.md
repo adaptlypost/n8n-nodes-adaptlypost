@@ -1,5 +1,11 @@
 # Changelog
 
+## 0.17.0
+
+- Post > Publish Draft has a new Publish Now option, sent as `publishNow`. It publishes the draft right away even when the draft has a planned date. Scheduled At is hidden while it is on.
+- Publish Draft with Scheduled At empty now schedules a draft for its planned date when that date is still in the future, and publishes any other draft right away. Before, it always published right away.
+- Post > Create with Save as Draft on keeps Scheduled At as the draft's planned date. The post stays a draft until Publish Draft.
+
 ## 0.16.0
 
 - Create and Validate post to Tumblr. Tumblr blogs connected in AdaptlyPost show up in Accounts, and the selected ones are sent as `tumblrConnectionIds`.

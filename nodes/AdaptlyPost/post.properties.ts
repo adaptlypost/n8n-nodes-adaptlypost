@@ -268,7 +268,6 @@ export const postProperties: INodeProperties[] = [
 									},
 									{ name: 'LinkedIn', value: 'LINKEDIN', description: 'Up to 1250 characters' },
 									{ name: 'Mastodon', value: 'MASTODON', description: 'Up to 500 characters, posted as a reply' },
-									{ name: 'Threads', value: 'THREADS', description: 'Up to 500 characters, posted as a reply' },
 									{
 										name: 'X (Twitter)',
 										value: 'TWITTER',

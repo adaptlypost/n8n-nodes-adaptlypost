@@ -1,5 +1,15 @@
 # Changelog
 
+## 0.18.0
+
+- Create and Validate post to WordPress. Self-hosted WordPress sites connected in AdaptlyPost show up in Accounts, one per site, and the selected ones are sent as `wordpressConnectionIds`.
+- The text becomes the body of a published blog post, up to 100,000 characters, with up to 20 media items: images up to 20 MB and video up to 500 MB. The first image is the featured image. Image Alt Texts reach WordPress.
+- Additional Fields take WordPress Title, WordPress Excerpt, WordPress Categories and WordPress Tags, sent as `wordpressConfigs`. WordPress Categories is a dropdown of the selected sites' categories, and a category picked from it goes only to its own site. WordPress Tags take one tag per line.
+- Account > Get WordPress Categories lists a site's categories with their `id`, `name` and `parentId`.
+- WordPress takes no first comments, video thumbnails or image shapes, and has no analytics. Post > Get Many filters by WordPress, and Post > Get returns `wordpressTitle`, `wordpressExcerpt`, `wordpressCategoryIds` and `wordpressTags` on each WordPress platform entry.
+- Additional Fields take YouTube Audio Language, sent as `youtubeConfigs[].defaultAudioLanguage`: the language spoken in the video's original audio, such as `pt-BR`.
+- Video Thumbnails take a video frame on YouTube, Facebook, LinkedIn and Telegram too.
+
 ## 0.17.1
 
 - AdaptlyPost and AdaptlyPost Trigger are listed under the Marketing & Content category in n8n. Before, n8n dropped the unrecognised Marketing category.

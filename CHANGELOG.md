@@ -1,5 +1,9 @@
 # Changelog
 
+## 0.18.1
+
+- First Comments no longer offer Threads. Meta has not approved replies for the AdaptlyPost Threads app, so a Threads first comment always failed. First comments on LinkedIn, X, Bluesky, Mastodon, YouTube, Facebook and Instagram work as before.
+
 ## 0.18.0
 
 - Create and Validate post to WordPress. Self-hosted WordPress sites connected in AdaptlyPost show up in Accounts, one per site, and the selected ones are sent as `wordpressConnectionIds`.

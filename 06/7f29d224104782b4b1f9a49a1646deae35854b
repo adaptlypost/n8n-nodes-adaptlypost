@@ -1,0 +1,29 @@
+README.md
+  s_905ea2da8b0246::t_5dd412439b07bc 3,18,22,27,43-47,52,56-57
+nodes/AdaptlyPost/AdaptlyPost.node.ts
+  s_905ea2da8b0246::t_3dc755624b447f 17-18,97-103,143-153,196-197,294-302,619-651,899-918,920,927
+nodes/AdaptlyPost/accounts.ts
+  s_905ea2da8b0246::t_edaa4a520f1572 19,38,65,189-244
+nodes/AdaptlyPost/analytics.properties.ts
+  s_905ea2da8b0246::t_f5a721aae506e7 79
+nodes/AdaptlyPost/post.properties.ts
+  s_905ea2da8b0246::t_e6f328cb34dee4 117,127,409,730,741,743,745,747,803-842,859-867,1060
+test/createPostWordPress.test.js
+  s_905ea2da8b0246::t_b9502c2e92b474 1-214
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.5",
+  "base_commit_sha": "067f29d224104782b4b1f9a49a1646deae35854b",
+  "prompts": {},
+  "sessions": {
+    "s_905ea2da8b0246": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "fc922e67-f995-4eb1-927f-e7ad607d44c3",
+        "model": "claude-opus-5-5"
+      },
+      "human_author": "Taras Shynkarenko <taras.shinkarenko@gmail.com>"
+    }
+  }
+}

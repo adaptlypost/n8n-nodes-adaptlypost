@@ -1,5 +1,9 @@
 # Changelog
 
+## 0.17.1
+
+- AdaptlyPost and AdaptlyPost Trigger are listed under the Marketing & Content category in n8n. Before, n8n dropped the unrecognised Marketing category.
+
 ## 0.17.0
 
 - Post > Publish Draft has a new Publish Now option, sent as `publishNow`. It publishes the draft right away even when the draft has a planned date. Scheduled At is hidden while it is on.

@@ -16,6 +16,7 @@ export const PLATFORMS = [
 	'GOOGLE_BUSINESS',
 	'TELEGRAM',
 	'TUMBLR',
+	'WORDPRESS',
 ] as const;
 
 export type Platform = (typeof PLATFORMS)[number];
@@ -34,6 +35,7 @@ export const PLATFORM_LABELS: Record<Platform, string> = {
 	GOOGLE_BUSINESS: 'Google Business Profile',
 	TELEGRAM: 'Telegram',
 	TUMBLR: 'Tumblr',
+	WORDPRESS: 'WordPress',
 };
 
 export interface SocialAccount {
@@ -60,6 +62,7 @@ const CONNECTION_ID_FIELD: Record<Exclude<Platform, 'FACEBOOK'>, string> = {
 	GOOGLE_BUSINESS: 'googleBusinessConnectionIds',
 	TELEGRAM: 'telegramConnectionIds',
 	TUMBLR: 'tumblrConnectionIds',
+	WORDPRESS: 'wordpressConnectionIds',
 };
 
 export const connectionField = (platform: Platform): string =>
@@ -178,6 +181,62 @@ export async function getPinterestBoards(
 			options.push({
 				name: targets.length > 1 ? `${board.name} (${account.displayName})` : board.name,
 				value: board.id,
+			});
+		}
+	}
+	return options;
+}
+
+export interface WordPressCategory {
+	id: number;
+	name: string;
+	parentId: number | null;
+}
+
+export const wordpressCategoryChoice = (siteId: string, categoryId: number): string =>
+	`${siteId}:${categoryId}`;
+
+export async function getWordPressAccounts(
+	this: ILoadOptionsFunctions,
+): Promise<INodePropertyOptions[]> {
+	const { accounts } = await adaptlyPostApiRequest.call(this, 'GET', '/social-accounts');
+	return (accounts as SocialAccount[])
+		.filter((account) => account.platform === 'WORDPRESS')
+		.sort((a, b) => disconnectedLast(a) - disconnectedLast(b))
+		.map((account) =>
+			account.status === 'unauthorized'
+				? {
+						name: `${account.displayName} - Disconnected`,
+						value: account.id,
+						description: 'Reconnect this site in AdaptlyPost before listing its categories',
+					}
+				: { name: account.displayName, value: account.id },
+		);
+}
+
+export async function getWordPressCategories(
+	this: ILoadOptionsFunctions,
+): Promise<INodePropertyOptions[]> {
+	const selected = this.getCurrentNodeParameter('accountIds');
+	const selectedIds = Array.isArray(selected) ? selected : [];
+	const { accounts } = await adaptlyPostApiRequest.call(this, 'GET', '/social-accounts');
+	const sites = (accounts as SocialAccount[]).filter(
+		(account) => account.platform === 'WORDPRESS' && account.status === 'active',
+	);
+	const chosen = sites.filter((account) => selectedIds.includes(account.id));
+	const targets = chosen.length ? chosen : sites;
+
+	const options: INodePropertyOptions[] = [];
+	for (const site of targets) {
+		const { categories } = await adaptlyPostApiRequest.call(
+			this,
+			'GET',
+			`/social-accounts/${encodeURIComponent(site.id)}/wordpress-categories`,
+		);
+		for (const category of categories as WordPressCategory[]) {
+			options.push({
+				name: targets.length > 1 ? `${category.name} (${site.displayName})` : category.name,
+				value: wordpressCategoryChoice(site.id, category.id),
 			});
 		}
 	}

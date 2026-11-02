@@ -114,7 +114,7 @@ export const postProperties: INodeProperties[] = [
 		default: 'TEXT',
 		displayOptions: { show: postBodyFields },
 		description:
-			'Document is LinkedIn only and takes exactly one PDF, PPT, PPTX, DOC or DOCX file in Media URLs. AdaptlyPost refuses a Document post on another platform, with two or more files, or with an image or video, and refuses a document file on any other content type. Google Business Profile takes Text or Image, with one JPEG or PNG image up to 5 MB. Telegram takes Text, Image, Video or Carousel, with up to 10 JPEG, PNG or WebP images (10 MB each) or one MP4 or MOV video up to 50 MB. Tumblr takes Text, Image, Video or Carousel, with up to 30 JPEG or PNG images (10 MB each) or one MP4 video up to 500 MB and 10 minutes; it refuses WebP.',
+			'Document is LinkedIn only and takes exactly one PDF, PPT, PPTX, DOC or DOCX file in Media URLs. AdaptlyPost refuses a Document post on another platform, with two or more files, or with an image or video, and refuses a document file on any other content type. Google Business Profile takes Text or Image, with one JPEG or PNG image up to 5 MB. Telegram takes Text, Image, Video or Carousel, with up to 10 JPEG, PNG or WebP images (10 MB each) or one MP4 or MOV video up to 50 MB. Tumblr takes Text, Image, Video or Carousel, with up to 30 JPEG or PNG images (10 MB each) or one MP4 video up to 500 MB and 10 minutes; it refuses WebP. WordPress takes Text, Image, Video or Carousel, with up to 20 media items: images up to 20 MB and video up to 500 MB.',
 	},
 	{
 		displayName: 'Text',
@@ -124,7 +124,7 @@ export const postProperties: INodeProperties[] = [
 		default: '',
 		displayOptions: { show: postBodyFields },
 		description:
-			"Caption shared across the selected platforms. On LinkedIn, mention a company page with @[Page Name](urn:li:organization:12345), using the page's numeric ID and its name exactly as LinkedIn shows it. Telegram takes up to 4096 characters, and a caption over 1024 characters goes out as its own message after the media. Tumblr takes up to 32768 characters.",
+			"Caption shared across the selected platforms. On LinkedIn, mention a company page with @[Page Name](urn:li:organization:12345), using the page's numeric ID and its name exactly as LinkedIn shows it. Telegram takes up to 4096 characters, and a caption over 1024 characters goes out as its own message after the media. Tumblr takes up to 32768 characters. WordPress takes up to 100,000 characters and publishes them as the body of a blog post: blank lines start new paragraphs and bare links become clickable.",
 	},
 	{
 		displayName: 'Media URLs',
@@ -406,7 +406,7 @@ export const postProperties: INodeProperties[] = [
 				default: '',
 				placeholder: 'A red bicycle leaning on a brick wall',
 				description:
-					'Alt text for each image, one line per image in the same order as Media URLs. Leave a line empty to skip an image. Sent to X, Bluesky, Mastodon, Tumblr, LinkedIn, Facebook, Instagram and Threads; Pinterest uses the first line.',
+					'Alt text for each image, one line per image in the same order as Media URLs. Leave a line empty to skip an image. Sent to X, Bluesky, Mastodon, Tumblr, WordPress, LinkedIn, Facebook, Instagram and Threads; Pinterest uses the first line.',
 			},
 			{
 				displayName: 'Image Shape',
@@ -727,7 +727,7 @@ export const postProperties: INodeProperties[] = [
 				placeholder: 'Add Video Thumbnail',
 				default: {},
 				description:
-					'A thumbnail for one platform of a Video post, one entry per platform. Not for Facebook or Instagram stories.',
+					'A thumbnail for one platform of a Video post, one entry per platform. Not for Facebook or Instagram stories. TikTok takes only a video frame.',
 				options: [
 					{
 						displayName: 'Thumbnail',
@@ -738,13 +738,13 @@ export const postProperties: INodeProperties[] = [
 								name: 'platform',
 								type: 'options',
 								options: [
-									{ name: 'Facebook', value: 'FACEBOOK', description: 'Image only' },
+									{ name: 'Facebook', value: 'FACEBOOK', description: 'Image or video frame' },
 									{ name: 'Instagram', value: 'INSTAGRAM', description: 'Image or video frame' },
-									{ name: 'LinkedIn', value: 'LINKEDIN', description: 'Image only' },
+									{ name: 'LinkedIn', value: 'LINKEDIN', description: 'Image or video frame' },
 									{ name: 'Pinterest', value: 'PINTEREST', description: 'Image or video frame' },
-									{ name: 'Telegram', value: 'TELEGRAM', description: 'Image only' },
+									{ name: 'Telegram', value: 'TELEGRAM', description: 'Image or video frame' },
 									{ name: 'TikTok', value: 'TIKTOK', description: 'Video frame only' },
-									{ name: 'YouTube', value: 'YOUTUBE', description: 'Image only' },
+									{ name: 'YouTube', value: 'YOUTUBE', description: 'Image or video frame' },
 								],
 								default: 'YOUTUBE',
 							},
@@ -801,6 +801,46 @@ export const postProperties: INodeProperties[] = [
 					'How long Wait for Result waits before the item fails. A long video can take a few minutes. The post keeps publishing after the timeout, and Get Results returns its outcome later.',
 			},
 			{
+				displayName: 'WordPress Category Names or IDs',
+				name: 'wordpressCategories',
+				type: 'multiOptions',
+				default: [],
+				typeOptions: {
+					loadOptionsMethod: 'getWordPressCategories',
+					loadOptionsDependsOn: ['accountIds'],
+				},
+				description:
+					'Categories to file the post under, up to 50, listed from the WordPress sites selected in Accounts. A category picked from the list goes only to the site it belongs to. Leave empty to use the site\'s default category. A plain category ID in an expression goes to every selected WordPress site. Choose from the list, or specify IDs using an <a href="https://docs.n8n.io/code/expressions/">expression</a>.',
+			},
+			{
+				displayName: 'WordPress Excerpt',
+				name: 'wordpressExcerpt',
+				type: 'string',
+				typeOptions: { rows: 2 },
+				default: '',
+				description:
+					'Summary WordPress shows in post lists and feeds, up to 1000 characters. Applied to every selected WordPress site.',
+			},
+			{
+				displayName: 'WordPress Tags',
+				name: 'wordpressTags',
+				type: 'string',
+				typeOptions: { rows: 3 },
+				default: '',
+				placeholder: 'product updates',
+				description:
+					'Tag names, one tag per line, up to 50 tags of up to 100 characters each. A tag the site does not have yet is created when the WordPress user may manage tags, and skipped otherwise. Applied to every selected WordPress site.',
+			},
+			{
+				displayName: 'WordPress Title',
+				name: 'wordpressTitle',
+				type: 'string',
+				default: '',
+				placeholder: 'What we shipped this week',
+				description:
+					'Post title, up to 300 characters. Leave empty to use the first line of the text, cut to 100 characters. Applied to every selected WordPress site.',
+			},
+			{
 				displayName: 'X Keep Links Clickable',
 				name: 'twitterKeepLinks',
 				type: 'boolean',
@@ -815,6 +855,15 @@ export const postProperties: INodeProperties[] = [
 				default: false,
 				description:
 					'Whether to disclose altered or synthetic content, such as an AI voice, an AI avatar or realistic footage that was generated or edited. YouTube shows its "Altered or synthetic content" label on the video. Works on videos and Shorts.',
+			},
+			{
+				displayName: 'YouTube Audio Language',
+				name: 'youtubeAudioLanguage',
+				type: 'string',
+				default: '',
+				placeholder: 'pt-BR',
+				description:
+					'Language spoken in the video\'s original audio, as a BCP-47 tag such as en, pt-BR or es-419, so YouTube does not treat it as another language. Does not turn off automatic dubbing.',
 			},
 			{
 				displayName: 'YouTube Format',
@@ -1008,6 +1057,7 @@ export const postProperties: INodeProperties[] = [
 					{ name: 'Threads', value: 'THREADS' },
 					{ name: 'TikTok', value: 'TIKTOK' },
 					{ name: 'Tumblr', value: 'TUMBLR' },
+					{ name: 'WordPress', value: 'WORDPRESS' },
 					{ name: 'X (Twitter)', value: 'TWITTER' },
 					{ name: 'YouTube', value: 'YOUTUBE' },
 				],

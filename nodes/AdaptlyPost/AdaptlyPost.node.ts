@@ -14,6 +14,8 @@ import {
 	getInstagramAccounts,
 	getPinterestAccounts,
 	getPinterestBoards,
+	getWordPressAccounts,
+	getWordPressCategories,
 	groupAccountsByPlatform,
 	type PinterestBoard,
 	type Platform,
@@ -93,6 +95,13 @@ export class AdaptlyPost implements INodeType {
 							'List the boards of a Pinterest account, secret boards included. Use a board ID as Pinterest Board when creating a post.',
 					},
 					{
+						name: 'Get WordPress Categories',
+						value: 'getWordPressCategories',
+						action: 'Get wordpress categories',
+						description:
+							'List the categories of a WordPress site. Use a category ID in WordPress Categories when creating a post.',
+					},
+					{
 						name: 'Remove',
 						value: 'remove',
 						action: 'Remove an account',
@@ -130,6 +139,17 @@ export class AdaptlyPost implements INodeType {
 				displayOptions: { show: { resource: ['account'], operation: ['getPinterestBoards'] } },
 				description:
 					'Pinterest account to list boards for. Choose from the list, or specify an ID using an <a href="https://docs.n8n.io/code/expressions/">expression</a>.',
+			},
+			{
+				displayName: 'WordPress Site Name or ID',
+				name: 'wordpressAccountId',
+				type: 'options',
+				required: true,
+				default: '',
+				typeOptions: { loadOptionsMethod: 'getWordPressAccounts' },
+				displayOptions: { show: { resource: ['account'], operation: ['getWordPressCategories'] } },
+				description:
+					'WordPress site to list categories for. Choose from the list, or specify an ID using an <a href="https://docs.n8n.io/code/expressions/">expression</a>.',
 			},
 			{
 				displayName: 'Account Name or ID',
@@ -173,6 +193,8 @@ export class AdaptlyPost implements INodeType {
 			getInstagramAccounts,
 			getPinterestAccounts,
 			getPinterestBoards,
+			getWordPressAccounts,
+			getWordPressCategories,
 		},
 	};
 
@@ -268,6 +290,15 @@ async function runOperation(
 				`/social-accounts/${encodeURIComponent(accountId)}/pinterest-boards`,
 			);
 			return boards as IDataObject[];
+		}
+		if (operation === 'getWordPressCategories') {
+			const accountId = this.getNodeParameter('wordpressAccountId', i) as string;
+			const { categories } = await adaptlyPostApiRequest.call(
+				this,
+				'GET',
+				`/social-accounts/${encodeURIComponent(accountId)}/wordpress-categories`,
+			);
+			return categories as IDataObject[];
 		}
 		if (operation === 'remove') {
 			const accountId = this.getNodeParameter('accountId', i) as string;
@@ -585,6 +616,39 @@ function readTumblrTags(this: IExecuteFunctions, options: IDataObject, i: number
 	return tags;
 }
 
+function readWordPressCategories(
+	this: IExecuteFunctions,
+	options: IDataObject,
+	siteIds: string[],
+	i: number,
+): Map<string, number[]> {
+	const bySite = new Map<string, number[]>(siteIds.map((siteId) => [siteId, []]));
+	const add = (siteId: string, categoryId: number) => {
+		const ids = bySite.get(siteId);
+		if (ids && !ids.includes(categoryId)) ids.push(categoryId);
+	};
+	for (const entry of asList(options.wordpressCategories ?? [])) {
+		const picked = /^(.+):(\d+)$/.exec(entry);
+		if (picked) {
+			add(picked[1], Number(picked[2]));
+			continue;
+		}
+		if (/^\d+$/.test(entry) && Number(entry) >= 1) {
+			for (const siteId of siteIds) add(siteId, Number(entry));
+			continue;
+		}
+		throw new NodeOperationError(
+			this.getNode(),
+			`WordPress Categories take category IDs, got "${entry}"`,
+			{
+				itemIndex: i,
+				description: 'Pick categories from the list, or list them with Account > Get WordPress Categories.',
+			},
+		);
+	}
+	return bySite;
+}
+
 async function readPlatformThumbnails(
 	this: IExecuteFunctions,
 	options: IDataObject,
@@ -832,13 +896,35 @@ async function buildPostBody(
 			}));
 		}
 	}
+	if (targets.platforms.includes('WORDPRESS')) {
+		const siteIds = ids('WORDPRESS');
+		const categories = readWordPressCategories.call(this, options, siteIds, i);
+		const title = String(options.wordpressTitle ?? '').trim();
+		const excerpt = String(options.wordpressExcerpt ?? '').trim();
+		const tags = asLines(options.wordpressTags ?? '').filter(Boolean);
+		const configs = siteIds.map((connectionId) => {
+			const categoryIds = categories.get(connectionId) ?? [];
+			return {
+				connectionId,
+				title: title || undefined,
+				excerpt: excerpt || undefined,
+				categoryIds: categoryIds.length ? categoryIds : undefined,
+				tags: tags.length ? tags : undefined,
+			};
+		});
+		if (configs.some((config) => config.title || config.excerpt || config.categoryIds || config.tags)) {
+			body.wordpressConfigs = configs;
+		}
+	}
 	if (targets.platforms.includes('YOUTUBE')) {
+		const audioLanguage = String(options.youtubeAudioLanguage ?? '').trim();
 		body.youtubeConfigs = ids('YOUTUBE').map((connectionId) => ({
 			connectionId,
 			videoTitle: options.youtubeTitle || undefined,
 			privacyStatus: options.youtubePrivacyStatus || undefined,
 			postType: options.youtubePostType || undefined,
 			aiGenerated: options.youtubeAiGenerated === true ? true : undefined,
+			defaultAudioLanguage: audioLanguage || undefined,
 		}));
 	}
 

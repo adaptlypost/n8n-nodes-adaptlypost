@@ -1,0 +1,18 @@
+CHANGELOG.md
+  h_d76ceef5a88fa0 3-6
+package-lock.json
+  h_d76ceef5a88fa0 3,9
+package.json
+  h_d76ceef5a88fa0 3
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.5",
+  "base_commit_sha": "ddabf4e42e57a9d7fcd7ddabffa14565bad6916c",
+  "prompts": {},
+  "humans": {
+    "h_d76ceef5a88fa0": {
+      "author": "Taras Shynkarenko <taras.shinkarenko@gmail.com>"
+    }
+  }
+}

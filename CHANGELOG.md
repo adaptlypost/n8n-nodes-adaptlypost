@@ -1,5 +1,10 @@
 # Changelog
 
+## 0.19.0
+
+- Additional Fields take Facebook AI Generated, sent as `facebookConfigs[].aiGenerated`. Facebook shows its "AI info" label on the post. Facebook takes it only on a video posted as a Reel or a Story, and the story Share to Story adds to a video reel carries it too; any other post is refused with a 400.
+- Post > Get returns `facebookAiGenerated` on each Facebook platform entry.
+
 ## 0.18.1
 
 - First Comments no longer offer Threads. Meta has not approved replies for the AdaptlyPost Threads app, so a Threads first comment always failed. First comments on LinkedIn, X, Bluesky, Mastodon, YouTube, Facebook and Instagram work as before.

@@ -1,5 +1,9 @@
 # Changelog
 
+## 0.19.1
+
+- Facebook AI Generated now works on every Video post, whatever its Facebook Post Type, since Facebook publishes every video as a reel. Photos, carousels and text posts are still refused.
+
 ## 0.19.0
 
 - Additional Fields take Facebook AI Generated, sent as `facebookConfigs[].aiGenerated`. Facebook shows its "AI info" label on the post. Facebook takes it only on a video posted as a Reel or a Story, and the story Share to Story adds to a video reel carries it too; any other post is refused with a 400.

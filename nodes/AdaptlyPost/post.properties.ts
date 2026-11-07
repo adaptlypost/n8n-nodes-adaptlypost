@@ -150,7 +150,7 @@ export const postProperties: INodeProperties[] = [
 				type: 'boolean',
 				default: false,
 				description:
-					'Whether to disclose that the video was made or edited with AI. Facebook shows its "AI info" label on the post. Works only on a Video post with Facebook Post Type Reel or Story, and a story made with Facebook Share to Story carries the label too.',
+					'Whether to disclose that the video was made or edited with AI. Facebook shows its "AI info" label on the post. Works on every Video post, whatever its Facebook Post Type, since Facebook publishes every video as a reel, and a video story carries the label too. Photos, carousels and text posts are refused.',
 			},
 			{
 				displayName: 'Facebook Carousel Cards',

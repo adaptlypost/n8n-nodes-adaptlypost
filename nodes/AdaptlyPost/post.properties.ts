@@ -145,6 +145,14 @@ export const postProperties: INodeProperties[] = [
 		displayOptions: { show: postBodyFields },
 		options: [
 			{
+				displayName: 'Facebook AI Generated',
+				name: 'facebookAiGenerated',
+				type: 'boolean',
+				default: false,
+				description:
+					'Whether to disclose that the video was made or edited with AI. Facebook shows its "AI info" label on the post. Works only on a Video post with Facebook Post Type Reel or Story, and a story made with Facebook Share to Story carries the label too.',
+			},
+			{
 				displayName: 'Facebook Carousel Cards',
 				name: 'facebookCarouselCards',
 				type: 'fixedCollection',

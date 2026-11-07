@@ -851,6 +851,7 @@ async function buildPostBody(
 		targets.platforms.includes('FACEBOOK') &&
 		(options.facebookPostType ||
 			options.facebookShareToStory === true ||
+			options.facebookAiGenerated === true ||
 			options.facebookTextFormatPresetId ||
 			options.facebookImageLayout)
 	) {
@@ -869,6 +870,7 @@ async function buildPostBody(
 			textFormatPresetId: options.facebookTextFormatPresetId || undefined,
 			imageLayout: options.facebookImageLayout || undefined,
 			carouselCards: carouselCards.length ? carouselCards : undefined,
+			aiGenerated: options.facebookAiGenerated === true ? true : undefined,
 		}));
 	}
 	const googleBusiness = fixedCollectionEntries(options.googleBusiness, 'settings')[0];

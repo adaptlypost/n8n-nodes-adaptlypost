@@ -1,5 +1,9 @@
 # Changelog
 
+## 0.22.0
+
+- Additional Fields take YouTube Schedule on YouTube. The video goes to YouTube as soon as the post is scheduled, as a private video that YouTube publishes itself at the scheduled time, so a Test & Compare can be set up in YouTube Studio first. Privacy must be Public and the post must not repeat. While the video waits on YouTube the post can't be updated or unscheduled, and deleting it before its time also deletes the video.
+
 ## 0.21.0
 
 - New Inbox resource for comments, mentions, direct messages and Google Business Profile reviews. Get Many Comments, Get Many Mentions, Get Many Conversations and Get Many Reviews filter by accounts, platforms, statuses, Since and search text; comments also by post, and reviews by rating and whether they have a reply. Return All follows `nextCursor` to the last page, and Return Page returns one page with its `nextCursor`.

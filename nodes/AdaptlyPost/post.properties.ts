@@ -250,7 +250,7 @@ export const postProperties: INodeProperties[] = [
 				placeholder: 'Add First Comment',
 				default: {},
 				description:
-					'A comment posted from the same account about 10 seconds after the post goes out (60 seconds on YouTube), one per platform. A comment that fails never fails the post: read firstCommentStatus and firstCommentError on the platform. A platform the post does not go to, a private or made for kids YouTube video and a Facebook or Instagram story are refused.',
+					'A comment posted from the same account about 10 seconds after the post goes out (60 seconds on YouTube), one per platform. A comment that fails never fails the post: read firstCommentStatus and firstCommentError on the platform. A platform the post does not go to, a platform that also has Thread Replies, a private or made for kids YouTube video and a Facebook or Instagram story are refused.',
 				options: [
 					{
 						displayName: 'Comment',
@@ -678,6 +678,80 @@ export const postProperties: INodeProperties[] = [
 				default: '',
 				description:
 					"Leave empty to publish immediately. With Save as Draft on, this is the draft's planned date: the post stays a draft, and Publish Draft schedules it for that date. Scheduling and publishing both need an Editor or Admin key.",
+			},
+			{
+				displayName: 'Thread Replies',
+				name: 'threadReplies',
+				type: 'fixedCollection',
+				typeOptions: { multipleValues: true },
+				placeholder: 'Add Thread',
+				default: {},
+				description:
+					'Turns the post into a thread, one entry per platform. The post opens the thread, and each reply goes out from the same account as a reply to the one before, up to 25 replies. Replies start about 10 seconds after the post goes out, 2 seconds apart. A thread that fails never fails the post: read threadStatus, threadReplyIds and threadError on the platform. A platform the post does not go to, or one that also has a First Comment, is refused.',
+				options: [
+					{
+						displayName: 'Thread',
+						name: 'thread',
+						values: [
+							{
+								displayName: 'Platform',
+								name: 'platform',
+								type: 'options',
+								options: [
+									{ name: 'Bluesky', value: 'BLUESKY', description: 'Up to 300 characters per reply' },
+									{
+										name: 'Mastodon',
+										value: 'MASTODON',
+										description: "Up to 500 characters per reply, or the instance's own limit",
+									},
+									{ name: 'Threads', value: 'THREADS', description: 'Up to 500 characters per reply' },
+									{
+										name: 'X (Twitter)',
+										value: 'TWITTER',
+										description:
+											'Up to 280 characters per reply, more on X Premium. Not retried if it fails, and a lifetime deal account pays for each reply like any X post.',
+									},
+								],
+								default: 'TWITTER',
+							},
+							{
+								displayName: 'Replies',
+								name: 'replies',
+								type: 'fixedCollection',
+								typeOptions: { multipleValues: true, sortable: true },
+								placeholder: 'Add Reply',
+								default: {},
+								description: 'The replies in the order they go out, up to 25',
+								options: [
+									{
+										displayName: 'Reply',
+										name: 'reply',
+										values: [
+											{
+												displayName: 'Text',
+												name: 'text',
+												type: 'string',
+												typeOptions: { rows: 2 },
+												default: '',
+												description: 'May be empty when the reply has images',
+											},
+											{
+												displayName: 'Image URLs',
+												name: 'imageUrls',
+												type: 'string',
+												typeOptions: { rows: 2 },
+												default: '',
+												placeholder: 'https://example.com/chart.png',
+												description:
+													'Public URLs of up to 4 JPEG, PNG, GIF or WebP images, one URL per line. Each image is copied into AdaptlyPost storage before posting. Videos are refused.',
+											},
+										],
+									},
+								],
+							},
+						],
+					},
+				],
 			},
 			{
 				displayName: 'TikTok Privacy',

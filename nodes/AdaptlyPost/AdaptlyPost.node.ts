@@ -21,7 +21,7 @@ import {
 	type Platform,
 	type SocialAccount,
 } from './accounts';
-import { uploadMediaFromUrl } from './media';
+import { uploadMediaFromUrl, uploadReplyImageFromUrl } from './media';
 import { postProperties } from './post.properties';
 import { DEFAULT_WAIT_TIMEOUT_SECONDS, PostResultError, waitForPostResults } from './postResults';
 import { analyticsProperties } from './analytics.properties';
@@ -649,6 +649,32 @@ function readWordPressCategories(
 	return bySite;
 }
 
+async function readThreadReplies(
+	this: IExecuteFunctions,
+	options: IDataObject,
+	i: number,
+): Promise<IDataObject[]> {
+	const threads: IDataObject[] = [];
+	for (const thread of fixedCollectionEntries(options.threadReplies, 'thread')) {
+		const texts: string[] = [];
+		const mediaUrls: string[][] = [];
+		for (const reply of fixedCollectionEntries(thread.replies, 'reply')) {
+			texts.push(String(reply.text ?? ''));
+			const images: string[] = [];
+			for (const sourceUrl of asLines(reply.imageUrls).filter(Boolean)) {
+				images.push(await uploadReplyImageFromUrl.call(this, sourceUrl, i));
+			}
+			mediaUrls.push(images);
+		}
+		threads.push({
+			platform: thread.platform,
+			texts,
+			mediaUrls: mediaUrls.some((images) => images.length > 0) ? mediaUrls : undefined,
+		});
+	}
+	return threads;
+}
+
 async function readPlatformThumbnails(
 	this: IExecuteFunctions,
 	options: IDataObject,
@@ -793,8 +819,9 @@ async function buildPostBody(
 			}),
 		),
 		platformThumbnails: await readPlatformThumbnails.call(this, options, i),
+		threadReplies: await readThreadReplies.call(this, options, i),
 	};
-	for (const field of ['firstComments', 'platformAspectRatios', 'platformThumbnails']) {
+	for (const field of ['firstComments', 'platformAspectRatios', 'platformThumbnails', 'threadReplies']) {
 		if ((body[field] as IDataObject[]).length === 0) delete body[field];
 	}
 

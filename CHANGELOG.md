@@ -1,5 +1,12 @@
 # Changelog
 
+## 0.20.0
+
+- Additional Fields take Thread Replies, sent as `threadReplies`. Each entry picks X, Threads, Bluesky or Mastodon and lists its replies in order, up to 25. The post opens the thread, and each reply goes out from the same account as a reply to the one before. A reply holds up to 280 characters on X (more on X Premium), 500 on Threads, 300 on Bluesky and 500 on Mastodon (or the instance's limit).
+- Each reply takes Image URLs, one URL per line, up to 4 JPEG, PNG, GIF or WebP images. The node copies them into AdaptlyPost storage and sends them as `mediaUrls`, parallel to the texts, only when at least one reply has an image. A reply with images may leave its text empty, and a video on a reply is refused.
+- A platform with a thread cannot also have a first comment, and AdaptlyPost refuses one the post does not go to.
+- A thread that fails never fails the post. Post > Get returns `threadReplies`, `threadReplyMediaUrls`, `threadStatus`, `threadReplyIds`, `threadError` and `threadPublishedAt` on each platform entry.
+
 ## 0.19.1
 
 - Facebook AI Generated now works on every Video post, whatever its Facebook Post Type, since Facebook publishes every video as a reel. Photos, carousels and text posts are still refused.

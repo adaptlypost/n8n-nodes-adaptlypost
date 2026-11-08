@@ -3,7 +3,7 @@ import { NodeOperationError } from 'n8n-workflow';
 
 import { adaptlyPostApiRequest } from './transport';
 
-const SUPPORTED_MEDIA_TYPES = {
+const POST_MEDIA_TYPES = {
 	'image/jpeg': '.jpg',
 	'image/png': '.png',
 	'image/webp': '.webp',
@@ -16,19 +16,52 @@ const SUPPORTED_MEDIA_TYPES = {
 	'application/vnd.openxmlformats-officedocument.wordprocessingml.document': '.docx',
 } as const;
 
-type MediaType = keyof typeof SUPPORTED_MEDIA_TYPES;
-
-const isSupported = (value: string): value is MediaType => value in SUPPORTED_MEDIA_TYPES;
+const REPLY_IMAGE_TYPES = {
+	'image/jpeg': '.jpg',
+	'image/png': '.png',
+	'image/gif': '.gif',
+	'image/webp': '.webp',
+} as const;
 
 interface UploadSlot {
 	uploadUrl: string;
 	publicUrl: string;
 }
 
-export async function uploadMediaFromUrl(
+export function uploadMediaFromUrl(
 	this: IExecuteFunctions,
 	sourceUrl: string,
 	itemIndex: number,
+): Promise<string> {
+	return uploadFromUrl.call(
+		this,
+		sourceUrl,
+		itemIndex,
+		POST_MEDIA_TYPES,
+		'AdaptlyPost accepts JPEG, PNG, WebP, MP4, QuickTime, and PDF, PPT, PPTX, DOC or DOCX for LinkedIn document posts.',
+	);
+}
+
+export function uploadReplyImageFromUrl(
+	this: IExecuteFunctions,
+	sourceUrl: string,
+	itemIndex: number,
+): Promise<string> {
+	return uploadFromUrl.call(
+		this,
+		sourceUrl,
+		itemIndex,
+		REPLY_IMAGE_TYPES,
+		'A thread reply takes JPEG, PNG, GIF or WebP images.',
+	);
+}
+
+async function uploadFromUrl(
+	this: IExecuteFunctions,
+	sourceUrl: string,
+	itemIndex: number,
+	extensions: Record<string, string>,
+	accepted: string,
 ): Promise<string> {
 	const source = await this.helpers.httpRequest({
 		url: sourceUrl,
@@ -37,10 +70,13 @@ export async function uploadMediaFromUrl(
 	});
 	const headers = source.headers as Record<string, string | undefined>;
 	const mimeType = (headers['content-type'] ?? '').split(';')[0].trim().toLowerCase();
-	if (!isSupported(mimeType)) {
+	const extension = Object.prototype.hasOwnProperty.call(extensions, mimeType)
+		? extensions[mimeType]
+		: undefined;
+	if (!extension) {
 		throw new NodeOperationError(
 			this.getNode(),
-			`${sourceUrl} is served as "${mimeType || 'unknown'}". AdaptlyPost accepts JPEG, PNG, WebP, MP4, QuickTime, and PDF, PPT, PPTX, DOC or DOCX for LinkedIn document posts.`,
+			`${sourceUrl} is served as "${mimeType || 'unknown'}". ${accepted}`,
 			{ itemIndex },
 		);
 	}
@@ -48,7 +84,7 @@ export async function uploadMediaFromUrl(
 	const bytes = Buffer.from(source.body as ArrayBuffer);
 	const stem = new URL(sourceUrl).pathname.split('/').pop()?.replace(/\.[^.]*$/, '') || 'upload';
 	const { urls } = await adaptlyPostApiRequest.call(this, 'POST', '/upload-urls', {
-		files: [{ fileName: `${stem}${SUPPORTED_MEDIA_TYPES[mimeType]}`, mimeType }],
+		files: [{ fileName: `${stem}${extension}`, mimeType }],
 	});
 	const slot = (urls as UploadSlot[])[0];
 

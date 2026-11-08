@@ -1,5 +1,16 @@
 # Changelog
 
+## 0.21.0
+
+- New Inbox resource for comments, mentions, direct messages and Google Business Profile reviews. Get Many Comments, Get Many Mentions, Get Many Conversations and Get Many Reviews filter by accounts, platforms, statuses, Since and search text; comments also by post, and reviews by rating and whether they have a reply. Return All follows `nextCursor` to the last page, and Return Page returns one page with its `nextCursor`.
+- Inbox writes: Reply to Comment, Hide Comment, Unhide Comment, Like Comment, Unlike Comment, Delete Comment, Reply to Mention, Send Message, Reply to Review, Delete Review Reply and Set Status (1 to 100 IDs, one per line). Get Comment, Get Conversation, Get Summary and Refresh read the rest. Reading needs `inbox.read`, answering needs `inbox.reply` and an active plan.
+- Inbox refusals come with an explanation: `inbox_reconnect_required` asks for a reconnect in AdaptlyPost, `inbox_rate_limited` and `inbox_platform_error` say to try again later, and On Error > Continue returns the `code`.
+- AdaptlyPost Trigger fires on New Comment, Comment Replied, New Mention, Message Received and New Review, and on Image Completed and Image Failed. The webhook is registered with the selected events and receives only those, and a changed selection is applied when the workflow is activated again. Inbox events arrive within about 10 minutes of the item appearing.
+- First Comments take Threads again, up to 500 characters, posted as a reply.
+- Additional Fields take Platform Texts, a Video Thumbnail URL and Video Thumbnail Frame for every platform, TikTok Title, Caption, Allow Comments, Allow Duet, Allow Stitch, Send as Draft, AI Generated, Branded Content, Branded Content Own Brand and Auto Add Music, YouTube Tags, License, Category ID, Playlist ID, Notify Subscribers, Allow Embedding and Made for Kids, X Quote Of, LinkedIn Reshare Of, Pinterest Title and Facebook Video Title.
+- Media URLs accept GIF images, which post to Facebook, X, Bluesky, Mastodon, LinkedIn and Tumblr.
+- Post > Retry Failed Platforms takes Platforms to Retry, one platform name or entry ID per line. Analytics operations take Accounts. Account > Check asks the platform whether an account still works.
+
 ## 0.20.0
 
 - Additional Fields take Thread Replies, sent as `threadReplies`. Each entry picks X, Threads, Bluesky or Mastodon and lists its replies in order, up to 25. The post opens the thread, and each reply goes out from the same account as a reply to the one before. A reply holds up to 280 characters on X (more on X Premium), 500 on Threads, 300 on Bluesky and 500 on Mastodon (or the instance's limit).

@@ -1,6 +1,6 @@
 # n8n-nodes-adaptlypost
 
-n8n community node for [AdaptlyPost](https://adaptlypost.com). Publish and schedule posts to Instagram, TikTok, YouTube, X, Facebook, LinkedIn, Pinterest, Threads, Bluesky, Mastodon, Google Business Profile, Telegram, Tumblr and WordPress from a workflow, and start workflows when a post publishes or fails.
+n8n community node for [AdaptlyPost](https://adaptlypost.com). Publish and schedule posts to Instagram, TikTok, YouTube, X, Facebook, LinkedIn, Pinterest, Threads, Bluesky, Mastodon, Google Business Profile, Telegram, Tumblr and WordPress from a workflow, read and answer comments, mentions, direct messages and Google reviews, and start workflows when a post publishes or fails or when something new reaches the inbox.
 
 [n8n](https://n8n.io/) is a [fair-code licensed](https://docs.n8n.io/sustainable-use-license/) workflow automation platform.
 
@@ -15,17 +15,20 @@ Follow the [installation guide](https://docs.n8n.io/integrations/community-nodes
 | Resource | Operations |
 | --- | --- |
 | Post | Create, Validate, Get, Get Many, Get Results, Publish Draft, Retry Failed Platforms, Unschedule, Delete |
-| Account | Get Many, Get Pinterest Boards, Get WordPress Categories, Remove, Search Instagram Audio |
+| Account | Check, Get Many, Get Pinterest Boards, Get WordPress Categories, Remove, Search Instagram Audio |
 | Analytics | Get Overview, Get Timeseries, Get Platform Breakdown, Get Post Analytics |
+| Inbox | Get Summary, Refresh, Get Many Comments, Get Comment, Reply to Comment, Hide Comment, Unhide Comment, Like Comment, Unlike Comment, Delete Comment, Get Many Mentions, Reply to Mention, Get Many Conversations, Get Conversation, Send Message, Get Many Reviews, Reply to Review, Delete Review Reply, Set Status |
 | Recurring Post | Get, Get Many, Pause, Resume, Delete |
 
-Create takes the accounts to post from (a multi-select loaded from your workspace), the text, and media URLs. Media is copied from the URL you give into AdaptlyPost storage before the post is created, so any public JPEG, PNG, WebP, MP4 or QuickTime link works. TikTok privacy, Pinterest board, Instagram and Facebook post type, YouTube title, privacy and audio language, LinkedIn document title, Tumblr tags, title and source URL, and WordPress title, excerpt, categories and tags live under Additional Fields.
+Create takes the accounts to post from (a multi-select loaded from your workspace), the text, and media URLs. Media is copied from the URL you give into AdaptlyPost storage before the post is created, so any public JPEG, PNG, WebP, GIF, MP4 or QuickTime link works. GIF images post to Facebook, X, Bluesky, Mastodon, LinkedIn and Tumblr; other platforms refuse them. TikTok privacy, title, caption and interaction settings, Pinterest board and title, Instagram and Facebook post type, Facebook video title, YouTube title, privacy, audio language, tags, license, category and playlist, LinkedIn document title, Tumblr tags, title and source URL, and WordPress title, excerpt, categories and tags live under Additional Fields.
 
 Additional Fields also hold the options below. Each one applies to every selected account of its platform.
 
-- First Comments: one comment per platform, posted from the same account about 10 seconds after the post goes out (60 seconds on YouTube). Works on LinkedIn, X, Bluesky, Mastodon, YouTube, Facebook and Instagram (not on stories). A failed comment never fails the post; the platform entry carries `firstCommentStatus` and `firstCommentError`.
+- Platform Texts: a different text for one platform, one entry per platform. A platform without an entry uses Text.
+- First Comments: one comment per platform, posted from the same account about 10 seconds after the post goes out (60 seconds on YouTube). Works on LinkedIn (1250 characters), X (280), Threads (500), Bluesky (300), Mastodon (500), YouTube (10000), Facebook (8000) and Instagram (2200), not on stories. On X, Threads, Bluesky and Mastodon the comment is a reply. A failed comment never fails the post; the platform entry carries `firstCommentStatus` and `firstCommentError`.
 - Thread Replies: turns the post into a thread on X, Threads, Bluesky or Mastodon, one entry per platform. The post opens the thread, and each reply goes out from the same account as a reply to the one before, up to 25 replies. A reply holds up to 300 characters on Bluesky, 500 on Threads, 500 on Mastodon (or the instance's limit) and 280 on X (more on X Premium). Each reply takes up to 4 JPEG, PNG, GIF or WebP image URLs, one per line, copied into AdaptlyPost storage like the post's media; a reply with images may leave its text empty. A platform can have a thread or a first comment, not both. A failed thread never fails the post; Post > Get returns `threadReplies`, `threadReplyMediaUrls`, `threadStatus` (`PENDING`, `PUBLISHED` or `FAILED`), `threadReplyIds`, `threadError` and `threadPublishedAt` on each platform entry.
-- Video Thumbnails: a thumbnail per platform for a video post. YouTube, Facebook, Instagram, LinkedIn, Pinterest and Telegram take an image or a video frame, and TikTok takes only a video frame.
+- Video Thumbnail URL and Video Thumbnail Frame (Ms): a thumbnail for the video on every platform that takes one, as an image or a frame. The image wins everywhere except TikTok.
+- Video Thumbnails: a thumbnail per platform for a video post, overriding the two fields above. YouTube, Facebook, Instagram, LinkedIn, Pinterest and Telegram take an image or a video frame, and TikTok takes only a video frame.
 - Image Shape: reframes every image of an image or carousel post to square, portrait, vertical or landscape on Instagram or TikTok, by cropping from the center or padding with a blurred copy.
 - Instagram Share to Story and Facebook Share to Story: also publish the same media as a story. The story is its own entry in the post's platforms.
 - Instagram Collaborators: up to 3 usernames, one per line.
@@ -46,6 +49,12 @@ Additional Fields also hold the options below. Each one applies to every selecte
 - WordPress Categories: a dropdown of the categories of the selected WordPress sites, also available as Account > Get WordPress Categories. A category picked from the list goes only to the site it belongs to. A plain category ID sent from an expression goes to every selected site. Left empty, WordPress uses the site's default category.
 - WordPress Tags: tag names, one per line, up to 50 tags of up to 100 characters each. A tag the site does not have yet is created when the WordPress user may manage tags, and skipped otherwise.
 - YouTube Audio Language: the language spoken in the video's original audio, as a BCP-47 tag such as `en`, `pt-BR` or `es-419`, so YouTube does not treat the video as another language. It does not turn off YouTube's automatic dubbing.
+- TikTok Title, TikTok Caption, TikTok Allow Comments, TikTok Allow Duet, TikTok Allow Stitch, TikTok Send as Draft, TikTok AI Generated, TikTok Branded Content, TikTok Branded Content Own Brand and TikTok Auto Add Music: sent in `tiktokConfigs`. A switch you do not add is left to AdaptlyPost's default; one you add is sent as set, off included.
+- YouTube Tags (one per line, up to 20), YouTube License, YouTube Category ID, YouTube Playlist ID, YouTube Notify Subscribers, YouTube Allow Embedding and YouTube Made for Kids: sent in `youtubeConfigs`.
+- X Quote Of: quote one of the account's own X posts, by link or ID, with the text as the commentary.
+- LinkedIn Reshare Of: reshare a LinkedIn post by its `urn:li:share:` or `urn:li:ugcPost:` URN or its link, with the text as the commentary.
+- Pinterest Title: the pin title, up to 100 characters.
+- Facebook Video Title: the title of a Facebook video, up to 255 characters.
 - X Keep Links Clickable: only for AppSumo lifetime deals. By default AdaptlyPost breaks links in X text, because X charges far more for a post with a link.
 
 Google Business Profile locations show up in the account picker. A Google Business Profile post is text or one JPEG or PNG image, up to 1500 characters. Without settings a location gets a standard update. Add Google Business Profile under Additional Fields to post an event or an offer, or to add a button such as Book or Call. Event dates are in the business's local time, written as `2026-10-01` or `2026-10-01T18:00`.
@@ -64,7 +73,7 @@ Create answers as soon as AdaptlyPost queues the post, and the post publishes af
 - With On Error set to Continue, a failed or timed out item is returned with `error`, `status` and `results` and the workflow goes on. With Continue (using error output) it goes to the error output.
 - A draft or a scheduled post returns right away. Use the AdaptlyPost Trigger to react when a scheduled post publishes or fails.
 
-Leave Retry On Fail off when Wait for Result is on. Running the node again creates a second post. Retry the failed accounts of the first one with Post > Retry Failed Platforms.
+Leave Retry On Fail off when Wait for Result is on. Running the node again creates a second post. Retry the failed accounts of the first one with Post > Retry Failed Platforms. Platforms to Retry narrows the retry to some platforms, one per line, by platform name such as `BLUESKY` or by the entry ID from Get Results.
 
 Validate takes the same fields as Create and creates nothing. It sends the post to `POST /social-posts/validate`, which runs every check Create runs, plus the ones that usually fail only at publish time: TikTok creator limits and video length, the YouTube upload quota, expired Instagram and Threads tokens, Mastodon attachment limits, Pinterest boards and X credits. Media URLs are copied into AdaptlyPost storage first, as Create does, so the server can inspect them. The output is the report:
 
@@ -84,6 +93,23 @@ Only the next post of an active recurring post exists as a scheduled post. Pause
 
 The Document content type is LinkedIn only: it publishes exactly one PDF, PPT, PPTX, DOC or DOCX file (max 100 MB, 300 pages), given as the single Media URL, as a LinkedIn document post. LinkedIn shows the file name as the title unless you set LinkedIn Document Title.
 
+Each Analytics operation takes Accounts, to report on some accounts only.
+
+#### Inbox
+
+The inbox holds comments on the posts of the connected accounts (Facebook, Instagram, Threads, YouTube, Bluesky, Mastodon, LinkedIn), mentions (Facebook, Instagram, Threads, Bluesky, Mastodon), direct messages (Facebook, Instagram, Bluesky, Mastodon) and Google Business Profile reviews. TikTok and X have no inbox. AdaptlyPost syncs every account every 10 minutes; Refresh asks for a sync now.
+
+- Get Many Comments, Get Many Mentions, Get Many Conversations and Get Many Reviews list items newest first. Filters take Accounts, Platforms, Statuses (Unread, Read, Done), Since, Search and Cursor. Comments also filter by Post ID (an AdaptlyPost post) or Platform Post ID, and reviews by Ratings and Replied. Return All follows `nextCursor` until the last page. Return Page returns one item holding the list, `total`, `hasMore` and `nextCursor` instead of one item per entry; pass `nextCursor` back in Cursor to read the next page.
+- Get Comment returns the comment with the comment it answers (`parent`) and its `replies`. Get Conversation returns the conversation with its `messages`.
+- Reply to Comment and Reply to Mention follow the platform's comment limit: LinkedIn 1250 characters, Threads 500, Bluesky 300, Mastodon 500, YouTube 10000, Facebook 8000, Instagram 2200.
+- Hide Comment, Unhide Comment, Like Comment, Unlike Comment and Delete Comment work where the platform allows them. Each comment carries `capabilities` (`canReply`, `canHide`, `canDelete`, `canLike`). Liking works on Facebook, Bluesky, Mastodon and LinkedIn. Facebook, Instagram and LinkedIn delete any comment on the account's posts; YouTube, Threads, Bluesky and Mastodon delete only the account's own replies.
+- Send Message answers a conversation, up to its `maxMessageLength`. On Facebook and Instagram a message can only go out within 24 hours of the other person's last message (`replyWindowEndsAt`).
+- Reply to Review posts the one reply Google allows, up to 4096 bytes, replacing an earlier one. Delete Review Reply removes it.
+- Set Status marks 1 to 100 comments, mentions, conversations or reviews, one ID per line, as Unread, Read or Done, and returns them with the new unread count.
+- Get Summary returns the unread count per channel and, per account, whether each channel is `AVAILABLE`, `RECONNECT_REQUIRED` or `UNSUPPORTED`.
+
+Reading needs a key with `inbox.read` and answering one with `inbox.reply`, plus an active AdaptlyPost plan. Some channels wait on platform review (Messenger and Instagram messages, Threads mentions); an account without the permission shows `RECONNECT_REQUIRED` and an answer is refused with `inbox_reconnect_required`. Other refusals carry `inbox_item_not_found`, `inbox_action_unsupported`, `inbox_reply_invalid` (the message names the limit), `inbox_messaging_window_closed`, `inbox_rate_limited` (try again later) and `inbox_platform_error` (try again later). With On Error set to Continue the item carries the `code`.
+
 ### AdaptlyPost Trigger
 
 Registers a webhook with AdaptlyPost and fires on the events you pick:
@@ -93,6 +119,14 @@ Registers a webhook with AdaptlyPost and fires on the events you pick:
 - Post Failed
 - Post Scheduled
 - Account Disconnected
+- Image Completed and Image Failed
+- New Comment (`comment.created`): someone commented on a post of a connected account. The output carries `comment`.
+- Comment Replied (`comment.replied`): the account replied to a comment, from AdaptlyPost or from the platform's own app. The output carries the reply as `comment` and `parentCommentId`.
+- New Mention (`mention.created`): carries `mention`.
+- Message Received (`message.received`): carries `conversation` and `message`.
+- New Review (`review.created`): a new Google review, carries `review`.
+
+The webhook is registered with the events you pick and receives only those. Changing the selection updates the webhook the next time the workflow is activated. Inbox events arrive after the next inbox sync, within about 10 minutes, and never for comments, messages or reviews that were already there when the account was connected.
 
 Account > Remove disconnects an account from the workspace, disconnected ones included, and returns `id`, `platform`, `displayName`, `pageId` for Facebook pages and `removed: true`. Feed it the account ID from Account Disconnected to drop accounts nobody will reconnect. Pending and recurring posts stop publishing to the account, and only a workspace Admin token can remove one.
 

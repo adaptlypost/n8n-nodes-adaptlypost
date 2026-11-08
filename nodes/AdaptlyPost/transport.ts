@@ -128,6 +128,20 @@ export function describeApiError(body: ApiErrorBody): string {
 				}),
 				'Nothing was created. Fix these and run the node again; Post > Validate shows the status of every account without creating anything.',
 			].join('\n');
+		case 'inbox_item_not_found':
+			return 'No inbox item with this ID in the workspace. It may belong to another workspace or have been deleted.';
+		case 'inbox_action_unsupported':
+			return 'The platform does not allow this action on this item. The capabilities field of the item says which actions apply.';
+		case 'inbox_reconnect_required':
+			return 'The account needs to be reconnected in AdaptlyPost before it can do this. Retrying will not help.';
+		case 'inbox_reply_invalid':
+			return 'Fix the text and run the node again.';
+		case 'inbox_messaging_window_closed':
+			return 'Facebook and Instagram only allow a reply within 24 hours of the last message from the other person.';
+		case 'inbox_rate_limited':
+			return 'The platform is rate limiting the account. Try again in a while.';
+		case 'inbox_platform_error':
+			return 'The platform failed to answer. Try again later.';
 		case 'subscription_required':
 			return 'The workspace plan does not allow this. Update the subscription in the AdaptlyPost app.';
 		default:

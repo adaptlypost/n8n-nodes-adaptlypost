@@ -7,6 +7,7 @@ const POST_MEDIA_TYPES = {
 	'image/jpeg': '.jpg',
 	'image/png': '.png',
 	'image/webp': '.webp',
+	'image/gif': '.gif',
 	'video/mp4': '.mp4',
 	'video/quicktime': '.mov',
 	'application/pdf': '.pdf',
@@ -38,7 +39,7 @@ export function uploadMediaFromUrl(
 		sourceUrl,
 		itemIndex,
 		POST_MEDIA_TYPES,
-		'AdaptlyPost accepts JPEG, PNG, WebP, MP4, QuickTime, and PDF, PPT, PPTX, DOC or DOCX for LinkedIn document posts.',
+		'AdaptlyPost accepts JPEG, PNG, WebP, GIF, MP4, QuickTime, and PDF, PPT, PPTX, DOC or DOCX for LinkedIn document posts.',
 	);
 }
 

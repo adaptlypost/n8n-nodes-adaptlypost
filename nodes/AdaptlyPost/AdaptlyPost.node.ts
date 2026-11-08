@@ -21,6 +21,8 @@ import {
 	type Platform,
 	type SocialAccount,
 } from './accounts';
+import { inboxProperties } from './inbox.properties';
+import { runInbox } from './inbox';
 import { uploadMediaFromUrl, uploadReplyImageFromUrl } from './media';
 import { postProperties } from './post.properties';
 import { DEFAULT_WAIT_TIMEOUT_SECONDS, PostResultError, waitForPostResults } from './postResults';
@@ -69,6 +71,7 @@ export class AdaptlyPost implements INodeType {
 				options: [
 					{ name: 'Account', value: 'account' },
 					{ name: 'Analytics', value: 'analytics' },
+					{ name: 'Inbox', value: 'inbox' },
 					{ name: 'Post', value: 'post' },
 					{ name: 'Recurring Post', value: 'recurringPost' },
 				],
@@ -158,9 +161,9 @@ export class AdaptlyPost implements INodeType {
 				required: true,
 				default: '',
 				typeOptions: { loadOptionsMethod: 'getAccounts' },
-				displayOptions: { show: { resource: ['account'], operation: ['remove'] } },
+				displayOptions: { show: { resource: ['account'], operation: ['check', 'remove'] } },
 				description:
-					'Account to disconnect, such as the account ID from the Account Disconnected trigger, or a Facebook page ID. Choose from the list, or specify an ID using an <a href="https://docs.n8n.io/code/expressions/">expression</a>.',
+					'Account to check or disconnect, such as the account ID from the Account Disconnected trigger, or a Facebook page ID. Choose from the list, or specify an ID using an <a href="https://docs.n8n.io/code/expressions/">expression</a>.',
 			},
 			{
 				displayName: 'Audio Type',
@@ -183,6 +186,7 @@ export class AdaptlyPost implements INodeType {
 			},
 			...postProperties,
 			...analyticsProperties,
+			...inboxProperties,
 			...recurringPostProperties,
 		],
 	};
@@ -300,6 +304,15 @@ async function runOperation(
 			);
 			return categories as IDataObject[];
 		}
+		if (operation === 'check') {
+			const accountId = this.getNodeParameter('accountId', i) as string;
+			return adaptlyPostApiRequest.call(
+				this,
+				'POST',
+				`/social-accounts/${encodeURIComponent(accountId)}/check`,
+				{},
+			);
+		}
 		if (operation === 'remove') {
 			const accountId = this.getNodeParameter('accountId', i) as string;
 			return adaptlyPostApiRequest.call(
@@ -314,6 +327,10 @@ async function runOperation(
 
 	if (resource === 'analytics') {
 		return runAnalytics.call(this, operation, i);
+	}
+
+	if (resource === 'inbox') {
+		return runInbox.call(this, operation, i);
 	}
 
 	if (resource === 'recurringPost') {
@@ -370,13 +387,15 @@ async function runOperation(
 				},
 			);
 		}
-		case 'retry':
+		case 'retry': {
+			const platformIds = asLines(this.getNodeParameter('retryPlatformIds', i, '')).filter(Boolean);
 			return adaptlyPostApiRequest.call(
 				this,
 				'POST',
 				`/social-posts/${this.getNodeParameter('postId', i)}/retry`,
-				{},
+				platformIds.length ? { platformIds } : {},
 			);
+		}
 		case 'unschedule':
 			return adaptlyPostApiRequest.call(
 				this,
@@ -406,9 +425,11 @@ async function runAnalytics(
 	operation: string,
 	i: number,
 ): Promise<IDataObject | IDataObject[]> {
+	const connectionIds = this.getNodeParameter('connectionIds', i, []) as string[];
 	const range: IDataObject = {
 		from: this.getNodeParameter('from', i),
 		to: this.getNodeParameter('to', i),
+		connectionIds: connectionIds.length ? connectionIds : undefined,
 	};
 	if (operation === 'platformBreakdown') {
 		return adaptlyPostApiRequest.call(
@@ -705,6 +726,16 @@ async function readPlatformThumbnails(
 	return thumbnails;
 }
 
+async function readThumbnailUrl(
+	this: IExecuteFunctions,
+	options: IDataObject,
+	i: number,
+): Promise<string | undefined> {
+	const url = String(options.thumbnailUrl ?? '').trim();
+	if (!url) return undefined;
+	return url.startsWith('data:') ? url : uploadMediaFromUrl.call(this, url, i);
+}
+
 interface PinterestBoardChoice {
 	boardId?: string;
 	boardName?: string;
@@ -818,10 +849,22 @@ async function buildPostBody(
 				fit: shape.fit || undefined,
 			}),
 		),
+		platformTexts: fixedCollectionEntries(options.platformTexts, 'text').map((entry) => ({
+			platform: entry.platform,
+			text: entry.text,
+		})),
+		thumbnailUrl: await readThumbnailUrl.call(this, options, i),
+		thumbnailTimestampMs: options.thumbnailTimestampMs ?? undefined,
 		platformThumbnails: await readPlatformThumbnails.call(this, options, i),
 		threadReplies: await readThreadReplies.call(this, options, i),
 	};
-	for (const field of ['firstComments', 'platformAspectRatios', 'platformThumbnails', 'threadReplies']) {
+	for (const field of [
+		'firstComments',
+		'platformAspectRatios',
+		'platformTexts',
+		'platformThumbnails',
+		'threadReplies',
+	]) {
 		if ((body[field] as IDataObject[]).length === 0) delete body[field];
 	}
 
@@ -829,16 +872,27 @@ async function buildPostBody(
 		body.tiktokConfigs = ids('TIKTOK').map((connectionId) => ({
 			connectionId,
 			privacyLevel: options.tiktokPrivacyLevel || 'PUBLIC_TO_EVERYONE',
+			title: options.tiktokTitle || undefined,
+			caption: options.tiktokCaption || undefined,
+			allowComments: options.tiktokAllowComments,
+			allowDuet: options.tiktokAllowDuet,
+			allowStitch: options.tiktokAllowStitch,
+			sendAsDraft: options.tiktokSendAsDraft,
+			aiGenerated: options.tiktokAiGenerated,
+			brandedContent: options.tiktokBrandedContent,
+			brandedContentOwnBrand: options.tiktokBrandedContentOwnBrand,
+			autoAddMusic: options.tiktokAutoAddMusic,
 		}));
 	}
 	if (targets.platforms.includes('PINTEREST')) {
 		const { boardId, boardName } = pinterestBoard;
 		const link = options.pinterestLink || undefined;
+		const title = options.pinterestTitle || undefined;
 		const boardOwners =
 			boardId || boardName
 				? await pinterestAccountsOwningBoard.call(this, ids('PINTEREST'), pinterestBoard, i)
 				: [];
-		if (boardId || boardName || link) {
+		if (boardId || boardName || link || title) {
 			body.pinterestConfigs = ids('PINTEREST').map((connectionId) => {
 				const ownsBoard = boardOwners.includes(connectionId);
 				return {
@@ -846,6 +900,7 @@ async function buildPostBody(
 					boardId: ownsBoard ? boardId : undefined,
 					boardName: ownsBoard ? boardName : undefined,
 					link,
+					...(title && { title }),
 				};
 			});
 		}
@@ -880,6 +935,7 @@ async function buildPostBody(
 			options.facebookShareToStory === true ||
 			options.facebookAiGenerated === true ||
 			options.facebookTextFormatPresetId ||
+			options.facebookVideoTitle ||
 			options.facebookImageLayout)
 	) {
 		const carouselCards =
@@ -894,6 +950,7 @@ async function buildPostBody(
 			pageId,
 			postType: options.facebookPostType || undefined,
 			shareToStory: options.facebookShareToStory === true ? true : undefined,
+			videoTitle: options.facebookVideoTitle || undefined,
 			textFormatPresetId: options.facebookTextFormatPresetId || undefined,
 			imageLayout: options.facebookImageLayout || undefined,
 			carouselCards: carouselCards.length ? carouselCards : undefined,
@@ -906,10 +963,17 @@ async function buildPostBody(
 			googleBusinessConfig(connectionId, googleBusiness),
 		);
 	}
-	if (targets.platforms.includes('LINKEDIN') && options.linkedinDocumentTitle) {
+	if (targets.platforms.includes('LINKEDIN') && (options.linkedinDocumentTitle || options.linkedinReshareOf)) {
 		body.linkedinConfigs = ids('LINKEDIN').map((connectionId) => ({
 			connectionId,
-			documentTitle: options.linkedinDocumentTitle,
+			documentTitle: options.linkedinDocumentTitle || undefined,
+			reshareOf: options.linkedinReshareOf || undefined,
+		}));
+	}
+	if (targets.platforms.includes('TWITTER') && options.twitterQuoteOf) {
+		body.twitterConfigs = ids('TWITTER').map((connectionId) => ({
+			connectionId,
+			quoteOf: options.twitterQuoteOf,
 		}));
 	}
 	if (targets.platforms.includes('TUMBLR')) {
@@ -947,6 +1011,7 @@ async function buildPostBody(
 	}
 	if (targets.platforms.includes('YOUTUBE')) {
 		const audioLanguage = String(options.youtubeAudioLanguage ?? '').trim();
+		const tags = asLines(options.youtubeTags ?? '').filter(Boolean);
 		body.youtubeConfigs = ids('YOUTUBE').map((connectionId) => ({
 			connectionId,
 			videoTitle: options.youtubeTitle || undefined,
@@ -954,6 +1019,13 @@ async function buildPostBody(
 			postType: options.youtubePostType || undefined,
 			aiGenerated: options.youtubeAiGenerated === true ? true : undefined,
 			defaultAudioLanguage: audioLanguage || undefined,
+			tags: tags.length ? tags : undefined,
+			license: options.youtubeLicense || undefined,
+			notifySubscribers: options.youtubeNotifySubscribers,
+			allowEmbedding: options.youtubeAllowEmbedding,
+			madeForKids: options.youtubeMadeForKids,
+			categoryId: options.youtubeCategoryId || undefined,
+			playlistId: options.youtubePlaylistId || undefined,
 		}));
 	}
 

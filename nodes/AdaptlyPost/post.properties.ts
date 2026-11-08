@@ -57,7 +57,7 @@ export const postProperties: INodeProperties[] = [
 				value: 'retry',
 				action: 'Retry failed platforms of a post',
 				description:
-					'Re-queue publishing for every platform that failed. Needs an Editor or Admin key.',
+					'Re-queue publishing for the platforms that failed, all of them or the ones you list. Needs an Editor or Admin key.',
 			},
 			{
 				name: 'Unschedule',
@@ -134,7 +134,7 @@ export const postProperties: INodeProperties[] = [
 		placeholder: 'https://example.com/photo.jpg, https://example.com/clip.mp4',
 		displayOptions: { show: postBodyFields },
 		description:
-			'Comma-separated public URLs of JPEG, PNG, WebP, MP4 or QuickTime files. For a Document post, the URL of that one PDF, PPT, PPTX, DOC or DOCX file (max 100 MB, 300 pages). Each file is copied into AdaptlyPost storage before posting.',
+			'Comma-separated public URLs of JPEG, PNG, WebP, GIF, MP4 or QuickTime files. GIF images post to Facebook, X, Bluesky, Mastodon, LinkedIn and Tumblr; other platforms refuse them. For a Document post, the URL of that one PDF, PPT, PPTX, DOC or DOCX file (max 100 MB, 300 pages). Each file is copied into AdaptlyPost storage before posting.',
 	},
 	{
 		displayName: 'Additional Fields',
@@ -243,6 +243,14 @@ export const postProperties: INodeProperties[] = [
 					"Facebook's ID for a colored text background, for example 106018623298955 (solid purple) or 249307305544279 (red to blue gradient). Only for Text posts with no media and text up to 130 characters. Links in the text show without a preview. If Facebook refuses the background, the post goes out as plain text.",
 			},
 			{
+				displayName: 'Facebook Video Title',
+				name: 'facebookVideoTitle',
+				type: 'string',
+				default: '',
+				description:
+					'Title of a Facebook video, up to 255 characters. Applied to every selected Facebook page; a story made by Facebook Share to Story skips it.',
+			},
+			{
 				displayName: 'First Comments',
 				name: 'firstComments',
 				type: 'fixedCollection',
@@ -276,6 +284,7 @@ export const postProperties: INodeProperties[] = [
 									},
 									{ name: 'LinkedIn', value: 'LINKEDIN', description: 'Up to 1250 characters' },
 									{ name: 'Mastodon', value: 'MASTODON', description: 'Up to 500 characters, posted as a reply' },
+									{ name: 'Threads', value: 'THREADS', description: 'Up to 500 characters, posted as a reply' },
 									{
 										name: 'X (Twitter)',
 										value: 'TWITTER',
@@ -636,6 +645,15 @@ export const postProperties: INodeProperties[] = [
 					'Title LinkedIn shows on a Document post, up to 100 characters. Defaults to the file name. Applied to every selected LinkedIn account; ignored for other content types.',
 			},
 			{
+				displayName: 'LinkedIn Reshare Of',
+				name: 'linkedinReshareOf',
+				type: 'string',
+				default: '',
+				placeholder: 'urn:li:share:7123456789012345678',
+				description:
+					'Reshare this LinkedIn post from every selected LinkedIn account, with the text as the commentary. Takes a urn:li:share: or urn:li:ugcPost: URN, such as the platformPostId from Get Results, or a link of the form https://www.linkedin.com/feed/update/ followed by the URN. urn:li:activity: links are refused. Media is not attached on LinkedIn.',
+			},
+			{
 				displayName: 'Pinterest Board Name',
 				name: 'pinterestBoardName',
 				type: 'string',
@@ -662,6 +680,61 @@ export const postProperties: INodeProperties[] = [
 				type: 'string',
 				default: '',
 				description: 'Destination link for the pin',
+			},
+			{
+				displayName: 'Pinterest Title',
+				name: 'pinterestTitle',
+				type: 'string',
+				default: '',
+				description:
+					'Title of the pin, up to 100 characters. Applied to every selected Pinterest account.',
+			},
+			{
+				displayName: 'Platform Texts',
+				name: 'platformTexts',
+				type: 'fixedCollection',
+				typeOptions: { multipleValues: true },
+				placeholder: 'Add Platform Text',
+				default: {},
+				description:
+					'A different text for one platform, one entry per platform. A platform without an entry uses Text.',
+				options: [
+					{
+						displayName: 'Platform Text',
+						name: 'text',
+						values: [
+							{
+								displayName: 'Platform',
+								name: 'platform',
+								type: 'options',
+								options: [
+									{ name: 'Bluesky', value: 'BLUESKY' },
+									{ name: 'Facebook', value: 'FACEBOOK' },
+									{ name: 'Google Business Profile', value: 'GOOGLE_BUSINESS' },
+									{ name: 'Instagram', value: 'INSTAGRAM' },
+									{ name: 'LinkedIn', value: 'LINKEDIN' },
+									{ name: 'Mastodon', value: 'MASTODON' },
+									{ name: 'Pinterest', value: 'PINTEREST' },
+									{ name: 'Telegram', value: 'TELEGRAM' },
+									{ name: 'Threads', value: 'THREADS' },
+									{ name: 'TikTok', value: 'TIKTOK' },
+									{ name: 'Tumblr', value: 'TUMBLR' },
+									{ name: 'WordPress', value: 'WORDPRESS' },
+									{ name: 'X (Twitter)', value: 'TWITTER' },
+									{ name: 'YouTube', value: 'YOUTUBE' },
+								],
+								default: 'TWITTER',
+							},
+							{
+								displayName: 'Text',
+								name: 'text',
+								type: 'string',
+								typeOptions: { rows: 3 },
+								default: '',
+							},
+						],
+					},
+				],
 			},
 			{
 				displayName: 'Save as Draft',
@@ -754,6 +827,71 @@ export const postProperties: INodeProperties[] = [
 				],
 			},
 			{
+				displayName: 'TikTok AI Generated',
+				name: 'tiktokAiGenerated',
+				type: 'boolean',
+				default: false,
+				description:
+					'Whether to label the post as AI-generated content on TikTok',
+			},
+			{
+				displayName: 'TikTok Allow Comments',
+				name: 'tiktokAllowComments',
+				type: 'boolean',
+				default: false,
+				description:
+					'Whether viewers may comment. Left out, AdaptlyPost uses its default.',
+			},
+			{
+				displayName: 'TikTok Allow Duet',
+				name: 'tiktokAllowDuet',
+				type: 'boolean',
+				default: false,
+				description:
+					'Whether viewers may duet the video. Left out, AdaptlyPost uses its default.',
+			},
+			{
+				displayName: 'TikTok Allow Stitch',
+				name: 'tiktokAllowStitch',
+				type: 'boolean',
+				default: false,
+				description:
+					'Whether viewers may stitch the video. Left out, AdaptlyPost uses its default.',
+			},
+			{
+				displayName: 'TikTok Auto Add Music',
+				name: 'tiktokAutoAddMusic',
+				type: 'boolean',
+				default: false,
+				description:
+					'Whether TikTok adds music to a photo post',
+			},
+			{
+				displayName: 'TikTok Branded Content',
+				name: 'tiktokBrandedContent',
+				type: 'boolean',
+				default: false,
+				description:
+					'Whether the post promotes a third-party brand (paid partnership)',
+			},
+			{
+				displayName: 'TikTok Branded Content Own Brand',
+				name: 'tiktokBrandedContentOwnBrand',
+				type: 'boolean',
+				default: false,
+				description:
+					'Whether the post promotes your own brand or business',
+			},
+			{
+				displayName: 'TikTok Caption',
+				name: 'tiktokCaption',
+				type: 'string',
+				typeOptions: { rows: 2 },
+				default: '',
+				description:
+					'Photo posts: the description, up to 4000 characters. Video posts: the caption, up to 2200 characters. Falls back to TikTok Title, then to Text.',
+			},
+			{
 				displayName: 'TikTok Privacy',
 				name: 'tiktokPrivacyLevel',
 				type: 'options',
@@ -764,6 +902,22 @@ export const postProperties: INodeProperties[] = [
 					{ name: 'Public', value: 'PUBLIC_TO_EVERYONE' },
 				],
 				default: 'PUBLIC_TO_EVERYONE',
+			},
+			{
+				displayName: 'TikTok Send as Draft',
+				name: 'tiktokSendAsDraft',
+				type: 'boolean',
+				default: false,
+				description:
+					'Whether to send the post to the TikTok inbox as a draft for the creator to finish in the app, instead of publishing it',
+			},
+			{
+				displayName: 'TikTok Title',
+				name: 'tiktokTitle',
+				type: 'string',
+				default: '',
+				description:
+					'Photo posts: the title shown above the description, up to 90 characters. Video posts: used as the caption only when TikTok Caption is empty.',
 			},
 			{
 				displayName: 'Timezone',
@@ -799,6 +953,24 @@ export const postProperties: INodeProperties[] = [
 				placeholder: 'Our spring collection',
 				description:
 					'Heading shown above the media and the text, up to 4096 characters. Applied to every selected Tumblr blog.',
+			},
+			{
+				displayName: 'Video Thumbnail Frame (Ms)',
+				name: 'thumbnailTimestampMs',
+				type: 'number',
+				typeOptions: { minValue: 0 },
+				default: 0,
+				description:
+					'Video frame, in milliseconds from the start, to use as the thumbnail on every platform that takes one. A Video Thumbnail URL wins everywhere except TikTok, and Video Thumbnails override both.',
+			},
+			{
+				displayName: 'Video Thumbnail URL',
+				name: 'thumbnailUrl',
+				type: 'string',
+				default: '',
+				placeholder: 'https://example.com/cover.jpg',
+				description:
+					'Public URL of a JPEG, PNG or WebP image, or an image data URI, used as the thumbnail of a video on every platform that takes one. Video Thumbnails override it for one platform. The image is copied into AdaptlyPost storage before posting.',
 			},
 			{
 				displayName: 'Video Thumbnails',
@@ -930,12 +1102,29 @@ export const postProperties: INodeProperties[] = [
 					'Whether to keep links in the X text clickable. X charges over 10 times more for a post with a link, so AdaptlyPost breaks every link in X text by default (example.com becomes example. com). Only AppSumo lifetime deals can turn this on, and a kept link costs 20 credits instead of 2; on any other plan the post is refused with a 400.',
 			},
 			{
+				displayName: 'X Quote Of',
+				name: 'twitterQuoteOf',
+				type: 'string',
+				default: '',
+				placeholder: 'https://x.com/acme/status/1234567890',
+				description:
+					'Quote one of the account\'s own X posts, with the text as the commentary. Takes a link such as https://x.com/handle/status/123 or the numeric post ID. X only lets an account quote posts it wrote or posts that mention it. Media is not attached on X. Applied to every selected X account.',
+			},
+			{
 				displayName: 'YouTube AI Generated',
 				name: 'youtubeAiGenerated',
 				type: 'boolean',
 				default: false,
 				description:
 					'Whether to disclose altered or synthetic content, such as an AI voice, an AI avatar or realistic footage that was generated or edited. YouTube shows its "Altered or synthetic content" label on the video. Works on videos and Shorts.',
+			},
+			{
+				displayName: 'YouTube Allow Embedding',
+				name: 'youtubeAllowEmbedding',
+				type: 'boolean',
+				default: false,
+				description:
+					'Whether other sites may embed the video',
 			},
 			{
 				displayName: 'YouTube Audio Language',
@@ -945,6 +1134,15 @@ export const postProperties: INodeProperties[] = [
 				placeholder: 'pt-BR',
 				description:
 					'Language spoken in the video\'s original audio, as a BCP-47 tag such as en, pt-BR or es-419, so YouTube does not treat it as another language. Does not turn off automatic dubbing.',
+			},
+			{
+				displayName: 'YouTube Category ID',
+				name: 'youtubeCategoryId',
+				type: 'string',
+				default: '',
+				placeholder: '22',
+				description:
+					'YouTube video category ID, such as 22 for People & Blogs',
 			},
 			{
 				displayName: 'YouTube Format',
@@ -957,6 +1155,40 @@ export const postProperties: INodeProperties[] = [
 				default: 'VIDEO',
 			},
 			{
+				displayName: 'YouTube License',
+				name: 'youtubeLicense',
+				type: 'options',
+				options: [
+					{ name: 'Creative Commons', value: 'creativeCommon' },
+					{ name: 'Standard YouTube License', value: 'youtube' },
+				],
+				default: 'youtube',
+			},
+			{
+				displayName: 'YouTube Made for Kids',
+				name: 'youtubeMadeForKids',
+				type: 'boolean',
+				default: false,
+				description:
+					'Whether the video is made for kids. A made for kids video takes no first comment.',
+			},
+			{
+				displayName: 'YouTube Notify Subscribers',
+				name: 'youtubeNotifySubscribers',
+				type: 'boolean',
+				default: false,
+				description:
+					'Whether YouTube notifies the channel subscribers about the video',
+			},
+			{
+				displayName: 'YouTube Playlist ID',
+				name: 'youtubePlaylistId',
+				type: 'string',
+				default: '',
+				description:
+					'ID of a playlist of the channel to add the video to',
+			},
+			{
 				displayName: 'YouTube Privacy',
 				name: 'youtubePrivacyStatus',
 				type: 'options',
@@ -966,6 +1198,15 @@ export const postProperties: INodeProperties[] = [
 					{ name: 'Unlisted', value: 'unlisted' },
 				],
 				default: 'public',
+			},
+			{
+				displayName: 'YouTube Tags',
+				name: 'youtubeTags',
+				type: 'string',
+				typeOptions: { rows: 3 },
+				default: '',
+				description:
+					'Video tags, one tag per line, up to 20',
 			},
 			{
 				displayName: 'YouTube Video Title',
@@ -1060,6 +1301,17 @@ export const postProperties: INodeProperties[] = [
 					'Days of the week to post on. The weekday of Scheduled At is always included.',
 			},
 		],
+	},
+	{
+		displayName: 'Platforms to Retry',
+		name: 'retryPlatformIds',
+		type: 'string',
+		typeOptions: { rows: 2 },
+		default: '',
+		placeholder: 'BLUESKY',
+		displayOptions: { show: { resource: ['post'], operation: ['retry'] } },
+		description:
+			'One per line: a platform name such as BLUESKY to retry every failed entry of that platform, or a platform entry ID from Get Results. Leave empty to retry every failed entry.',
 	},
 	{
 		displayName: 'Publish Now',

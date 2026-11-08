@@ -79,6 +79,16 @@ export const analyticsProperties: INodeProperties[] = [
 			'Leave empty for every platform with analytics. Mastodon, Telegram, Tumblr and WordPress have no analytics.',
 	},
 	{
+		displayName: 'Account Names or IDs',
+		name: 'connectionIds',
+		type: 'multiOptions',
+		typeOptions: { loadOptionsMethod: 'getAccounts' },
+		default: [],
+		displayOptions: { show: onlyAnalytics },
+		description:
+			'Only these accounts. Leave empty for every account. Choose from the list, or specify IDs using an <a href="https://docs.n8n.io/code/expressions/">expression</a>.',
+	},
+	{
 		displayName: 'Granularity',
 		name: 'interval',
 		type: 'options',

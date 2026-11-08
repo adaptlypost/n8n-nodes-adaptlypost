@@ -1200,6 +1200,14 @@ export const postProperties: INodeProperties[] = [
 				default: 'public',
 			},
 			{
+				displayName: 'YouTube Schedule on YouTube',
+				name: 'youtubeScheduleOnYouTube',
+				type: 'boolean',
+				default: false,
+				description:
+					'Whether to upload the video as soon as the post is scheduled, as a private video that YouTube publishes itself at Scheduled At. This leaves time to set up Test & Compare in YouTube Studio before the video goes public. Needs Public privacy and is refused on a repeating post. Less than 15 minutes ahead, the video uploads at Scheduled At as usual. While the video waits on YouTube, the post cannot be updated or unscheduled, and deleting it also deletes the video from YouTube. Read youtubeScheduleOnYouTube and youtubeScheduledVideoId on the platform.',
+			},
+			{
 				displayName: 'YouTube Tags',
 				name: 'youtubeTags',
 				type: 'string',

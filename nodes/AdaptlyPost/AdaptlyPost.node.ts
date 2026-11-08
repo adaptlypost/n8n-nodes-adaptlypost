@@ -1024,6 +1024,7 @@ async function buildPostBody(
 			notifySubscribers: options.youtubeNotifySubscribers,
 			allowEmbedding: options.youtubeAllowEmbedding,
 			madeForKids: options.youtubeMadeForKids,
+			scheduleOnYouTube: options.youtubeScheduleOnYouTube,
 			categoryId: options.youtubeCategoryId || undefined,
 			playlistId: options.youtubePlaylistId || undefined,
 		}));

@@ -1,5 +1,9 @@
 # Changelog
 
+## 0.23.0
+
+- Account > Look Up LinkedIn Company Page takes a company page URL, its vanity name or @vanity and returns the page's `id`, `name`, `vanityName`, `urn` and `mention`. Paste `mention` into a LinkedIn post text as is to tag the page. LinkedIn matches the exact vanity name only, and the lookup runs on the workspace's own LinkedIn accounts, so the workspace needs one connected. It needs `accounts.read`.
+
 ## 0.22.0
 
 - Additional Fields take YouTube Schedule on YouTube. The video goes to YouTube as soon as the post is scheduled, as a private video that YouTube publishes itself at the scheduled time, so a Test & Compare can be set up in YouTube Studio first. Privacy must be Public and the post must not repeat. While the video waits on YouTube the post can't be updated or unscheduled, and deleting it before its time also deletes the video.

@@ -1,5 +1,9 @@
 # Changelog
 
+## 0.24.0
+
+- Additional Fields take Platform Media, which gives one platform its own media when the post media doesn't fit it, such as a video too long for TikTok or a carousel with more images than X takes. Each entry names a platform, its media URLs (one per line) and optional alt texts (one line per file, an empty line skips one). The entry must match the Content Type, the other platforms keep the post's Media URLs, and a platform with its own media takes its thumbnail from Video Thumbnails.
+
 ## 0.23.0
 
 - Account > Look Up LinkedIn Company Page takes a company page URL, its vanity name or @vanity and returns the page's `id`, `name`, `vanityName`, `urn` and `mention`. Paste `mention` into a LinkedIn post text as is to tag the page. LinkedIn matches the exact vanity name only, and the lookup runs on the workspace's own LinkedIn accounts, so the workspace needs one connected. It needs `accounts.read`.

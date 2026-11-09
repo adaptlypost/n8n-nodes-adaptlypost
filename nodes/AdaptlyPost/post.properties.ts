@@ -690,6 +690,66 @@ export const postProperties: INodeProperties[] = [
 					'Title of the pin, up to 100 characters. Applied to every selected Pinterest account.',
 			},
 			{
+				displayName: 'Platform Media',
+				name: 'platformMedia',
+				type: 'fixedCollection',
+				typeOptions: { multipleValues: true },
+				placeholder: 'Add Platform Media',
+				default: {},
+				description:
+					'Different media for one platform, one entry per platform, for when the post media does not fit it, such as a video too long for TikTok or a carousel with more images than X takes. A platform without an entry uses Media URLs. The entry must match Content Type: one video for Video, one image for Image, one document for Document, two or more items for Carousel, and none for Text. Each entry is checked against its own platform only. A platform with an entry does not use Video Thumbnail URL or Video Thumbnail Frame; give it one under Video Thumbnails.',
+				options: [
+					{
+						displayName: 'Media',
+						name: 'media',
+						values: [
+							{
+								displayName: 'Platform',
+								name: 'platform',
+								type: 'options',
+								options: [
+									{ name: 'Bluesky', value: 'BLUESKY' },
+									{ name: 'Facebook', value: 'FACEBOOK' },
+									{ name: 'Google Business Profile', value: 'GOOGLE_BUSINESS' },
+									{ name: 'Instagram', value: 'INSTAGRAM' },
+									{ name: 'LinkedIn', value: 'LINKEDIN' },
+									{ name: 'Mastodon', value: 'MASTODON' },
+									{ name: 'Pinterest', value: 'PINTEREST' },
+									{ name: 'Telegram', value: 'TELEGRAM' },
+									{ name: 'Threads', value: 'THREADS' },
+									{ name: 'TikTok', value: 'TIKTOK' },
+									{ name: 'Tumblr', value: 'TUMBLR' },
+									{ name: 'WordPress', value: 'WORDPRESS' },
+									{ name: 'X (Twitter)', value: 'TWITTER' },
+									{ name: 'YouTube', value: 'YOUTUBE' },
+								],
+								default: 'TIKTOK',
+							},
+							{
+								displayName: 'Media URLs',
+								name: 'mediaUrls',
+								type: 'string',
+								typeOptions: { rows: 4 },
+								default: '',
+								placeholder: 'https://example.com/clip-short.mp4',
+								description:
+									'Public URLs of the files for this platform, one URL per line, in posting order. Same file types as Media URLs. Each file is copied into AdaptlyPost storage before posting.',
+							},
+							{
+								displayName: 'Image Alt Texts',
+								name: 'mediaAltTexts',
+								type: 'string',
+								typeOptions: { rows: 4 },
+								default: '',
+								placeholder: 'A red bicycle leaning on a brick wall',
+								description:
+									'Alt text for each file of this entry, one line per file in the same order as its Media URLs, up to 1000 characters each. Leave a line empty to skip a file.',
+							},
+						],
+					},
+				],
+			},
+			{
 				displayName: 'Platform Texts',
 				name: 'platformTexts',
 				type: 'fixedCollection',

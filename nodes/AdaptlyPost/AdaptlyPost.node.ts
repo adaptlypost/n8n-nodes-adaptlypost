@@ -754,6 +754,35 @@ async function readPlatformThumbnails(
 	return thumbnails;
 }
 
+async function readPlatformMedia(
+	this: IExecuteFunctions,
+	options: IDataObject,
+	i: number,
+): Promise<IDataObject[]> {
+	const entries: IDataObject[] = [];
+	for (const entry of fixedCollectionEntries(options.platformMedia, 'media')) {
+		const sourceUrls = asLines(entry.mediaUrls).filter(Boolean);
+		if (!sourceUrls.length) {
+			throw new NodeOperationError(
+				this.getNode(),
+				`Add Media URLs to the ${entry.platform as string} platform media or remove the entry`,
+				{ itemIndex: i },
+			);
+		}
+		const mediaUrls: string[] = [];
+		for (const sourceUrl of sourceUrls) {
+			mediaUrls.push(await uploadMediaFromUrl.call(this, sourceUrl, i));
+		}
+		const altTexts = asLines(entry.mediaAltTexts);
+		entries.push({
+			platform: entry.platform,
+			mediaUrls,
+			mediaAltTexts: altTexts.length ? altTexts : undefined,
+		});
+	}
+	return entries;
+}
+
 async function readThumbnailUrl(
 	this: IExecuteFunctions,
 	options: IDataObject,
@@ -884,11 +913,13 @@ async function buildPostBody(
 		thumbnailUrl: await readThumbnailUrl.call(this, options, i),
 		thumbnailTimestampMs: options.thumbnailTimestampMs ?? undefined,
 		platformThumbnails: await readPlatformThumbnails.call(this, options, i),
+		platformMedia: await readPlatformMedia.call(this, options, i),
 		threadReplies: await readThreadReplies.call(this, options, i),
 	};
 	for (const field of [
 		'firstComments',
 		'platformAspectRatios',
+		'platformMedia',
 		'platformTexts',
 		'platformThumbnails',
 		'threadReplies',

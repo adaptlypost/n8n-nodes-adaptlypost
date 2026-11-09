@@ -15,7 +15,7 @@ Follow the [installation guide](https://docs.n8n.io/integrations/community-nodes
 | Resource | Operations |
 | --- | --- |
 | Post | Create, Validate, Get, Get Many, Get Results, Publish Draft, Retry Failed Platforms, Unschedule, Delete |
-| Account | Check, Get Many, Get Pinterest Boards, Get WordPress Categories, Remove, Search Instagram Audio |
+| Account | Check, Get Many, Get Pinterest Boards, Get WordPress Categories, Look Up LinkedIn Company Page, Remove, Search Instagram Audio |
 | Analytics | Get Overview, Get Timeseries, Get Platform Breakdown, Get Post Analytics |
 | Inbox | Get Summary, Refresh, Get Many Comments, Get Comment, Reply to Comment, Hide Comment, Unhide Comment, Like Comment, Unlike Comment, Delete Comment, Get Many Mentions, Reply to Mention, Get Many Conversations, Get Conversation, Send Message, Get Many Reviews, Reply to Review, Delete Review Reply, Set Status |
 | Recurring Post | Get, Get Many, Pause, Resume, Delete |
@@ -86,6 +86,8 @@ Validate takes the same fields as Create and creates nothing. It sends the post 
 Put an IF node on `valid` between Validate and Create to stop a post that would fail. Any key that can save drafts may run Validate. When Create itself refuses a post for its content, the error lists every issue with its account, and On Error > Continue returns them in `issues`.
 
 On LinkedIn, mention a company page in the text with `@[Page Name](urn:li:organization:12345)`, using the page name exactly as LinkedIn shows it.
+
+Account > Look Up LinkedIn Company Page finds that mention for you. Company Page takes the page URL (`https://www.linkedin.com/company/acme/`), its vanity name (`acme`) or `@acme`. LinkedIn matches the exact vanity name only, so `acm` or a name with spaces finds nothing. The item carries `id`, `name`, `vanityName`, `urn` and `mention`; paste `mention` into the text as is. When the post also goes to other platforms, put the mention in a LinkedIn entry of Platform Texts, since other platforms show it as plain text. The lookup needs a key with `accounts.read` and runs through one of the workspace's LinkedIn accounts. It fails with `linkedin_organization_query_invalid` when the value is not a page URL or vanity name, `linkedin_organization_not_found` when no page has that vanity name, and `linkedin_organization_lookup_unavailable` when no LinkedIn account of the workspace could run it; connect or reconnect one, ideally a company page the workspace administers.
 
 Repeat on Create turns the post into a recurring post. Pick a Frequency (daily, weekly, monthly or yearly), Repeat Every N days, weeks, months or years (1 to 30), Weekdays for a weekly post, and when it Ends: never, on an End Date, or after a Number of Posts (2 to 365). A recurring post needs a future Scheduled At, which becomes the first post and sets the time of day. It cannot be saved as a draft or include a TikTok account. X and LinkedIn reject identical text, so use spintax such as `{Hi|Hello}` to vary each post. The response carries `recurringPostId`, and every post it creates carries `recurringPostId` and `occurrenceAt`.
 

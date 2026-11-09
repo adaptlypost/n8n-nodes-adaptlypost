@@ -105,6 +105,13 @@ export class AdaptlyPost implements INodeType {
 							'List the categories of a WordPress site. Use a category ID in WordPress Categories when creating a post.',
 					},
 					{
+						name: 'Look Up LinkedIn Company Page',
+						value: 'lookUpLinkedInCompanyPage',
+						action: 'Look up a linkedin company page',
+						description:
+							'Find a LinkedIn company page by its URL or vanity name. Returns the mention to paste as is into a LinkedIn post text to tag the page.',
+					},
+					{
 						name: 'Remove',
 						value: 'remove',
 						action: 'Remove an account',
@@ -153,6 +160,17 @@ export class AdaptlyPost implements INodeType {
 				displayOptions: { show: { resource: ['account'], operation: ['getWordPressCategories'] } },
 				description:
 					'WordPress site to list categories for. Choose from the list, or specify an ID using an <a href="https://docs.n8n.io/code/expressions/">expression</a>.',
+			},
+			{
+				displayName: 'Company Page',
+				name: 'query',
+				type: 'string',
+				required: true,
+				default: '',
+				placeholder: 'https://www.linkedin.com/company/acme/',
+				displayOptions: { show: { resource: ['account'], operation: ['lookUpLinkedInCompanyPage'] } },
+				description:
+					'The page URL, its vanity name (acme) or @acme, up to 300 characters. LinkedIn matches the exact vanity name only, so part of a name or a name with spaces finds nothing.',
 			},
 			{
 				displayName: 'Account Name or ID',
@@ -303,6 +321,16 @@ async function runOperation(
 				`/social-accounts/${encodeURIComponent(accountId)}/wordpress-categories`,
 			);
 			return categories as IDataObject[];
+		}
+		if (operation === 'lookUpLinkedInCompanyPage') {
+			const { organization } = await adaptlyPostApiRequest.call(
+				this,
+				'GET',
+				'/linkedin-organizations/lookup',
+				undefined,
+				{ query: this.getNodeParameter('query', i) },
+			);
+			return organization as IDataObject;
 		}
 		if (operation === 'check') {
 			const accountId = this.getNodeParameter('accountId', i) as string;

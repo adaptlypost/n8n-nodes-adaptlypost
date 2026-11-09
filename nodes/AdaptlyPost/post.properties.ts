@@ -124,7 +124,7 @@ export const postProperties: INodeProperties[] = [
 		default: '',
 		displayOptions: { show: postBodyFields },
 		description:
-			"Caption shared across the selected platforms. On LinkedIn, mention a company page with @[Page Name](urn:li:organization:12345), using the page's numeric ID and its name exactly as LinkedIn shows it. Telegram takes up to 4096 characters, and a caption over 1024 characters goes out as its own message after the media. Tumblr takes up to 32768 characters. WordPress takes up to 100,000 characters and publishes them as the body of a blog post: blank lines start new paragraphs and bare links become clickable.",
+			"Caption shared across the selected platforms. On LinkedIn, mention a company page with @[Page Name](urn:li:organization:12345), using the page's numeric ID and its name exactly as LinkedIn shows it, or paste the mention from Account > Look Up LinkedIn Company Page. Telegram takes up to 4096 characters, and a caption over 1024 characters goes out as its own message after the media. Tumblr takes up to 32768 characters. WordPress takes up to 100,000 characters and publishes them as the body of a blog post: blank lines start new paragraphs and bare links become clickable.",
 	},
 	{
 		displayName: 'Media URLs',

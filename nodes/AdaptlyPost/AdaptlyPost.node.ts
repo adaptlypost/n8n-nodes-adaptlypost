@@ -1054,6 +1054,7 @@ async function buildPostBody(
 		const title = String(options.wordpressTitle ?? '').trim();
 		const excerpt = String(options.wordpressExcerpt ?? '').trim();
 		const tags = asLines(options.wordpressTags ?? '').filter(Boolean);
+		const status = options.wordpressStatus ? String(options.wordpressStatus) : undefined;
 		const configs = siteIds.map((connectionId) => {
 			const categoryIds = categories.get(connectionId) ?? [];
 			return {
@@ -1062,9 +1063,14 @@ async function buildPostBody(
 				excerpt: excerpt || undefined,
 				categoryIds: categoryIds.length ? categoryIds : undefined,
 				tags: tags.length ? tags : undefined,
+				status,
 			};
 		});
-		if (configs.some((config) => config.title || config.excerpt || config.categoryIds || config.tags)) {
+		if (
+			configs.some(
+				(config) => config.title || config.excerpt || config.categoryIds || config.tags || config.status,
+			)
+		) {
 			body.wordpressConfigs = configs;
 		}
 	}

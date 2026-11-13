@@ -127,6 +127,20 @@ describe('Post > Create on WordPress', () => {
 		]);
 	});
 
+	it('sends WordPress Status to every selected site', async () => {
+		const context = createContext({
+			accountIds: ['wp-blog', 'wp-docs'],
+			additionalFields: { wordpressStatus: 'DRAFT' },
+		});
+
+		await execute(context);
+
+		assert.deepEqual(context.body('POST /social-posts').wordpressConfigs, [
+			{ connectionId: 'wp-blog', status: 'DRAFT' },
+			{ connectionId: 'wp-docs', status: 'DRAFT' },
+		]);
+	});
+
 	it('stops the item when a category is not an ID', async () => {
 		const context = createContext({
 			accountIds: ['wp-blog'],

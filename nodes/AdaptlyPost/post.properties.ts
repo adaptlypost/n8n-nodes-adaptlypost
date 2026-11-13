@@ -1135,6 +1135,31 @@ export const postProperties: INodeProperties[] = [
 					'Summary WordPress shows in post lists and feeds, up to 1000 characters. Applied to every selected WordPress site.',
 			},
 			{
+				displayName: 'WordPress Status',
+				name: 'wordpressStatus',
+				type: 'options',
+				options: [
+					{
+						name: 'Draft',
+						value: 'DRAFT',
+						description: 'Leave a WordPress draft to finish and publish or schedule in WordPress',
+					},
+					{
+						name: 'Pending Review',
+						value: 'PENDING',
+						description: 'Submit the post for review on the site',
+					},
+					{
+						name: 'Publish',
+						value: 'PUBLISH',
+						description: 'Publish the post live on the site',
+					},
+				],
+				default: 'PUBLISH',
+				description:
+					"What the WordPress site gets at the post's time. Draft and Pending Review are not an AdaptlyPost draft: the post still has to be scheduled or published to reach the site, and its post URL then opens the post in the WordPress editor. Applied to every selected WordPress site.",
+			},
+			{
 				displayName: 'WordPress Tags',
 				name: 'wordpressTags',
 				type: 'string',

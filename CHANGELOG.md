@@ -1,5 +1,9 @@
 # Changelog
 
+## 0.25.0
+
+- Additional Fields take WordPress Status, sent as `wordpressConfigs[].status`. Publish (the default) publishes the post live on the site at its time, Draft leaves a WordPress draft to finish and publish or schedule in WordPress, and Pending Review submits it for review. For Draft and Pending Review the platform's post URL opens the post in the WordPress editor, and the platform reads `wordpressStatus`.
+
 ## 0.24.0
 
 - Additional Fields take Platform Media, which gives one platform its own media when the post media doesn't fit it, such as a video too long for TikTok or a carousel with more images than X takes. Each entry names a platform, its media URLs (one per line) and optional alt texts (one line per file, an empty line skips one). The entry must match the Content Type, the other platforms keep the post's Media URLs, and a platform with its own media takes its thumbnail from Video Thumbnails.

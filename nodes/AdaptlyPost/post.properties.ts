@@ -258,7 +258,7 @@ export const postProperties: INodeProperties[] = [
 				placeholder: 'Add First Comment',
 				default: {},
 				description:
-					'A comment posted from the same account about 10 seconds after the post goes out (60 seconds on YouTube), one per platform. A comment that fails never fails the post: read firstCommentStatus and firstCommentError on the platform. A platform the post does not go to, a platform that also has Thread Replies, a private or made for kids YouTube video and a Facebook or Instagram story are refused.',
+					'A comment posted from the same account within about a minute of the post going out (about two minutes on YouTube), or within about a minute of Delay (Minutes) after it, one per platform. A comment that fails never fails the post: read firstCommentStatus and firstCommentError on the platform. A platform the post does not go to, a platform that also has Thread Replies, a private or made for kids YouTube video and a Facebook or Instagram story are refused.',
 				options: [
 					{
 						displayName: 'Comment',
@@ -301,6 +301,15 @@ export const postProperties: INodeProperties[] = [
 								type: 'string',
 								typeOptions: { rows: 2 },
 								default: '',
+							},
+							{
+								displayName: 'Delay (Minutes)',
+								name: 'delayMinutes',
+								type: 'number',
+								typeOptions: { minValue: 0, maxValue: 10080, numberPrecision: 0 },
+								default: 0,
+								description:
+									'How many minutes after the platform publishes to post the comment, up to 10080 (7 days). 0 means no delay. The comment goes out within about a minute of that time; without a delay, within about a minute of the post (about two minutes on YouTube). Once the post is published the delay cannot be changed; deleting the post cancels a comment that has not gone out yet.',
 							},
 						],
 					},

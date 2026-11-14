@@ -898,6 +898,7 @@ async function buildPostBody(
 		firstComments: fixedCollectionEntries(options.firstComments, 'comment').map((comment) => ({
 			platform: comment.platform,
 			text: comment.text,
+			delayMinutes: comment.delayMinutes ? comment.delayMinutes : undefined,
 		})),
 		platformAspectRatios: fixedCollectionEntries(options.platformAspectRatios, 'shape').map(
 			(shape) => ({

@@ -74,6 +74,27 @@ describe('Post > Create platform options', () => {
 		assert.deepEqual(context.postBody().platformTexts, [{ platform: 'TWITTER', text: 'Short version' }]);
 	});
 
+	it('sends a first comment delay only when it is above 0', async () => {
+		const context = createContext({
+			accountIds: ['th-1', 'x-1'],
+			additionalFields: {
+				firstComments: {
+					comment: [
+						{ platform: 'THREADS', text: 'Later', delayMinutes: 90 },
+						{ platform: 'TWITTER', text: 'Now', delayMinutes: 0 },
+					],
+				},
+			},
+		});
+
+		await execute(context);
+
+		assert.deepEqual(context.postBody().firstComments, [
+			{ platform: 'THREADS', text: 'Later', delayMinutes: 90 },
+			{ platform: 'TWITTER', text: 'Now' },
+		]);
+	});
+
 	it('sends every TikTok option that was added, false included', async () => {
 		const context = createContext({
 			accountIds: ['tt-1'],

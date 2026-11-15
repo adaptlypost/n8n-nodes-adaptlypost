@@ -1,5 +1,9 @@
 # Changelog
 
+## 0.26.0
+
+- First Comments take Delay (Minutes), from 0 to 10080 (7 days), sent as `firstComments[].delayMinutes`. The comment posts within about a minute of that time after the platform publishes, and 0 posts it right away. The delay cannot be changed once the post is published, and deleting the post cancels a comment that has not gone out yet. The platform entry carries `firstCommentDelayMinutes` and `firstCommentDueAt`.
+
 ## 0.25.0
 
 - Additional Fields take WordPress Status, sent as `wordpressConfigs[].status`. Publish (the default) publishes the post live on the site at its time, Draft leaves a WordPress draft to finish and publish or schedule in WordPress, and Pending Review submits it for review. For Draft and Pending Review the platform's post URL opens the post in the WordPress editor, and the platform reads `wordpressStatus`.

@@ -330,7 +330,7 @@ async function runOperation(
 				undefined,
 				{ query: this.getNodeParameter('query', i) },
 			);
-			return organization as IDataObject;
+			return organization ? [organization as IDataObject] : [];
 		}
 		if (operation === 'check') {
 			const accountId = this.getNodeParameter('accountId', i) as string;

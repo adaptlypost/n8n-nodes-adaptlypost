@@ -74,17 +74,25 @@ describe('Account > Look Up LinkedIn Company Page', () => {
 		);
 	});
 
+	it('outputs no item when no page has that vanity name', async () => {
+		const context = createContext('acm', () => ({ organization: null }));
+
+		const [items] = await execute(context);
+
+		assert.deepEqual(items, []);
+	});
+
 	it('returns the code when the lookup is refused and On Error is Continue', async () => {
 		const refusal = {
-			statusCode: 404,
-			error: 'Not Found',
-			code: 'linkedin_organization_not_found',
-			message: 'No LinkedIn company page has this vanity name',
+			statusCode: 400,
+			error: 'Bad Request',
+			code: 'linkedin_organization_query_invalid',
+			message: 'Use a company page URL or vanity name',
 		};
 		const context = createContext(
-			'acm',
+			'a b',
 			() => {
-				throw new ApiError(404, refusal);
+				throw new ApiError(400, refusal);
 			},
 			{ continueOnFail: true },
 		);
@@ -92,8 +100,8 @@ describe('Account > Look Up LinkedIn Company Page', () => {
 		const [[item]] = await execute(context);
 
 		assert.equal(item.json.error, refusal.message);
-		assert.equal(item.json.code, 'linkedin_organization_not_found');
-		assert.match(describeApiError(refusal), /exact vanity name/);
+		assert.equal(item.json.code, 'linkedin_organization_query_invalid');
+		assert.match(describeApiError(refusal), /vanity name/);
 	});
 
 	it('explains a lookup no LinkedIn account could run', () => {

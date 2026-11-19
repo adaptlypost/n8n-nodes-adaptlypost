@@ -144,8 +144,6 @@ export function describeApiError(body: ApiErrorBody): string {
 			return 'The platform failed to answer. Try again later.';
 		case 'linkedin_organization_query_invalid':
 			return 'Use a LinkedIn company page URL such as https://www.linkedin.com/company/acme/, its vanity name (acme) or @acme.';
-		case 'linkedin_organization_not_found':
-			return 'LinkedIn matches the exact vanity name only. Copy it from the page URL, after /company/.';
 		case 'linkedin_organization_lookup_unavailable':
 			return 'No LinkedIn account of the workspace could run the lookup. Connect or reconnect one in AdaptlyPost, ideally a company page the workspace administers.';
 		case 'subscription_required':

@@ -1,0 +1,23 @@
+README.md
+  s_3473f5de672b7c::t_da6a65cd41232d 92
+nodes/AdaptlyPost/AdaptlyPost.node.ts
+  s_3473f5de672b7c::t_98035b0dcd65fd 333
+test/linkedinCompanyPage.test.js
+  s_3473f5de672b7c::t_aacabbf7383524 77-84,87-90,93,95,103-104
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.5",
+  "base_commit_sha": "990854164b88048dcd52e2db57748251a2caebcf",
+  "prompts": {},
+  "sessions": {
+    "s_3473f5de672b7c": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "54542a87-6bbd-4aeb-aeb2-e12cd894c3b2",
+        "model": "claude-opus-5-5"
+      },
+      "human_author": "Taras Shynkarenko <taras.shinkarenko@gmail.com>"
+    }
+  }
+}

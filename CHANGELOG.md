@@ -1,5 +1,9 @@
 # Changelog
 
+## 0.26.1
+
+- Look Up LinkedIn Company Page outputs no item when LinkedIn has no page with that vanity name, instead of failing with `linkedin_organization_not_found`. The API now answers that case with 200 and `organization: null`.
+
 ## 0.26.0
 
 - First Comments take Delay (Minutes), from 0 to 10080 (7 days), sent as `firstComments[].delayMinutes`. The comment posts within about a minute of that time after the platform publishes, and 0 posts it right away. The delay cannot be changed once the post is published, and deleting the post cancels a comment that has not gone out yet. The platform entry carries `firstCommentDelayMinutes` and `firstCommentDueAt`.

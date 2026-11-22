@@ -1,5 +1,9 @@
 # Changelog
 
+## 0.27.0
+
+- YouTube Playlist Name or ID is now a dropdown of the playlists of the YouTube accounts selected in Accounts, private and unlisted ones included, loaded with GET /social-accounts/{id}/youtube-playlists. Each option shows the playlist title, plus the channel name when several channels are listed, and an expression can still pass a playlist id. The parameter name is unchanged, so existing workflows keep working.
+
 ## 0.26.1
 
 - Look Up LinkedIn Company Page outputs no item when LinkedIn has no page with that vanity name, instead of failing with `linkedin_organization_not_found`. The API now answers that case with 200 and `organization: null`.

@@ -16,6 +16,7 @@ import {
 	getPinterestBoards,
 	getWordPressAccounts,
 	getWordPressCategories,
+	getYouTubePlaylists,
 	groupAccountsByPlatform,
 	type PinterestBoard,
 	type Platform,
@@ -217,6 +218,7 @@ export class AdaptlyPost implements INodeType {
 			getPinterestBoards,
 			getWordPressAccounts,
 			getWordPressCategories,
+			getYouTubePlaylists,
 		},
 	};
 

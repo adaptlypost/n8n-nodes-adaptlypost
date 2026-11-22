@@ -1275,12 +1275,16 @@ export const postProperties: INodeProperties[] = [
 					'Whether YouTube notifies the channel subscribers about the video',
 			},
 			{
-				displayName: 'YouTube Playlist ID',
+				displayName: 'YouTube Playlist Name or ID',
 				name: 'youtubePlaylistId',
-				type: 'string',
+				type: 'options',
 				default: '',
+				typeOptions: {
+					loadOptionsMethod: 'getYouTubePlaylists',
+					loadOptionsDependsOn: ['accountIds'],
+				},
 				description:
-					'ID of a playlist of the channel to add the video to',
+					'Playlist to add the video to, listed from the YouTube accounts selected in Accounts, private and unlisted playlists included. A playlist belongs to one channel, so with several YouTube accounts selected the other channels cannot add the video to it. Choose from the list, or specify an ID using an <a href="https://docs.n8n.io/code/expressions/">expression</a>.',
 			},
 			{
 				displayName: 'YouTube Privacy',

@@ -52,7 +52,7 @@ Additional Fields also hold the options below. Each one applies to every selecte
 - WordPress Status: Publish (the default) publishes the post live on the site, Draft leaves a WordPress draft to finish and publish or schedule in WordPress, and Pending Review submits it for review. The post still has to be scheduled or published in AdaptlyPost to reach the site.
 - YouTube Audio Language: the language spoken in the video's original audio, as a BCP-47 tag such as `en`, `pt-BR` or `es-419`, so YouTube does not treat the video as another language. It does not turn off YouTube's automatic dubbing.
 - TikTok Title, TikTok Caption, TikTok Allow Comments, TikTok Allow Duet, TikTok Allow Stitch, TikTok Send as Draft, TikTok AI Generated, TikTok Branded Content, TikTok Branded Content Own Brand and TikTok Auto Add Music: sent in `tiktokConfigs`. A switch you do not add is left to AdaptlyPost's default; one you add is sent as set, off included.
-- YouTube Tags (one per line, up to 20), YouTube License, YouTube Category ID, YouTube Playlist ID, YouTube Notify Subscribers, YouTube Allow Embedding and YouTube Made for Kids: sent in `youtubeConfigs`.
+- YouTube Tags (one per line, up to 20), YouTube License, YouTube Category ID, YouTube Playlist Name or ID (listed from the selected channel), YouTube Notify Subscribers, YouTube Allow Embedding and YouTube Made for Kids: sent in `youtubeConfigs`.
 - X Quote Of: quote one of the account's own X posts, by link or ID, with the text as the commentary.
 - LinkedIn Reshare Of: reshare a LinkedIn post by its `urn:li:share:` or `urn:li:ugcPost:` URN or its link, with the text as the commentary.
 - Pinterest Title: the pin title, up to 100 characters.

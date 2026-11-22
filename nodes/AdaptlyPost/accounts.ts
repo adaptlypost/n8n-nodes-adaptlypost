@@ -187,6 +187,59 @@ export async function getPinterestBoards(
 	return options;
 }
 
+export interface YouTubePlaylist {
+	id: string;
+	title: string;
+	privacyStatus?: 'public' | 'unlisted' | 'private';
+	itemCount?: number;
+}
+
+const PLAYLIST_PRIVACY_LABELS: Record<NonNullable<YouTubePlaylist['privacyStatus']>, string> = {
+	public: 'Public',
+	unlisted: 'Unlisted',
+	private: 'Private',
+};
+
+function describePlaylist(playlist: YouTubePlaylist): string | undefined {
+	const parts = [
+		playlist.privacyStatus && `${PLAYLIST_PRIVACY_LABELS[playlist.privacyStatus]} playlist`,
+		playlist.itemCount !== undefined &&
+			`${playlist.itemCount} ${playlist.itemCount === 1 ? 'video' : 'videos'}`,
+	].filter(Boolean);
+	return parts.length ? parts.join(', ') : undefined;
+}
+
+export async function getYouTubePlaylists(
+	this: ILoadOptionsFunctions,
+): Promise<INodePropertyOptions[]> {
+	const selected = this.getCurrentNodeParameter('accountIds');
+	const selectedIds = Array.isArray(selected) ? selected : [];
+	const { accounts } = await adaptlyPostApiRequest.call(this, 'GET', '/social-accounts');
+	const channels = (accounts as SocialAccount[]).filter(
+		(account) => account.platform === 'YOUTUBE' && account.status === 'active',
+	);
+	const chosen = channels.filter((account) => selectedIds.includes(account.id));
+	const targets = chosen.length ? chosen : channels;
+
+	const options: INodePropertyOptions[] = [];
+	for (const channel of targets) {
+		const { playlists } = await adaptlyPostApiRequest.call(
+			this,
+			'GET',
+			`/social-accounts/${encodeURIComponent(channel.id)}/youtube-playlists`,
+		);
+		for (const playlist of playlists as YouTubePlaylist[]) {
+			options.push({
+				name:
+					targets.length > 1 ? `${playlist.title} (${channel.displayName})` : playlist.title,
+				value: playlist.id,
+				description: describePlaylist(playlist),
+			});
+		}
+	}
+	return options;
+}
+
 export interface WordPressCategory {
 	id: number;
 	name: string;

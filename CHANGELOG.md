@@ -1,5 +1,9 @@
 # Changelog
 
+## 0.28.0
+
+- Additional Fields take X AI Generated, Pinterest AI Generated and Threads AI Generated, sent only when on as `twitterConfigs[].aiGenerated`, `pinterestConfigs[].aiGenerated` and `threadsConfigs[].aiGenerated` for every selected account of that platform. X sets `made_with_ai` on the post and labels it. Pinterest gets the `AI_MODIFIED` disclosure and shows an "AI modified" label on image, video and carousel Pins. Threads shows its "AI info" label on text, image, video and carousel posts, and thread replies don't carry it. The platform entry reads `twitterAiGenerated`, `pinterestAiGenerated` and `threadsAiGenerated`.
+
 ## 0.27.0
 
 - YouTube Playlist Name or ID is now a dropdown of the playlists of the YouTube accounts selected in Accounts, private and unlisted ones included, loaded with GET /social-accounts/{id}/youtube-playlists. Each option shows the playlist title, plus the channel name when several channels are listed, and an expression can still pass a playlist id. The parameter name is unchanged, so existing workflows keep working.

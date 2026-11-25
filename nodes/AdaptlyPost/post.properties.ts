@@ -663,6 +663,14 @@ export const postProperties: INodeProperties[] = [
 					'Reshare this LinkedIn post from every selected LinkedIn account, with the text as the commentary. Takes a urn:li:share: or urn:li:ugcPost: URN, such as the platformPostId from Get Results, or a link of the form https://www.linkedin.com/feed/update/ followed by the URN. urn:li:activity: links are refused. Media is not attached on LinkedIn.',
 			},
 			{
+				displayName: 'Pinterest AI Generated',
+				name: 'pinterestAiGenerated',
+				type: 'boolean',
+				default: false,
+				description:
+					'Whether to disclose that the Pin was made or modified with AI. Sends Pinterest the AI_MODIFIED disclosure, which shows an "AI modified" label on the Pin. Works on image, video and carousel Pins. Applied to every selected Pinterest account.',
+			},
+			{
 				displayName: 'Pinterest Board Name',
 				name: 'pinterestBoardName',
 				type: 'string',
@@ -894,6 +902,14 @@ export const postProperties: INodeProperties[] = [
 						],
 					},
 				],
+			},
+			{
+				displayName: 'Threads AI Generated',
+				name: 'threadsAiGenerated',
+				type: 'boolean',
+				default: false,
+				description:
+					'Whether to disclose AI-generated content. Threads shows its "AI info" label on the post. Works on text, image, video and carousel posts; on a carousel the label covers the whole post. Thread replies do not carry it. Applied to every selected Threads account.',
 			},
 			{
 				displayName: 'TikTok AI Generated',
@@ -1186,6 +1202,14 @@ export const postProperties: INodeProperties[] = [
 				placeholder: 'What we shipped this week',
 				description:
 					'Post title, up to 300 characters. Leave empty to use the first line of the text, cut to 100 characters. Applied to every selected WordPress site.',
+			},
+			{
+				displayName: 'X AI Generated',
+				name: 'twitterAiGenerated',
+				type: 'boolean',
+				default: false,
+				description:
+					'Whether to disclose that the post contains AI-generated media. Sets made_with_ai on the X post, and X labels it. Applied to every selected X account.',
 			},
 			{
 				displayName: 'X Keep Links Clickable',

@@ -7,6 +7,9 @@ const API_PREFIX = '/post/api/v1';
 
 const ACCOUNTS = [
 	{ id: 'th-1', platform: 'THREADS', displayName: 'acme', status: 'active' },
+	{ id: 'th-2', platform: 'THREADS', displayName: 'acme.shop', status: 'active' },
+	{ id: 'pin-1', platform: 'PINTEREST', displayName: 'Acme', status: 'active' },
+	{ id: 'x-2', platform: 'TWITTER', displayName: 'acmeshop', status: 'active' },
 	{ id: 'tt-1', platform: 'TIKTOK', displayName: 'acme.tt', status: 'active' },
 	{ id: 'yt-1', platform: 'YOUTUBE', displayName: 'Acme TV', status: 'active' },
 	{ id: 'x-1', platform: 'TWITTER', displayName: 'acme', status: 'active' },
@@ -172,6 +175,64 @@ describe('Post > Create platform options', () => {
 		assert.deepEqual(body.facebookConfigs, [{ pageId: 'fb-1', videoTitle: 'Launch' }]);
 		assert.equal(body.thumbnailUrl, COVER);
 		assert.equal(body.thumbnailTimestampMs, 1500);
+	});
+
+	it('labels the post as AI-generated on every selected X, Pinterest and Threads account', async () => {
+		const context = createContext({
+			accountIds: ['x-1', 'x-2', 'pin-1', 'th-1', 'th-2', 'li-1'],
+			contentType: 'IMAGE',
+			additionalFields: {
+				twitterAiGenerated: true,
+				twitterQuoteOf: 'https://x.com/acme/status/1',
+				pinterestAiGenerated: true,
+				threadsAiGenerated: true,
+			},
+		});
+
+		await execute(context);
+
+		const body = context.postBody();
+		assert.deepEqual(body.twitterConfigs, [
+			{ connectionId: 'x-1', quoteOf: 'https://x.com/acme/status/1', aiGenerated: true },
+			{ connectionId: 'x-2', quoteOf: 'https://x.com/acme/status/1', aiGenerated: true },
+		]);
+		assert.deepEqual(body.pinterestConfigs, [{ connectionId: 'pin-1', aiGenerated: true }]);
+		assert.deepEqual(body.threadsConfigs, [
+			{ connectionId: 'th-1', aiGenerated: true },
+			{ connectionId: 'th-2', aiGenerated: true },
+		]);
+		assert.equal(body.linkedinConfigs, undefined);
+	});
+
+	it('sends no X, Pinterest or Threads configs when AI-Generated is off', async () => {
+		const context = createContext({
+			accountIds: ['x-1', 'pin-1', 'th-1'],
+			additionalFields: {
+				twitterAiGenerated: false,
+				pinterestAiGenerated: false,
+				threadsAiGenerated: false,
+			},
+		});
+
+		await execute(context);
+
+		const body = context.postBody();
+		assert.equal(body.twitterConfigs, undefined);
+		assert.equal(body.pinterestConfigs, undefined);
+		assert.equal(body.threadsConfigs, undefined);
+	});
+
+	it('keeps the X quote without an AI label when only X Quote Of is set', async () => {
+		const context = createContext({
+			accountIds: ['x-1'],
+			additionalFields: { twitterQuoteOf: 'https://x.com/acme/status/1' },
+		});
+
+		await execute(context);
+
+		assert.deepEqual(context.postBody().twitterConfigs, [
+			{ connectionId: 'x-1', quoteOf: 'https://x.com/acme/status/1' },
+		]);
 	});
 });
 

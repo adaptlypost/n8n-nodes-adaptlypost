@@ -954,7 +954,8 @@ async function buildPostBody(
 			boardId || boardName
 				? await pinterestAccountsOwningBoard.call(this, ids('PINTEREST'), pinterestBoard, i)
 				: [];
-		if (boardId || boardName || link || title) {
+		const aiGenerated = options.pinterestAiGenerated === true;
+		if (boardId || boardName || link || title || aiGenerated) {
 			body.pinterestConfigs = ids('PINTEREST').map((connectionId) => {
 				const ownsBoard = boardOwners.includes(connectionId);
 				return {
@@ -963,6 +964,7 @@ async function buildPostBody(
 					boardName: ownsBoard ? boardName : undefined,
 					link,
 					...(title && { title }),
+					...(aiGenerated && { aiGenerated }),
 				};
 			});
 		}
@@ -1032,10 +1034,20 @@ async function buildPostBody(
 			reshareOf: options.linkedinReshareOf || undefined,
 		}));
 	}
-	if (targets.platforms.includes('TWITTER') && options.twitterQuoteOf) {
+	if (
+		targets.platforms.includes('TWITTER') &&
+		(options.twitterQuoteOf || options.twitterAiGenerated === true)
+	) {
 		body.twitterConfigs = ids('TWITTER').map((connectionId) => ({
 			connectionId,
-			quoteOf: options.twitterQuoteOf,
+			quoteOf: options.twitterQuoteOf || undefined,
+			aiGenerated: options.twitterAiGenerated === true ? true : undefined,
+		}));
+	}
+	if (targets.platforms.includes('THREADS') && options.threadsAiGenerated === true) {
+		body.threadsConfigs = ids('THREADS').map((connectionId) => ({
+			connectionId,
+			aiGenerated: true,
 		}));
 	}
 	if (targets.platforms.includes('TUMBLR')) {

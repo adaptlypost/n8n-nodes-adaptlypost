@@ -1,0 +1,29 @@
+nodes/AdaptlyPost/labels.ts
+  s_c48832d3574fdd::t_92ef7cb7abde08 1-14
+nodes/AdaptlyPost/AdaptlyPost.node.ts
+  s_c48832d3574fdd::t_5e2c62ec43c9bb 27
+  s_c48832d3574fdd::t_097560075034e3 218,901,927
+nodes/AdaptlyPost/post.properties.ts
+  s_c48832d3574fdd::t_805d4ffc45c8df 648-655
+  s_c48832d3574fdd::t_445b75b7fa4c65 647
+test/createPostLabels.test.js
+  s_c48832d3574fdd::t_43dee039c2313c 1-103
+README.md
+  s_c48832d3574fdd::t_55ac4b0020453e 61
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.5",
+  "base_commit_sha": "8edb0f3b3e326adc87516f1267444c2590147ea9",
+  "prompts": {},
+  "sessions": {
+    "s_c48832d3574fdd": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "980c9e06-63e7-42d8-a06c-1720ae9a87d1",
+        "model": "claude-opus-5-5"
+      },
+      "human_author": "Taras Shynkarenko <taras.shinkarenko@gmail.com>"
+    }
+  }
+}

@@ -1,5 +1,9 @@
 # Changelog
 
+## 0.29.0
+
+- Additional Fields take Labels, a dropdown of the workspace's labels loaded with GET /labels, sent as `labelIds` on Create and Validate. Up to 10 labels per post, for example one label per brand. Labels are created in the AdaptlyPost app, stay inside AdaptlyPost and are never sent to a platform. An expression can pass label IDs as a list or one per line, and an ID that is not a label of the workspace fails the item with a 400. Posts read back from the API and from webhooks carry `labels`, each with `id`, `name` and `color`.
+
 ## 0.28.0
 
 - Additional Fields take X AI Generated, Pinterest AI Generated and Threads AI Generated, sent only when on as `twitterConfigs[].aiGenerated`, `pinterestConfigs[].aiGenerated` and `threadsConfigs[].aiGenerated` for every selected account of that platform. X sets `made_with_ai` on the post and labels it. Pinterest gets the `AI_MODIFIED` disclosure and shows an "AI modified" label on image, video and carousel Pins. Threads shows its "AI info" label on text, image, video and carousel posts, and thread replies don't carry it. The platform entry reads `twitterAiGenerated`, `pinterestAiGenerated` and `threadsAiGenerated`.

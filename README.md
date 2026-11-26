@@ -58,6 +58,7 @@ Additional Fields also hold the options below. Each one applies to every selecte
 - Pinterest Title: the pin title, up to 100 characters.
 - Facebook Video Title: the title of a Facebook video, up to 255 characters.
 - X Keep Links Clickable: only for AppSumo lifetime deals. By default AdaptlyPost breaks links in X text, because X charges far more for a post with a link.
+- Labels: a dropdown of the workspace's labels, up to 10, sent as `labelIds` on Create and Validate. Use them to group posts, for example one label per brand. Labels stay inside AdaptlyPost and never reach a platform. They are created in the AdaptlyPost app, and GET /labels lists their IDs for an expression. An ID that is not a label of the workspace fails the item with a 400. Post > Get, Get Many and the trigger's post events return `labels` with each label's `id`, `name` and `color`.
 
 Google Business Profile locations show up in the account picker. A Google Business Profile post is text or one JPEG or PNG image, up to 1500 characters. Without settings a location gets a standard update. Add Google Business Profile under Additional Fields to post an event or an offer, or to add a button such as Book or Call. Event dates are in the business's local time, written as `2026-10-01` or `2026-10-01T18:00`.
 

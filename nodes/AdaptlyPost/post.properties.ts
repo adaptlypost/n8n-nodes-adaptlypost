@@ -645,6 +645,15 @@ export const postProperties: INodeProperties[] = [
 				],
 			},
 			{
+				displayName: 'Label Names or IDs',
+				name: 'labelIds',
+				type: 'multiOptions',
+				default: [],
+				typeOptions: { loadOptionsMethod: 'getLabels' },
+				description:
+					'Labels to put on the post, for example one label per brand, up to 10. Labels stay inside AdaptlyPost and are never sent to a platform. They are created in the AdaptlyPost app, and GET /labels lists their IDs. An ID that is not a label of the workspace fails the item with a 400. Choose from the list, or specify IDs using an <a href="https://docs.n8n.io/code/expressions/">expression</a>.',
+			},
+			{
 				displayName: 'LinkedIn Document Title',
 				name: 'linkedinDocumentTitle',
 				type: 'string',

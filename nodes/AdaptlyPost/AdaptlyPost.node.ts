@@ -24,6 +24,7 @@ import {
 } from './accounts';
 import { inboxProperties } from './inbox.properties';
 import { runInbox } from './inbox';
+import { getLabels } from './labels';
 import { uploadMediaFromUrl, uploadReplyImageFromUrl } from './media';
 import { postProperties } from './post.properties';
 import { DEFAULT_WAIT_TIMEOUT_SECONDS, PostResultError, waitForPostResults } from './postResults';
@@ -214,6 +215,7 @@ export class AdaptlyPost implements INodeType {
 		loadOptions: {
 			getAccounts,
 			getInstagramAccounts,
+			getLabels,
 			getPinterestAccounts,
 			getPinterestBoards,
 			getWordPressAccounts,
@@ -896,6 +898,7 @@ async function buildPostBody(
 		timezone: options.timezone || 'UTC',
 		saveAsDraft: options.saveAsDraft === true,
 		recurrence,
+		labelIds: asList(options.labelIds ?? []),
 		twitterKeepLinks: targets.platforms.includes('TWITTER') && options.twitterKeepLinks === true ? true : undefined,
 		firstComments: fixedCollectionEntries(options.firstComments, 'comment').map((comment) => ({
 			platform: comment.platform,
@@ -921,6 +924,7 @@ async function buildPostBody(
 	};
 	for (const field of [
 		'firstComments',
+		'labelIds',
 		'platformAspectRatios',
 		'platformMedia',
 		'platformTexts',

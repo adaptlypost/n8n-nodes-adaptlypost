@@ -1,5 +1,11 @@
 # Changelog
 
+## 0.30.0
+
+- Additional Fields take Pinterest Board Section ID and Pinterest Board Section Name, sent as `pinterestConfigs[].boardSectionId` and `boardSectionName` for the accounts that own the chosen board, to pin into a section instead of the board itself. A section needs Pinterest Board or Pinterest Board Name, and the node refuses both section fields together. A section name matches exactly first, then ignoring case, and a name that matches no section or several fails the item with a 400. The platform entry reads `pinterestBoardSectionId`.
+- Additional Fields take Pinterest AI Generated Person, sent only when on as `pinterestConfigs[].aiGeneratedPerson`. Pinterest gets the `SYNTHETIC_PERFORMER` disclosure, next to `AI_MODIFIED` when Pinterest AI Generated is also on, on image, video and carousel Pins. The platform entry reads `pinterestAiGeneratedPerson`.
+- YouTube Schedule on YouTube now says what the API does: the video uploads 48 hours before Scheduled At, or at once when Scheduled At is closer.
+
 ## 0.29.0
 
 - Additional Fields take Labels, a dropdown of the workspace's labels loaded with GET /labels, sent as `labelIds` on Create and Validate. Up to 10 labels per post, for example one label per brand. Labels are created in the AdaptlyPost app, stay inside AdaptlyPost and are never sent to a platform. An expression can pass label IDs as a list or one per line, and an ID that is not a label of the workspace fails the item with a 400. Posts read back from the API and from webhooks carry `labels`, each with `id`, `name` and `color`.

@@ -800,6 +800,8 @@ async function readThumbnailUrl(
 interface PinterestBoardChoice {
 	boardId?: string;
 	boardName?: string;
+	boardSectionId?: string;
+	boardSectionName?: string;
 }
 
 function readPinterestBoardChoice(
@@ -820,7 +822,31 @@ function readPinterestBoardChoice(
 			},
 		);
 	}
-	return { boardId: boardId || undefined, boardName: boardName || undefined };
+	const boardSectionId = String(options.pinterestBoardSectionId ?? '').trim();
+	const boardSectionName = String(options.pinterestBoardSectionName ?? '').trim();
+	if (boardSectionId && boardSectionName) {
+		throw new NodeOperationError(
+			this.getNode(),
+			'Set Pinterest Board Section ID or Pinterest Board Section Name, not both',
+			{
+				itemIndex: i,
+				description:
+					'Pinterest Board Section ID picks a section by its ID and Pinterest Board Section Name picks it by name. Clear one of them.',
+			},
+		);
+	}
+	if ((boardSectionId || boardSectionName) && !boardId && !boardName) {
+		throw new NodeOperationError(this.getNode(), 'A Pinterest board section needs a board', {
+			itemIndex: i,
+			description: 'Set Pinterest Board or Pinterest Board Name to the board that holds the section.',
+		});
+	}
+	return {
+		boardId: boardId || undefined,
+		boardName: boardName || undefined,
+		boardSectionId: boardSectionId || undefined,
+		boardSectionName: boardSectionName || undefined,
+	};
 }
 
 async function pinterestAccountsOwningBoard(
@@ -951,7 +977,7 @@ async function buildPostBody(
 		}));
 	}
 	if (targets.platforms.includes('PINTEREST')) {
-		const { boardId, boardName } = pinterestBoard;
+		const { boardId, boardName, boardSectionId, boardSectionName } = pinterestBoard;
 		const link = options.pinterestLink || undefined;
 		const title = options.pinterestTitle || undefined;
 		const boardOwners =
@@ -959,16 +985,20 @@ async function buildPostBody(
 				? await pinterestAccountsOwningBoard.call(this, ids('PINTEREST'), pinterestBoard, i)
 				: [];
 		const aiGenerated = options.pinterestAiGenerated === true;
-		if (boardId || boardName || link || title || aiGenerated) {
+		const aiGeneratedPerson = options.pinterestAiGeneratedPerson === true;
+		if (boardId || boardName || link || title || aiGenerated || aiGeneratedPerson) {
 			body.pinterestConfigs = ids('PINTEREST').map((connectionId) => {
 				const ownsBoard = boardOwners.includes(connectionId);
 				return {
 					connectionId,
 					boardId: ownsBoard ? boardId : undefined,
 					boardName: ownsBoard ? boardName : undefined,
+					...(ownsBoard && boardSectionId && { boardSectionId }),
+					...(ownsBoard && boardSectionName && { boardSectionName }),
 					link,
 					...(title && { title }),
 					...(aiGenerated && { aiGenerated }),
+					...(aiGeneratedPerson && { aiGeneratedPerson }),
 				};
 			});
 		}

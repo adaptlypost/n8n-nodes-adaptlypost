@@ -680,6 +680,14 @@ export const postProperties: INodeProperties[] = [
 					'Whether to disclose that the Pin was made or modified with AI. Sends Pinterest the AI_MODIFIED disclosure, which shows an "AI modified" label on the Pin. Works on image, video and carousel Pins. Applied to every selected Pinterest account.',
 			},
 			{
+				displayName: 'Pinterest AI Generated Person',
+				name: 'pinterestAiGeneratedPerson',
+				type: 'boolean',
+				default: false,
+				description:
+					'Whether to disclose that the Pin shows a person generated with AI. Sends Pinterest the SYNTHETIC_PERFORMER disclosure, next to AI_MODIFIED when Pinterest AI Generated is also on. Works on image, video and carousel Pins. Applied to every selected Pinterest account.',
+			},
+			{
 				displayName: 'Pinterest Board Name',
 				name: 'pinterestBoardName',
 				type: 'string',
@@ -699,6 +707,23 @@ export const postProperties: INodeProperties[] = [
 				},
 				description:
 					'Board to pin to, listed from the Pinterest accounts selected in Accounts. Leave empty to pin to a board named AdaptlyPost, which is created on the Pinterest account the first time. With several Pinterest accounts, the board is used for the account that owns it and the others pin to their AdaptlyPost board. To pick a board by name, use Pinterest Board Name instead. Choose from the list, or specify an ID using an <a href="https://docs.n8n.io/code/expressions/">expression</a>.',
+			},
+			{
+				displayName: 'Pinterest Board Section ID',
+				name: 'pinterestBoardSectionId',
+				type: 'string',
+				default: '',
+				description:
+					'ID of a section of the chosen board, to pin into that section instead of the board itself. Needs Pinterest Board or Pinterest Board Name, and is sent only for the accounts that own that board. Use Pinterest Board Section ID or Pinterest Board Section Name, not both.',
+			},
+			{
+				displayName: 'Pinterest Board Section Name',
+				name: 'pinterestBoardSectionName',
+				type: 'string',
+				default: '',
+				placeholder: 'Desserts',
+				description:
+					'Name of a section of the chosen board, up to 180 characters. AdaptlyPost looks it up when the post is created: an exact match wins, otherwise a single match that ignores case. A name that matches no section, or several, fails the item. Needs Pinterest Board or Pinterest Board Name, and is sent only for the accounts that own that board.',
 			},
 			{
 				displayName: 'Pinterest Link',
@@ -1336,7 +1361,7 @@ export const postProperties: INodeProperties[] = [
 				type: 'boolean',
 				default: false,
 				description:
-					'Whether to upload the video as soon as the post is scheduled, as a private video that YouTube publishes itself at Scheduled At. This leaves time to set up Test & Compare in YouTube Studio before the video goes public. Needs Public privacy and is refused on a repeating post. Less than 15 minutes ahead, the video uploads at Scheduled At as usual. While the video waits on YouTube, the post cannot be updated or unscheduled, and deleting it also deletes the video from YouTube. Read youtubeScheduleOnYouTube and youtubeScheduledVideoId on the platform.',
+					'Whether to upload the video 48 hours before Scheduled At (at once when Scheduled At is closer), as a private video that YouTube publishes itself at Scheduled At. This leaves time to set up Test & Compare in YouTube Studio before the video goes public. Needs Public privacy and is refused on a repeating post. Less than 15 minutes ahead, the video uploads at Scheduled At as usual. While the video waits on YouTube, the post cannot be updated or unscheduled, and deleting it also deletes the video from YouTube. Read youtubeScheduleOnYouTube and youtubeScheduledVideoId on the platform.',
 			},
 			{
 				displayName: 'YouTube Tags',

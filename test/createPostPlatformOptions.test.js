@@ -204,6 +204,20 @@ describe('Post > Create platform options', () => {
 		assert.equal(body.linkedinConfigs, undefined);
 	});
 
+	it('discloses an AI-generated person on every selected Pinterest account', async () => {
+		const context = createContext({
+			accountIds: ['pin-1'],
+			contentType: 'IMAGE',
+			additionalFields: { pinterestAiGenerated: true, pinterestAiGeneratedPerson: true },
+		});
+
+		await execute(context);
+
+		assert.deepEqual(context.postBody().pinterestConfigs, [
+			{ connectionId: 'pin-1', aiGenerated: true, aiGeneratedPerson: true },
+		]);
+	});
+
 	it('sends no X, Pinterest or Threads configs when AI-Generated is off', async () => {
 		const context = createContext({
 			accountIds: ['x-1', 'pin-1', 'th-1'],

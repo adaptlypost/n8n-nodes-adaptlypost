@@ -165,4 +165,59 @@ describe('Post > Create with a Pinterest board', () => {
 			},
 		]);
 	});
+
+	it('sends the board section only to the account that owns the board', async () => {
+		const context = createContext({
+			accounts: [PIN_MAIN, PIN_SHOP],
+			additionalFields: { pinterestBoard: 'board-recipes', pinterestBoardSectionName: ' Desserts ' },
+		});
+
+		await execute(context);
+
+		assert.deepEqual(context.postBody().pinterestConfigs, [
+			{
+				connectionId: 'pin-main',
+				boardId: 'board-recipes',
+				boardName: undefined,
+				boardSectionName: 'Desserts',
+				link: undefined,
+			},
+			{ connectionId: 'pin-shop', boardId: undefined, boardName: undefined, link: undefined },
+		]);
+	});
+
+	it('refuses a board section ID and a section name together before calling the API', async () => {
+		const context = createContext({
+			accounts: [PIN_MAIN],
+			additionalFields: {
+				pinterestBoardName: 'Summer Recipes',
+				pinterestBoardSectionId: 'section-1',
+				pinterestBoardSectionName: 'Desserts',
+			},
+		});
+
+		await assert.rejects(execute(context), (error) => {
+			assert.ok(error instanceof NodeOperationError);
+			assert.equal(
+				error.message,
+				'Set Pinterest Board Section ID or Pinterest Board Section Name, not both',
+			);
+			return true;
+		});
+		assert.deepEqual(context.requests, []);
+	});
+
+	it('refuses a board section without a board before calling the API', async () => {
+		const context = createContext({
+			accounts: [PIN_MAIN],
+			additionalFields: { pinterestBoardSectionId: 'section-1' },
+		});
+
+		await assert.rejects(execute(context), (error) => {
+			assert.ok(error instanceof NodeOperationError);
+			assert.equal(error.message, 'A Pinterest board section needs a board');
+			return true;
+		});
+		assert.deepEqual(context.requests, []);
+	});
 });
